@@ -112,7 +112,7 @@ const AUTOMATION_DATA: FeatureSectionData = {
   id: 'efficiency',
   badge: '20% productivity boost',
   badgeColor: '#f59e0b',
-  title: 'End-to-end\nautomation.',
+  title: 'End-to-end\nautomation',
   description: 'Streamline the entire source-to-pay journey. Real-time data flows through every touchpoint while four-way reconciliation closes invoices without manual intervention.',
   features: [
     { icon: '⚡', label: 'Automated ordering', desc: 'Convert approved RFQs to POs in one click. No re-entry, no errors, no delays.' },

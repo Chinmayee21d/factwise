@@ -145,9 +145,9 @@ const RequisitionMockup = () => {
 
 const REQUISITIONS_DATA: FeatureSectionData = {
   id: 'requisitions',
-  badge: 'Module 01: Requisitions',
+  badge: 'Requisitions',
   badgeColor: '#7c5cfc',
-  title: 'Request-to-order\nsimplified.',
+  title: 'Request-to-order\nsimplified',
   description: 'Empower your team to create requisitions with ease. FactWise automatically validates requests against budgets and preferred supplier lists to ensure compliance from the start.',
   features: [
     { icon: '🛒', label: 'Intuitive PR creation', desc: 'A consumer-grade shopping experience for enterprise procurement. Search catalogs or add custom items in seconds.' },

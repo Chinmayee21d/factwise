@@ -152,7 +152,7 @@ const GOVERNANCE_DATA: FeatureSectionData = {
   id: 'usability',
   badge: 'Cut excess spend 50%',
   badgeColor: '#7c5cfc',
-  title: 'Governance without\nfriction.',
+  title: 'Governance without\nfriction',
   description: 'Automated approval workflows route requests to the right people instantly. An intuitive interface means zero training time — your team gets compliant on day one.',
   features: [
     { icon: '✓', label: 'Auto-routing approvals', desc: 'Define multi-tier approval rules once. Every purchase request flows through the right reviewers automatically.' },

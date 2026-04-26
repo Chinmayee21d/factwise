@@ -75,7 +75,7 @@ export default function SavingsSection() {
             </div>
             
             <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(30px,4vw,50px)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#f4f4f5', marginBottom: 18 }}>
-              Negotiate smarter,<br />spend less.
+              Negotiate smarter,<br />spend less
             </h2>
             
             <p style={{ fontSize: 16, color: '#6b6b7a', lineHeight: 1.7, marginBottom: 34, maxWidth: 440 }}>

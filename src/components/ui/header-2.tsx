@@ -65,7 +65,7 @@ export function Header() {
 				)}
 			>
 				<div className="flex items-center gap-2">
-           <div className="h-[18px] w-[3px] rounded-sm bg-[#f4f4f5]" />
+
            <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#f4f4f5]">
              factwise
            </span>

@@ -140,9 +140,9 @@ const GoodsReceiptMockup = () => {
 
 const GOODS_RECEIPT_DATA: FeatureSectionData = {
   id: 'receiving',
-  badge: 'Module 06: Goods Receipt',
+  badge: 'Goods Receipt',
   badgeColor: '#34d399',
-  title: 'Receiving and\ninspection.',
+  title: 'Receiving and\ninspection',
   description: 'Close the loop on your procurement cycle. Verify shipments, perform quality inspections, and trigger automatic payments — all from a single interface.',
   features: [
     { icon: '📦', label: 'Real-time receiving', desc: 'Scan items as they arrive and verify against the original PO instantly. Flag shortages or damages with one tap.' },

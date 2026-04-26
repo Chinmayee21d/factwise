@@ -574,7 +574,7 @@ export default function ScrollFeatureSection() {
               marginBottom: 0,
             }}
           >
-            One platform, end-to-end.
+            One platform, end-to-end
           </h2>
         </div>
 
