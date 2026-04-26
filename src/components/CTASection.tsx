@@ -105,12 +105,7 @@ export default function CTASection() {
         style={{ y: textY }}
         className="relative z-20 max-w-[1400px] mx-auto px-10 text-center"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        >
+        <motion.div>
           {/* Badge */}
           <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#7c5cfc]/10 border border-[#7c5cfc]/20 backdrop-blur-xl mb-10">
             <div className="w-1.5 h-1.5 rounded-full bg-[#7c5cfc] animate-pulse" />

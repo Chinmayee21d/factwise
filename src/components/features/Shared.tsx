@@ -85,10 +85,6 @@ export function FeatureLayout({ section }: Readonly<{ section: FeatureSectionDat
         >
         {/* ── Text column ── */}
         <motion.div
-          initial={{ opacity: 0, x: isRight ? 28 : -28 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
           style={{ order: isRight ? 2 : 1 }}
         >
           {/* Badge */}
@@ -118,10 +114,6 @@ export function FeatureLayout({ section }: Readonly<{ section: FeatureSectionDat
             {section.features.map((f, fi) => (
               <motion.div
                 key={f.label}
-                initial={{ opacity: 0, x: isRight ? 16 : -16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.5, delay: 0.15 + fi * 0.1, ease: [0.16, 1, 0.3, 1] }}
                 style={{ display: 'flex', gap: 13 }}
               >
                 <div style={{ flexShrink: 0, marginTop: 2, width: 30, height: 30, borderRadius: '50%', background: `${section.badgeColor}15`, border: `1px solid ${section.badgeColor}28`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: section.badgeColor, fontWeight: 400 }}>

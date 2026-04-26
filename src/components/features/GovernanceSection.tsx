@@ -18,10 +18,6 @@ const ApprovalWorkflowMockup = () => {
   return (
     <div style={{ paddingTop: '80px', perspective: '1200px' }}>
       <motion.div
-        initial={{ opacity: 0, x: 180, scale: 0.95, rotateY: -10, filter: 'blur(8px)' }}
-        whileInView={{ opacity: 1, x: 0, scale: 1, rotateY: 0, filter: 'blur(0px)' }}
-        viewport={{ once: true, margin: '-120px' }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], x: { type: 'spring', stiffness: 40, damping: 12 } }}
         style={{
           background: 'linear-gradient(145deg, #0a0a0c 0%, #111116 100%)',
           borderRadius: 24,
@@ -41,9 +37,6 @@ const ApprovalWorkflowMockup = () => {
             {steps.map((step, i, arr) => (
               <motion.div
                 key={step.label}
-                initial={{ opacity: 0, y: 12 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.8 + i * 0.18, ease: [0.16, 1, 0.3, 1] }}
                 style={{ display: 'flex', gap: 18 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -110,9 +103,6 @@ const ApprovalWorkflowMockup = () => {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
             style={{
               marginTop: 24,
               padding: '20px',

@@ -9,10 +9,6 @@ export default function TrustBar() {
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="flex flex-col items-center gap-10">
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
             className="text-[11px] font-medium tracking-[0.18em] text-[#6b6b7a] uppercase text-center"
           >
             Trusted by procurement teams at

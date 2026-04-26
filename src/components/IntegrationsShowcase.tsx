@@ -90,11 +90,7 @@ export default function IntegrationsShowcase() {
               {highlights.map((h, i) => (
                 <motion.div
                   key={h.label}
-                  initial={{ opacity: 0, x: -24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
                   whileHover={{ x: 8 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   style={{ 
                     position: 'relative',
                     display: 'flex', 
@@ -260,11 +256,7 @@ export default function IntegrationsShowcase() {
                 return (
                   <motion.div
                     key={intg.name}
-                    initial={{ opacity: 0, scale: 0.55 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
                     whileHover={{ scale: 1.12, zIndex: 30 }}
-                    viewport={{ once: true, margin: '-80px' }}
-                    transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
                     style={{
                       position: 'absolute',
                       top: ny - HALF,

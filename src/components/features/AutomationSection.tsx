@@ -19,9 +19,6 @@ const ReconciliationMockup = () => {
     <div style={{ paddingTop: '140px' }}>
       <motion.div 
         ref={ref} 
-        initial={{ opacity: 0, x: 120, rotateY: -10 }}
-        animate={inView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], x: { type: 'spring', stiffness: 40, damping: 12 } }}
         style={{ background: '#0a0a0c', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.6)', fontFamily: 'Inter, sans-serif', perspective: '1000px' }}
       >
         <BrowserChrome url="factwise.io/payments/reconciliation" />
@@ -30,9 +27,6 @@ const ReconciliationMockup = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#f4f4f5' }}>4-Way Reconciliation</div>
             <motion.div
-              initial={{ opacity: 0, scale: 0.65 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ type: 'spring', stiffness: 350, damping: 22, delay: 0.15 }}
               style={{ fontSize: 10, fontWeight: 600, color: '#34d399', background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', padding: '3px 9px', borderRadius: 5 }}
             >
               Auto-matched
@@ -43,9 +37,6 @@ const ReconciliationMockup = () => {
             {cards.map((card, i) => (
               <motion.div
                 key={card.label}
-                initial={{ opacity: 0, scale: 0.82, y: 10 }}
-                animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{ duration: 0.42, delay: 0.22 + i * 0.11, ease: [0.16, 1, 0.3, 1] }}
                 style={{ padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -65,9 +56,6 @@ const ReconciliationMockup = () => {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.45, delay: 0.78 }}
             style={{ padding: '11px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
           >
             <div>

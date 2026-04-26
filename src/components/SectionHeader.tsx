@@ -29,10 +29,6 @@ export default function SectionHeader({
     }}>
       {/* Label and Pulse */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 24 }}
       >
         <div style={{ 
@@ -56,10 +52,6 @@ export default function SectionHeader({
 
       {/* Title */}
       <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         style={{
           fontFamily: 'Inter, sans-serif',
           fontSize: 'clamp(32px, 5vw, 48px)',
@@ -77,10 +69,6 @@ export default function SectionHeader({
       {/* Description */}
       {description && (
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ 
             fontSize: 16, 
             color: '#6b6b7a', 

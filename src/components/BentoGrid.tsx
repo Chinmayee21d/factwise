@@ -51,7 +51,6 @@ function SupplierScoringMockup() {
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {suppliers.map((s, i) => (
           <motion.div key={i}
-            initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}
             style={{
               display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr', gap: 12, padding: '12px 16px',
               borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.07)' : 'none', alignItems: 'center',
@@ -72,7 +71,7 @@ function SupplierScoringMockup() {
             <div style={{ fontSize: 12, color: '#a1a1aa' }}>{s.qty}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ flex: 1, height: 4, background: '#27272a', borderRadius: 2 }}>
-                <motion.div initial={{ width: 0 }} whileInView={{ width: `${s.score}%` }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }} style={{ height: '100%', background: s.color, borderRadius: 2 }} />
+                <motion.div style={{ width: `${s.score}%`, height: '100%', background: s.color, borderRadius: 2 }} />
               </div>
               <div style={{ fontSize: 12, fontWeight: 600, color: s.color }}>{s.score}</div>
             </div>
@@ -154,8 +153,6 @@ function NLPMockup() {
       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 48, padding: '0 4px' }}>
         {[40, 65, 85, 100, 75, 90, 60].map((h, i) => (
           <motion.div key={i}
-            initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }} viewport={{ once: true }}
-            transition={{ delay: 0.05 * i, duration: 0.4, ease: [0.16,1,0.3,1] }}
             style={{
               flex: 1, height: `${h}%`, borderRadius: '3px 3px 0 0',
               background: i === 3 ? '#7c5cfc' : 'rgba(124,92,252,0.15)',
@@ -187,7 +184,6 @@ function BYOKMockup() {
           { label: 'QUALITY CHECK', val: 'QC-881' },
         ].map((item, i) => (
           <motion.div key={i}
-            initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.1 * i }}
             style={{ padding: '12px 16px', background: '#34d39908', border: '1px solid #34d39930', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
           >
             <div>
@@ -274,10 +270,6 @@ export default function BentoGrid() {
         {features.map((f, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.7, delay: f.delay, ease: [0.16, 1, 0.3, 1] }}
             className={f.colSpan}
             style={{
               position: 'relative',

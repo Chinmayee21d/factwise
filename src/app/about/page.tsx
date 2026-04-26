@@ -93,24 +93,15 @@ const MissionSection = () => {
     <section className="relative w-full py-40 bg-[#0a0a0c]">
       <div className="max-w-7xl mx-auto px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1.2, ease: BEZIER_EASE }}
-          >
+          <div>
             <h2 className="text-4xl font-light text-white mb-10">Our Mission</h2>
             <div className="h-px w-24 bg-[#7c5cfc]/50 mb-10" />
             <p className="text-3xl md:text-5xl font-light text-white leading-[1.2]">
               &quot;Delight users and provide sustainable, positive impact to the organizations we serve.&quot;
             </p>
-          </motion.div>
+          </div>
           
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
-            whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.5, ease: BEZIER_EASE }}
+          <div
             className="relative aspect-square lg:aspect-video rounded-[40px] overflow-hidden border border-white/5 bg-white/[0.02] flex items-center justify-center group"
           >
              <div className="absolute inset-0 bg-radial-gradient from-[#7c5cfc]/10 to-transparent blur-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
@@ -131,7 +122,7 @@ const MissionSection = () => {
              {/* Ambient Glows */}
              <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff3cac]/20 blur-[60px]" />
              <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#7c5cfc]/20 blur-[80px]" />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -177,12 +168,8 @@ const ValuesSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {VALUES.map((v, i) => (
-            <motion.div
+            <div
               key={v.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 1, delay: i * 0.15, ease: BEZIER_EASE }}
               className="group relative p-10 rounded-[32px] border border-white/5 bg-white/[0.01] overflow-hidden hover:border-[#7c5cfc]/30 transition-all duration-500"
             >
               <div 
@@ -198,7 +185,7 @@ const ValuesSection = () => {
                 </h3>
                 <p className="text-white/30 font-light leading-relaxed text-lg">{v.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

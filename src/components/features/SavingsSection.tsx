@@ -57,10 +57,7 @@ export default function SavingsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           
           <motion.div
-            initial={{ opacity: 0, x: -28 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            style={{ order: 1 }}
           >
             {/* Badge */}
             <div style={{ marginBottom: 22 }}>
@@ -91,10 +88,6 @@ export default function SavingsSection() {
               ].map((item, i) => (
                 <motion.div 
                   key={i}
-                  initial={{ opacity: 0, x: -16 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.5, delay: 0.15 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   style={{ display: 'flex', gap: 13 }}
                 >
                   <div style={{ flexShrink: 0, marginTop: 2, width: 30, height: 30, borderRadius: '50%', background: 'rgba(124,92,252,0.1)', border: '1px solid rgba(124,92,252,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#7c5cfc', fontWeight: 400 }}>
@@ -110,10 +103,6 @@ export default function SavingsSection() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 120, rotateY: -10 }}
-            whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], x: { type: 'spring', stiffness: 40, damping: 12 } }}
             style={{ 
               x: dashboardX,
               opacity: dashboardOpacity,
