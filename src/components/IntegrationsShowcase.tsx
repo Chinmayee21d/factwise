@@ -20,7 +20,7 @@ const integrations = [
   { name: 'Dynamics', color: '#0078D4', category: 'ERP',         angle: 0    }, // right
   { name: 'Workday',  color: '#005CB9', category: 'Finance',     angle: 45   }, // bottom-right
   { name: 'NetSuite', color: '#3288C1', category: 'Cloud',       angle: 90   }, // bottom
-  { name: 'Coupa',    color: '#E87722', category: 'Procurement', angle: 135  }, // bottom-left
+  { name: 'Coupa',    color: '#E87722', category: 'Sourcing', angle: 135  }, // bottom-left
   { name: 'Ariba',    color: '#0070C0', category: 'Sourcing',    angle: 180  }, // left
   { name: 'Infor',    color: '#7B2D8B', category: 'ERP',         angle: -135 }, // top-left
 ];
@@ -30,19 +30,19 @@ const highlights = [
     icon: <RefreshCcw size={20} />, 
     label: 'Real-time sync', 
     desc: 'Bidirectional data flow with your ERP — zero manual entry.',
-    accent: '#7c5cfc'
+    accent: '#3666ff'
   },
   { 
     icon: <Lock size={20} />, 
     label: 'Encrypted transfers', 
     desc: 'End-to-end TLS-secured data propagation across every system.',
-    accent: '#7c5cfc'
+    accent: '#3666ff'
   },
   { 
     icon: <Zap size={20} />, 
     label: 'Sub-second latency', 
     desc: 'Changes reflect instantly across POs, invoices, and receipts.',
-    accent: '#7c5cfc'
+    accent: '#3666ff'
   },
 ];
 
@@ -66,11 +66,11 @@ export default function IntegrationsShowcase() {
   return (
     <section
       ref={sectionRef}
-      style={{ position: 'relative', width: '100%', padding: '160px 0 128px', overflow: 'hidden', background: '#0a0a0c', zIndex: 1 }}
+      style={{ position: 'relative', width: '100%', padding: '160px 0 128px', overflow: 'hidden', background: '#ffffff', zIndex: 1 }}
     >
       {/* Bokeh orbs */}
-      <motion.div style={{ y: orb1Y, position: 'absolute', top: '0%', left: '-6%', width: 760, height: 760, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,102,255,0.12) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
-      <motion.div style={{ y: orb2Y, position: 'absolute', bottom: '-8%', right: '-4%', width: 660, height: 660, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,92,252,0.14) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
+      <motion.div style={{ y: orb1Y, position: 'absolute', top: '0%', left: '-6%', width: 760, height: 760, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,102,255,0.10) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
+      <motion.div style={{ y: orb2Y, position: 'absolute', bottom: '-8%', right: '-4%', width: 660, height: 660, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,184,132,0.12) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
 
       <motion.div style={{ y: contentY, position: 'relative', zIndex: 10, maxWidth: 1400, margin: '0 auto', padding: '0 40px' }}>
 
@@ -82,7 +82,7 @@ export default function IntegrationsShowcase() {
               label="Seamless Integration"
               title={<>Integrate with every system in your stack.</>}
               description="Track goods from source to delivery to payment on a single platform. Connect with leading ERP and accounting systems worldwide."
-              accentColor="#7c5cfc"
+              accentColor="#3666ff"
               align="left"
             />
 
@@ -99,8 +99,8 @@ export default function IntegrationsShowcase() {
                     gap: 20, 
                     padding: '24px 28px', 
                     borderRadius: 20, 
-                    background: '#111116', 
-                    border: '1px solid rgba(255,255,255,0.07)', 
+                    background: '#ffffff',
+                    border: '1px solid rgba(0,0,0,0.08)',
                     backdropFilter: 'blur(20px)',
                     textAlign: 'left',
                     overflow: 'hidden',
@@ -108,11 +108,11 @@ export default function IntegrationsShowcase() {
                   className="group"
                 >
                   {/* Hover Glow Beam */}
-                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#7c5cfc]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#3666ff]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
                     <motion.div 
                       animate={{ x: ['-100%', '200%'] }}
                       transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-[#7c5cfc]/40 to-transparent"
+                      className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-[#3666ff]/40 to-transparent"
                     />
                   </div>
 
@@ -123,7 +123,7 @@ export default function IntegrationsShowcase() {
                   />
 
                   <div style={{ 
-                    color: '#7c5cfc', 
+                    color: '#3666ff',
                     flexShrink: 0, 
                     marginTop: 4,
                     opacity: 0.9,
@@ -132,10 +132,10 @@ export default function IntegrationsShowcase() {
                     {h.icon}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: '#f4f4f5', marginBottom: 6, letterSpacing: '-0.01em' }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: '#000000', marginBottom: 6, letterSpacing: '-0.01em' }}>
                       {h.label}
                     </div>
-                    <div style={{ fontSize: 13, color: '#6b6b7a', lineHeight: 1.6, fontWeight: 300 }}>
+                    <div style={{ fontSize: 13, color: '#808080', lineHeight: 1.6, fontWeight: 300 }}>
                       {h.desc}
                     </div>
                   </div>
@@ -167,8 +167,8 @@ export default function IntegrationsShowcase() {
                     const gradId = `grad-${intg.name}`;
                     return (
                       <linearGradient key={gradId} id={gradId} x1={CX} y1={CY} x2={nx} y2={ny} gradientUnits="userSpaceOnUse">
-                        <stop offset="0%"   stopColor="#7c5cfc" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#7c5cfc" stopOpacity="0.08" />
+                        <stop offset="0%"   stopColor="#3666ff" stopOpacity="0.45" />
+                        <stop offset="100%" stopColor="#3666ff" stopOpacity="0.08" />
                       </linearGradient>
                     );
                   })}
@@ -180,8 +180,8 @@ export default function IntegrationsShowcase() {
                   })}
                 </defs>
 
-                <circle cx={CX} cy={CY} r={RADIUS + 34} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-                <circle cx={CX} cy={CY} r={RADIUS + 66} fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={RADIUS + 34} fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={RADIUS + 66} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
 
                 {integrations.map((intg) => {
                   const { nx, ny } = nodeXY(intg.angle);
@@ -199,7 +199,7 @@ export default function IntegrationsShowcase() {
                   <circle
                     key={`pkt-${intg.name}`}
                     r="3"
-                    fill="#7c5cfc"
+                    fill="#3666ff"
                     filter={`url(#glow-${intg.name})`}
                   >
                     <animateMotion
@@ -236,16 +236,16 @@ export default function IntegrationsShowcase() {
                   width: 138,
                   height: 138,
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle at 40% 35%, rgba(124,92,252,0.22) 0%, #111116 60%)',
-                  border: '1px solid rgba(124,92,252,0.32)',
+                  background: 'radial-gradient(circle at 40% 35%, rgba(54,102,255,0.1) 0%, #ffffff 60%)',
+                  border: '1px solid rgba(54,102,255,0.25)',
                   backdropFilter: 'blur(24px)',
-                  boxShadow: '0 0 130px rgba(124,92,252,0.42), 0 0 50px rgba(124,92,252,0.22), inset 0 1px 0 rgba(255,255,255,0.08)',
+                  boxShadow: '0 0 60px rgba(54,102,255,0.15), 0 0 30px rgba(54,102,255,0.08)',
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 500, color: '#f4f4f5', letterSpacing: '-0.025em' }}>
+                <span style={{ fontSize: 16, fontWeight: 500, color: '#000000', letterSpacing: '-0.025em' }}>
                   fact<span style={{ fontWeight: 300 }}>wise</span>
                 </span>
-                <div style={{ fontSize: 9, color: '#7c5cfc', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 600 }}>
+                <div style={{ fontSize: 9, color: '#3666ff',marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 600 }}>
                   Hub
                 </div>
               </div>
@@ -269,10 +269,10 @@ export default function IntegrationsShowcase() {
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      background: `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.02) 0%, #111116 68%)`,
-                      border: `1px solid rgba(255,255,255,0.08)`,
+                      background: `#ffffff`,
+                      border: `1px solid rgba(0,0,0,0.08)`,
                       backdropFilter: 'blur(20px)',
-                      boxShadow: `0 8px 32px rgba(0,0,0,0.55)`,
+                      boxShadow: `0 4px 16px rgba(0,0,0,0.08)`,
                       cursor: 'pointer',
                     }}
                   >
@@ -286,7 +286,7 @@ export default function IntegrationsShowcase() {
                         boxShadow: `0 0 10px ${intg.color}80`,
                       }}
                     />
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#f4f4f5', letterSpacing: '0.01em' }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#000000', letterSpacing: '0.01em' }}>
                       {intg.name}
                     </div>
                   </motion.div>

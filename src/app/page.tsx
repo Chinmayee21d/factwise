@@ -2,21 +2,24 @@
 
 import { Header } from '@/components/ui/header-2';
 import Hero from '@/components/Hero';
-import TrustBar from '@/components/TrustBar';
+import StatsStrip from '@/components/StatsStrip';
 import PainSection from '@/components/PainSection';
-import BentoGrid from '@/components/BentoGrid';
-import { FactWiseEcosystem } from '@/components/blocks/features-6';
-import StatsSection from '@/components/StatsSection';
+import ProblemSection from '@/components/ProblemSection';
+// import BentoGrid from '@/components/BentoGrid';
 
-import SavingsSection from '@/components/features/SavingsSection';
-import GovernanceSection from '@/components/features/GovernanceSection';
-
-import AutomationSection from '@/components/features/AutomationSection';
-import ScrollFeatureSection from '@/components/ScrollFeatureSection';
+// import PersonaSection from '@/components/PersonaSection';
+// import ImpactBento from '@/components/ImpactBento';
 import IntegrationsShowcase from '@/components/IntegrationsShowcase';
-import IndustryMarquee from '@/components/IndustryMarquee';
+// import IndustryMarquee from '@/components/IndustryMarquee';
+
+import FAQSection from '@/components/FAQSection';
 import CTASection from '@/components/CTASection';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
+import ProductHubAnimation from '@/components/product copy';
+import ProductFlowShowcase from '@/components/ProductFlowShowcase';
+// import ProcurementJourney from '@/components/ProcurementJourney';
+// import ContractManufacturerFlow from '@/components/ContractManufacturerFlow';
+// import PostAwardExecution from '@/components/PostAwardExecution';
 
 export default function Home() {
   return (
@@ -28,31 +31,51 @@ export default function Home() {
         flexDirection: 'column',
         alignItems: 'center',
         overflowX: 'clip',
-        background: '#0a0a0c',
+        background: '#FFFFFF',
+        maxWidth: '100%',
+        margin: '0',
       }}
     >
       <Header />
 
+      {/* 1: Hero */}
       <Hero />
-      <TrustBar />
-      <PainSection />
-      <BentoGrid />
-      
 
-      <FactWiseEcosystem />
-      <SavingsSection />
-      <GovernanceSection />
+      {/* 2: Stats Strip */}
+      <StatsStrip />
 
-      <AutomationSection />
-      
-      <ScrollFeatureSection />
+      {/* 3: Problem Section */}
+      <ProblemSection />
 
-      <StatsSection />
+      {/* 4: Product Hub Animation */}
+      <ProductHubAnimation />
+      <ProductFlowShowcase />
+      {/* 4.5: Overview Bento */}
+      {/* <BentoGrid /> */}
+
+      {/* 4.6: Operations Journey (7 Steps) */}
+      {/* <ProcurementJourney /> */}
+
+      {/* 4.7: Contract Manufacturer Flow */}
+      {/* <ContractManufacturerFlow /> */}
+
+      {/* 4.8: Post-award Execution Flow */}
+      {/* <PostAwardExecution /> */}
+
+      {/* 6: Persona Deep Dive */}
+      {/* <PersonaSection />  */}
+
+      {/* 7
+      <ImpactBento /> */}
+
+      {/* 8 */}
       <IntegrationsShowcase />
-      <IndustryMarquee />
+      {/* 9 */}
+      {/*<IndustryMarquee /> */}
+      {/* 10 */}
+      <FAQSection />
 
       <CTASection />
-
       <FlickeringFooter />
     </main>
   );

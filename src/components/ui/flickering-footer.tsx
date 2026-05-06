@@ -3,7 +3,6 @@
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { ClassValue, clsx } from "clsx";
 import * as Color from "color-bits";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -15,7 +14,7 @@ export function cn(...inputs: ClassValue[]) {
 // Helper function to convert any CSS color to rgba
 export const getRGBA = (
   cssColor: React.CSSProperties["color"],
-  fallback: string = "rgba(124, 92, 252, 0.15)",
+  fallback: string = "rgba(54, 102, 255, 0.15)",
 ): string => {
   if (typeof window === "undefined") return fallback;
   if (!cssColor) return fallback;
@@ -46,46 +45,35 @@ export const colorWithOpacity = (color: string, opacity: number): string => {
 
 export const Icons = {
   logo: () => (
-    <div
-      style={{
-        width: 32,
-        height: 32,
-        borderRadius: 8,
-        background: '#7c5cfc',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 700,
-        fontSize: 14,
-        color: '#fff',
-      }}
-    >
-      F
-    </div>
+    <img 
+      src="/logo.png" 
+      alt="FactWise Logo" 
+      className="h-8 w-auto" 
+    />
   ),
   soc2Dark: ({ className }: { className?: string }) => (
     <svg width="46" height="45" viewBox="0 0 46 45" fill="none" className={cn("size-8 opacity-40", className)}>
-      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(255,255,255,0.05)" />
-      <text x="23" y="24" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">SOC2</text>
+      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(0,0,0,0.06)" />
+      <text x="23" y="24" textAnchor="middle" fill="#363636" fontSize="10" fontWeight="bold">SOC2</text>
     </svg>
   ),
   hipaaDark: ({ className }: { className?: string }) => (
     <svg width="46" height="45" viewBox="0 0 46 45" fill="none" className={cn("size-8 opacity-40", className)}>
-      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(255,255,255,0.05)" />
-      <text x="23" y="24" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">HIPAA</text>
+      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(0,0,0,0.06)" />
+      <text x="23" y="24" textAnchor="middle" fill="#363636" fontSize="10" fontWeight="bold">HIPAA</text>
     </svg>
   ),
   gdprDark: ({ className }: { className?: string }) => (
     <svg width="46" height="45" viewBox="0 0 46 45" fill="none" className={cn("size-8 opacity-40", className)}>
-      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(255,255,255,0.05)" />
-      <text x="23" y="24" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">GDPR</text>
+      <rect x="3" y="0.863281" width="40" height="40" rx="20" fill="rgba(0,0,0,0.06)" />
+      <text x="23" y="24" textAnchor="middle" fill="#363636" fontSize="10" fontWeight="bold">GDPR</text>
     </svg>
   ),
 };
 
 export const siteConfig = {
   hero: {
-    description: "The next-generation procurement platform. Unifying your entire supply chain in one intelligent ecosystem.",
+    description: "The next-generation source-to-pay platform. Unifying your entire supply chain in one intelligent ecosystem.",
   },
   footerLinks: [
     {
@@ -137,7 +125,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
   squareSize = 3,
   gridGap = 3,
   flickerChance = 0.2,
-  color = "#7c5cfc",
+  color = "#3666ff",
   width,
   height,
   className,
@@ -355,14 +343,14 @@ export const FlickeringFooter = () => {
   const tablet = useMediaQuery("(max-width: 1024px)");
 
   return (
-    <footer id="footer" className="w-full bg-[#0a0a0c] border-t border-white/5 pt-20">
+    <footer id="footer" className="w-full bg-[#f6f9fc] border-t border-black/[0.07] pt-20">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-start md:justify-between px-10">
         <div className="flex flex-col items-start justify-start gap-y-6 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-3">
             <Icons.logo />
-            <p className="text-xl font-bold text-white tracking-tight">factwise</p>
+            <p className="text-xl font-bold text-[#000000] tracking-tight">factwise</p>
           </Link>
-          <p className="tracking-tight text-[#6b6b7a] font-light leading-relaxed">
+          <p className="tracking-tight text-[#808080] font-light leading-relaxed">
             {siteConfig.hero.description}
           </p>
           <div className="flex items-center gap-4">
@@ -375,17 +363,17 @@ export const FlickeringFooter = () => {
           <div className="flex flex-col items-start justify-start md:flex-row md:items-start md:justify-between gap-y-10 lg:pl-10">
             {siteConfig.footerLinks.map((column, columnIndex) => (
               <ul key={columnIndex} className="flex flex-col gap-y-3">
-                <li className="mb-2 text-[11px] font-bold text-white/40 uppercase tracking-[0.2em]">
+                <li className="mb-2 text-[11px] font-bold text-[#808080] uppercase tracking-[0.2em]">
                   {column.title}
                 </li>
                 {column.links.map((link) => (
                   <li
                     key={link.id}
-                    className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[14px] text-[#6b6b7a] hover:text-white transition-colors duration-300"
+                    className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[14px] text-[#808080] hover:text-[#000000] transition-colors duration-300"
                   >
                     <Link href={link.url}>{link.title}</Link>
-                    <div className="flex size-4 items-center justify-center border border-white/10 rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
-                      <ChevronRightIcon className="h-3 w-3 text-[#7c5cfc]" />
+                    <div className="flex size-4 items-center justify-center border border-black/10 rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
+                      <ChevronRightIcon className="h-3 w-3 text-[#3666ff]" />
                     </div>
                   </li>
                 ))}
@@ -397,34 +385,34 @@ export const FlickeringFooter = () => {
 
       <div className="w-full h-48 md:h-64 relative mt-24 z-0 overflow-hidden">
         {/* Gradient mask to blend into the grid */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[#0a0a0c] z-10 from-20%" />
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-[#f6f9fc] z-10 from-20%" />
         <div className="absolute inset-0">
           <FlickeringGrid
-            text={tablet ? "FACTWISE" : "The Future of Procurement"}
+            text={tablet ? "FACTWISE" : "Future of Enterprise Commerce"}
             fontSize={tablet ? 60 : 100}
             className="h-full w-full"
             squareSize={2}
             gridGap={3}
-            color="#7c5cfc"
+            color="#3666ff"
             maxOpacity={0.2}
             flickerChance={0.1}
           />
         </div>
       </div>
-      
+
       {/* Bottom Bar */}
-      <div className="w-full py-8 border-t border-white/5 bg-[#0a0a0c]/80 backdrop-blur-xl px-10">
+      <div className="w-full py-8 border-t border-black/[0.07] bg-[#f6f9fc]/90 backdrop-blur-xl px-10">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-           <p className="text-[#3f3f5a] text-xs font-light">
-             © 2026 FactWise Technologies. All Rights Reserved.
-           </p>
-           <div className="flex items-center gap-8">
-             {['Privacy Policy', 'Terms of Service', 'Security'].map(item => (
-               <Link key={item} href="#" className="text-[#3f3f5a] text-xs hover:text-white transition-colors">
-                 {item}
-               </Link>
-             ))}
-           </div>
+          <p className="text-[#808080] text-xs font-light">
+            © 2026 FactWise Technologies. All Rights Reserved.
+          </p>
+          <div className="flex items-center gap-8">
+            {['Privacy Policy', 'Terms of Service', 'Security'].map(item => (
+              <Link key={item} href="#" className="text-[#808080] text-xs hover:text-[#000000] transition-colors">
+                {item}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

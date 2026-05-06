@@ -28,24 +28,24 @@ type LinkItem = {
 
 /* ── Link data ───────────────────────────────────── */
 const productLinks: LinkItem[] = [
-  { title: 'Strategic Sourcing',       href: '#product', icon: Target,   description: 'Run RFQ events and award the best deal',          color: '#7c5cfc' },
-  { title: 'Spend Analytics',          href: '#product', icon: BarChart3, description: 'Real-time visibility into every dollar spent',    color: '#34d399' },
-  { title: 'Supplier Management',      href: '#product', icon: Users,    description: 'Onboard and collaborate with vendors',            color: '#f59e0b' },
-  { title: 'Contract Management',      href: '#product', icon: FileText, description: 'Automate contracts and track renewals',           color: '#3b82f6' },
-  { title: 'ERP Integrations',         href: '#product', icon: Plug,     description: 'Connect with SAP, Oracle, and more',             color: '#7c5cfc' },
-  { title: 'Procurement Intelligence', href: '#product', icon: Brain,    description: 'AI-driven insights for smarter buying',          color: '#34d399' },
+  { title: 'Strategic Sourcing', href: '#product', icon: Target, description: 'Run RFQ events and award the best deal', color: '#3666ff' },
+  { title: 'Spend Analytics', href: '#product', icon: BarChart3, description: 'Real-time visibility into every dollar spent', color: '#34d399' },
+  { title: 'Supplier Management', href: '#product', icon: Users, description: 'Onboard and collaborate with vendors', color: '#f59e0b' },
+  { title: 'Contract Management', href: '#product', icon: FileText, description: 'Automate contracts and track renewals', color: '#3b82f6' },
+  { title: 'ERP Integrations', href: '#product', icon: Plug, description: 'Connect with SAP, Oracle, and more', color: '#3666ff' },
+  { title: 'Sourcing Intelligence', href: '#product', icon: Brain, description: 'AI-driven insights for smarter buying', color: '#34d399' },
 ];
 
 const companyLinks: LinkItem[] = [
-  { title: 'About FactWise',   href: '#', icon: Users,    description: 'Our story, mission, and team' },
-  { title: 'Customer Stories', href: '#', icon: Star,     description: 'See how leading teams save with FactWise' },
-  { title: 'Careers',          href: '#', icon: Briefcase,description: "We're hiring globally — come join us" },
+  { title: 'About FactWise', href: '#', icon: Users, description: 'Our story, mission, and team' },
+  { title: 'Customer Stories', href: '#', icon: Star, description: 'See how leading teams save with FactWise' },
+  { title: 'Careers', href: '#', icon: Briefcase, description: "We're hiring globally — come join us" },
 ];
 
 const companyLinks2: LinkItem[] = [
-  { title: 'Blog',             href: '#', icon: Leaf },
-  { title: 'Help Center',      href: '#', icon: HelpCircle },
-  { title: 'Privacy Policy',   href: '#', icon: Shield },
+  { title: 'Blog', href: '#', icon: Leaf },
+  { title: 'Help Center', href: '#', icon: HelpCircle },
+  { title: 'Privacy Policy', href: '#', icon: Shield },
   { title: 'Terms of Service', href: '#', icon: RotateCcw },
 ];
 
@@ -54,8 +54,8 @@ function useScrolled(threshold = 10) {
   const [scrolled, setScrolled] = React.useState(false);
   const onScroll = React.useCallback(() => setScrolled(window.scrollY > threshold), [threshold]);
   React.useEffect(() => {
-    window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [onScroll]);
   return scrolled;
@@ -66,19 +66,19 @@ type ListItemProps = Omit<React.ComponentProps<typeof NavigationMenuLink>, 'href
 
 function ListItem({ title, description, icon: Icon, className, href, color, ...rest }: ListItemProps) {
   return (
-    <NavigationMenuLink asChild className={cn('flex w-full flex-row items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-white/5', className)} {...rest}>
+    <NavigationMenuLink asChild className={cn('flex w-full flex-row items-center gap-3 rounded-lg p-2.5 transition-colors hover:bg-black/[0.04]', className)} {...rest}>
       <a href={href}>
         <div
           className="flex size-10 shrink-0 items-center justify-center rounded-md border"
           style={{
-            background:   color ? `${color}15` : 'rgba(255,255,255,0.03)',
-            borderColor:  color ? `${color}30` : 'rgba(255,255,255,0.07)',
+            background: color ? `${color}15` : 'rgba(0,0,0,0.03)',
+            borderColor: color ? `${color}30` : 'rgba(0,0,0,0.07)',
           }}
         >
-          <Icon className="size-4" style={{ color: color ?? 'rgba(244,244,245,0.55)' }} />
+          <Icon className="size-4" style={{ color: color ?? 'rgba(0,0,0,0.4)' }} />
         </div>
         <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium text-[#f4f4f5] leading-none">{title}</span>
+          <span className="text-sm font-medium text-[#000000] leading-none">{title}</span>
           {description && <span className="text-xs text-[#6b6b7a] leading-snug">{description}</span>}
         </div>
       </a>
@@ -101,7 +101,7 @@ function MobileMenuPortal({ open, children }: MobileMenuProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
-          className="fixed top-14 inset-x-0 bottom-0 z-40 flex flex-col overflow-y-auto border-t border-white/8 bg-[#0a0a0c]/95 backdrop-blur-xl md:hidden"
+          className="fixed top-14 inset-x-0 bottom-0 z-40 flex flex-col overflow-y-auto border-t border-black/[0.08] bg-[#f6f9fc]/98 backdrop-blur-xl md:hidden"
         >
           {children}
         </motion.div>
@@ -129,7 +129,7 @@ export default function Navbar() {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
           'sticky top-0 z-50 w-full border-b border-transparent transition-[background,border-color] duration-300',
-          scrolled && 'border-white/8 bg-[#0a0a0c]/80 backdrop-blur-xl',
+          scrolled && 'border-black/[0.08] bg-[#ffffff]/80 backdrop-blur-xl',
         )}
       >
         <nav className="mx-auto flex h-14 w-full max-w-screen-xl items-center justify-between px-6 md:px-10">
@@ -137,9 +137,13 @@ export default function Navbar() {
           {/* ── Logo + desktop nav ── */}
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2 rounded-md px-1 py-1">
-              <div className="h-[18px] w-[3px] rounded-sm bg-[#f4f4f5]" />
-              <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#f4f4f5]">
-                factwise
+              <img 
+                src="/logo.png" 
+                alt="FactWise Logo" 
+                className="h-8 w-auto" 
+              />
+              <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#000000]">
+                FactWise
               </span>
             </Link>
 
@@ -156,10 +160,10 @@ export default function Navbar() {
                           <ListItem key={item.title} {...item} />
                         ))}
                       </div>
-                      <div className="mt-2 border-t border-white/6 px-2 pt-3">
+                      <div className="mt-2 border-t border-black/[0.06] px-2 pt-3">
                         <p className="text-xs text-[#6b6b7a]">
                           Ready to save?{' '}
-                          <a href="#" className="font-medium text-[#7c5cfc] hover:underline">
+                          <a href="#" className="font-medium text-[#3666ff] hover:underline">
                             Book a demo →
                           </a>
                         </p>
@@ -184,10 +188,10 @@ export default function Navbar() {
                             <a
                               key={item.title}
                               href={item.href}
-                              className="flex items-center gap-2.5 rounded-md px-3 py-2 transition-colors hover:bg-white/5"
+                              className="flex items-center gap-2.5 rounded-md px-3 py-2 transition-colors hover:bg-black/[0.04]"
                             >
                               <item.icon className="size-3.5 text-[#52525b]" />
-                              <span className="text-sm font-medium text-[#a1a1aa]">{item.title}</span>
+                              <span className="text-sm font-medium text-[#808080]">{item.title}</span>
                             </a>
                           ))}
                         </div>
@@ -201,7 +205,7 @@ export default function Navbar() {
                   <NavigationMenuLink asChild>
                     <a
                       href="#"
-                      className="inline-flex h-9 items-center rounded-md px-4 py-2 text-sm font-medium text-foreground/60 transition-colors hover:bg-white/5 hover:text-foreground"
+                      className="inline-flex h-9 items-center rounded-md px-4 py-2 text-sm font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground"
                     >
                       Pricing
                     </a>
@@ -214,7 +218,7 @@ export default function Navbar() {
 
           {/* ── Desktop CTAs ── */}
           <div className="hidden items-center gap-2 md:flex">
-            <Button variant="ghost" size="sm" className="text-[#6b6b7a] hover:text-[#f4f4f5]">
+            <Button variant="ghost" size="sm" className="text-[#6b6b7a] hover:text-[#000000]">
               Login
             </Button>
             <Button size="sm" className="rounded-full px-5 font-semibold">
@@ -227,7 +231,7 @@ export default function Navbar() {
             size="icon"
             variant="ghost"
             onClick={() => setOpen(o => !o)}
-            className="md:hidden text-[#f4f4f5]"
+            className="md:hidden text-[#000000]"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Toggle menu"
@@ -254,7 +258,7 @@ export default function Navbar() {
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-2 border-t border-white/6 p-4">
+        <div className="flex flex-col gap-2 border-t border-black/[0.06] p-4">
           <Button variant="outline" className="w-full">Login</Button>
           <Button className="w-full rounded-full font-semibold">Start Now ›</Button>
         </div>

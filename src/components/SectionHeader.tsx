@@ -14,14 +14,14 @@ export default function SectionHeader({
   label,
   title,
   description,
-  accentColor = '#7c5cfc',
+  accentColor = '#3666ff',
   align = 'left',
 }: SectionHeaderProps) {
   const isCenter = align === 'center';
 
   return (
-    <div style={{ 
-      marginBottom: 64, 
+    <div style={{
+      marginBottom: 64,
       textAlign: isCenter ? 'center' : 'left',
       display: 'flex',
       flexDirection: 'column',
@@ -31,19 +31,19 @@ export default function SectionHeader({
       <motion.div
         style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 24 }}
       >
-        <div style={{ 
-          width: 6, 
-          height: 6, 
-          borderRadius: '50%', 
+        <div style={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
           background: accentColor,
           boxShadow: `0 0 10px ${accentColor}`,
         }} />
-        <span style={{ 
-          fontSize: 11, 
-          fontWeight: 500, 
-          color: accentColor, 
-          textTransform: 'uppercase', 
-          letterSpacing: '0.15em' 
+        <span style={{
+          fontSize: 11,
+          fontWeight: 600,
+          color: accentColor,
+          textTransform: 'uppercase',
+          letterSpacing: '0.2em'
         }}>
           {label}
         </span>
@@ -53,12 +53,11 @@ export default function SectionHeader({
       {/* Title */}
       <motion.h2
         style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: 'clamp(32px, 5vw, 48px)',
+          fontSize: 'clamp(32px, 5vw, 52px)',
           fontWeight: 300,
-          letterSpacing: '-0.02em',
-          color: '#f4f4f5',
-          lineHeight: 1.1,
+          letterSpacing: '-0.025em',
+          color: '#000000',
+          lineHeight: 1.08,
           marginBottom: 16,
           maxWidth: 800,
         }}
@@ -69,12 +68,12 @@ export default function SectionHeader({
       {/* Description */}
       {description && (
         <motion.p
-          style={{ 
-            fontSize: 16, 
-            color: '#6b6b7a', 
-            maxWidth: 540, 
-            lineHeight: 1.6, 
-            fontWeight: 400 
+          style={{
+            fontSize: 16,
+            color: '#808080',
+            maxWidth: 540,
+            lineHeight: 1.6,
+            fontWeight: 400
           }}
         >
           {description}

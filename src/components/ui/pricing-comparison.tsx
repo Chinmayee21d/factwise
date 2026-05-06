@@ -63,20 +63,20 @@ const COMPARISON_DATA = [
 const ComparisonValue = ({ value }: { value: string | boolean }) => {
   if (typeof value === 'boolean') {
     return value ? (
-      <Check className="size-4 text-[#7c5cfc]" strokeWidth={3} />
+      <Check className="size-4 text-[#3666ff]" strokeWidth={3} />
     ) : (
       <Minus className="size-4 text-[#3f3f5a]" />
     );
   }
-  return <span className="text-[13px] text-[#f4f4f5] font-medium">{value}</span>;
+  return <span className="text-[13px] text-[#000000] font-medium">{value}</span>;
 };
 
 export const PricingComparison = () => {
   return (
-    <section className="w-full bg-[#0a0a0c] py-24 px-10">
+    <section className="w-full bg-[#f6f9fc] py-24 px-10">
       <div className="max-w-[1400px] mx-auto">
         <div className="mb-16">
-          <h2 className="text-[32px] md:text-[42px] font-light text-white tracking-tight leading-tight">
+          <h2 className="text-[32px] md:text-[42px] font-light text-[#000000] tracking-tight leading-tight">
             Compare our <span className="text-[#6b6b7a]">detailed features.</span>
           </h2>
         </div>
@@ -84,24 +84,24 @@ export const PricingComparison = () => {
         <div className="w-full overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="py-6 px-4 text-left text-[14px] font-semibold text-white/40 uppercase tracking-widest w-1/4">Features</th>
-                <th className="py-6 px-4 text-left text-[14px] font-semibold text-white uppercase tracking-widest w-1/4">Startup</th>
-                <th className="py-6 px-4 text-left text-[14px] font-semibold text-white uppercase tracking-widest w-1/4">Pro</th>
-                <th className="py-6 px-4 text-left text-[14px] font-semibold text-white uppercase tracking-widest w-1/4">Growth</th>
+              <tr className="border-b border-black/[0.06]">
+                <th className="py-6 px-4 text-left text-[14px] font-semibold text-[#808080] uppercase tracking-widest w-1/4">Features</th>
+                <th className="py-6 px-4 text-left text-[14px] font-semibold text-[#000000] uppercase tracking-widest w-1/4">Startup</th>
+                <th className="py-6 px-4 text-left text-[14px] font-semibold text-[#000000] uppercase tracking-widest w-1/4">Pro</th>
+                <th className="py-6 px-4 text-left text-[14px] font-semibold text-[#000000] uppercase tracking-widest w-1/4">Growth</th>
               </tr>
             </thead>
             <tbody>
               {COMPARISON_DATA.map((section, idx) => (
                 <React.Fragment key={idx}>
-                  <tr className="bg-white/[0.02]">
-                    <td colSpan={4} className="py-4 px-4 text-[11px] font-bold text-[#7c5cfc] uppercase tracking-[0.2em]">
+                  <tr className="bg-black/[0.02]">
+                    <td colSpan={4} className="py-4 px-4 text-[11px] font-bold text-[#3666ff] uppercase tracking-[0.2em]">
                       {section.category}
                     </td>
                   </tr>
                   {section.rows.map((row, rowIdx) => (
-                    <tr key={rowIdx} className="border-b border-white/5 group hover:bg-white/[0.01] transition-colors">
-                      <td className="py-4 px-4 text-[13px] text-[#6b6b7a] group-hover:text-white transition-colors">
+                    <tr key={rowIdx} className="border-b border-black/[0.06] group hover:bg-black/[0.02] transition-colors">
+                      <td className="py-4 px-4 text-[13px] text-[#6b6b7a] group-hover:text-[#000000] transition-colors">
                         {row.feature}
                       </td>
                       <td className="py-4 px-4">

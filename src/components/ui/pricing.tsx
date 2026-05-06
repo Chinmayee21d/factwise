@@ -58,11 +58,11 @@ export function PricingSection({
 			{...props}
 		>
 			<div className="mx-auto max-w-2xl space-y-3">
-				<h2 className="text-center text-4xl font-light tracking-tight md:text-5xl lg:text-6xl text-white">
+				<h2 className="text-center text-4xl font-light tracking-tight md:text-5xl lg:text-6xl text-[#000000]">
 					{heading}
 				</h2>
 				{description && (
-					<p className="text-white/40 text-center text-sm md:text-lg font-light">
+					<p className="text-[#808080] text-center text-sm md:text-lg font-light">
 						{description}
 					</p>
 				)}
@@ -93,7 +93,7 @@ export function PricingFrequencyToggle({
 	return (
 		<div
 			className={cn(
-				'bg-white/[0.03] mx-auto flex w-fit rounded-full border border-white/10 p-1 backdrop-blur-md',
+				'bg-black/[0.04] mx-auto flex w-fit rounded-full border border-black/[0.08] p-1 backdrop-blur-md',
 				props.className,
 			)}
 			{...props}
@@ -110,7 +110,7 @@ export function PricingFrequencyToggle({
 						<motion.span
 							layoutId="frequency"
 							transition={{ type: 'spring', duration: 0.5, bounce: 0.2 }}
-							className="absolute inset-0 z-0 rounded-full bg-[#7c5cfc]"
+							className="absolute inset-0 z-0 rounded-full bg-[#3666ff]"
 						/>
 					)}
 				</button>
@@ -134,8 +134,8 @@ export function PricingCard({
 		<div
 			key={plan.name}
 			className={cn(
-				'relative flex w-full flex-col rounded-[32px] border border-white/5 bg-white/[0.01] backdrop-blur-3xl p-8 transition-all duration-500 hover:border-[#7c5cfc]/30 hover:bg-white/[0.03]',
-				plan.highlighted && 'border-[#7c5cfc]/20 bg-white/[0.03]',
+				'relative flex w-full flex-col rounded-[32px] border border-black/[0.07] bg-white backdrop-blur-3xl p-8 transition-all duration-500 hover:border-[#3666ff]/30',
+				plan.highlighted && 'border-[#3666ff]/30',
 				className,
 			)}
 			{...props}
@@ -156,7 +156,7 @@ export function PricingCard({
 			>
 				<div className="absolute top-6 right-6 z-10 flex items-center gap-2">
 					{plan.highlighted && (
-						<p className="bg-[#7c5cfc]/10 text-[#7c5cfc] flex items-center gap-1 rounded-full border border-[#7c5cfc]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+						<p className="bg-[#3666ff]/10 text-[#3666ff] flex items-center gap-1 rounded-full border border-[#3666ff]/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
 							Popular
 						</p>
 					)}
@@ -173,11 +173,11 @@ export function PricingCard({
 					)}
 				</div>
 
-				<div className="text-xl font-medium text-white mb-2">{plan.name}</div>
-				<p className="text-white/40 text-sm font-light">{plan.info}</p>
+				<div className="text-xl font-medium text-[#000000] mb-2">{plan.name}</div>
+				<p className="text-[#808080] text-sm font-light">{plan.info}</p>
 				<div className="mt-6 flex items-end gap-1">
-					<span className="text-5xl font-light text-white tracking-tight">${plan.price[frequency]}</span>
-					<span className="text-white/30 text-sm mb-1">
+					<span className="text-5xl font-light text-[#000000] tracking-tight">${plan.price[frequency]}</span>
+					<span className="text-[#808080] text-sm mb-1">
 						{plan.name !== 'Free'
 							? '/' + (frequency === 'monthly' ? 'mo' : 'yr')
 							: ''}
@@ -191,22 +191,22 @@ export function PricingCard({
 			>
 				{plan.features.map((feature, index) => (
 					<div key={index} className="flex items-center gap-3">
-						<CheckCircleIcon className="text-[#7c5cfc] h-4 w-4" />
+						<CheckCircleIcon className="text-[#3666ff] h-4 w-4" />
 						<TooltipProvider>
 							<Tooltip delayDuration={0}>
 								<TooltipTrigger asChild>
 									<p
 										className={cn(
-											"text-white/40 text-sm font-light",
+											"text-[#808080] text-sm font-light",
 											feature.tooltip &&
-												'cursor-pointer border-b border-dashed border-white/10 hover:text-white transition-colors',
+												'cursor-pointer border-b border-dashed border-black/[0.08] hover:text-[#000000] transition-colors',
 										)}
 									>
 										{feature.text}
 									</p>
 								</TooltipTrigger>
 								{feature.tooltip && (
-									<TooltipContent className="bg-[#111116] border-white/10 text-white">
+									<TooltipContent className="bg-white border-black/[0.08] text-[#000000]">
 										<p>{feature.tooltip}</p>
 									</TooltipContent>
 								)}
@@ -223,9 +223,9 @@ export function PricingCard({
 				<Button
 					className={cn(
 						"w-full h-12 rounded-2xl text-[15px] font-medium transition-all duration-300",
-						plan.highlighted 
-							? "bg-[#7c5cfc] hover:bg-[#6548d9] text-white shadow-[0_0_20px_rgba(124,92,252,0.3)]" 
-							: "bg-white/5 hover:bg-white/10 border-white/10 text-white"
+						plan.highlighted
+							? "bg-[#3666ff] hover:bg-[#2a55ee] text-white shadow-[0_0_20px_rgba(54,102,255,0.25)]"
+							: "bg-black/[0.04] hover:bg-black/[0.07] border-black/[0.07] text-[#000000]"
 					)}
 					asChild
 				>

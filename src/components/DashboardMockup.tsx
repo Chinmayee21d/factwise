@@ -21,28 +21,28 @@ import {
 
 export default function DashboardMockup() {
   return (
-    <div className="w-full bg-[#0a0a0c] rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex font-sans text-gray-200 h-[700px] relative">
+    <div className="w-full bg-[#f6f9fc] rounded-2xl border border-black/[0.08] shadow-2xl overflow-hidden flex font-sans text-[#363636] h-[700px] relative">
       {/* Sidebar */}
-      <div className="w-16 md:w-20 bg-[#0a0a0c] border-r border-white/5 flex flex-col items-center py-6 gap-8">
+      <div className="w-16 md:w-20 bg-[#f6f9fc] border-r border-black/[0.06] flex flex-col items-center py-6 gap-8">
         <div className="w-10 h-10 bg-[#0052cc] rounded-lg flex items-center justify-center text-white font-black text-xl">F</div>
         <div className="flex flex-col gap-6 items-center">
           <LayoutDashboard size={20} className="text-[#0052cc]" />
-          <Users size={20} className="text-gray-500 hover:text-white transition-colors" />
-          <FileText size={20} className="text-gray-500 hover:text-white transition-colors" />
-          <MessageSquare size={20} className="text-gray-500 hover:text-white transition-colors" />
-          <BarChart3 size={20} className="text-gray-500 hover:text-white transition-colors" />
-          <ShoppingBag size={20} className="text-gray-500 hover:text-white transition-colors" />
+          <Users size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
+          <FileText size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
+          <MessageSquare size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
+          <BarChart3 size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
+          <ShoppingBag size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
         </div>
         <div className="mt-auto flex flex-col gap-6 items-center">
-           <HelpCircle size={20} className="text-gray-500 hover:text-white transition-colors" />
-           <div className="w-8 h-8 rounded-full bg-gray-800" />
+           <HelpCircle size={20} className="text-[#808080] hover:text-[#000000] transition-colors" />
+           <div className="w-8 h-8 rounded-full bg-[#eef2f7]" />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#0a0a0c]">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#f6f9fc]">
         {/* Header / Tabs */}
-        <header className="h-14 bg-[#0a0a0c] border-b border-white/5 flex items-center justify-between px-6">
+        <header className="h-14 bg-[#f6f9fc] border-b border-black/[0.06] flex items-center justify-between px-6">
           <div className="flex gap-1 h-full items-center">
             {[
               { label: 'Inbound', count: 372 },
@@ -53,10 +53,10 @@ export default function DashboardMockup() {
             ].map((tab) => (
               <div 
                 key={tab.label} 
-                className={`flex items-center px-4 h-full cursor-pointer text-[11px] font-semibold transition-all relative ${tab.active ? 'text-white' : 'text-gray-500'}`}
+                className={`flex items-center px-4 h-full cursor-pointer text-[11px] font-semibold transition-all relative ${tab.active ? 'text-[#000000]' : 'text-[#808080]'}`}
               >
                 {tab.label} 
-                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full border text-[9px] ${tab.active ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/5 text-gray-500'}`}>
+                <span className={`ml-1.5 px-1.5 py-0.5 rounded-full border text-[9px] ${tab.active ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-black/[0.04] border-black/[0.06] text-[#808080]'}`}>
                   {tab.count}
                 </span>
                 {tab.active && <motion.div layoutId="tab-active" className="absolute bottom-0 left-4 right-4 h-0.5 bg-blue-500" />}
@@ -64,19 +64,19 @@ export default function DashboardMockup() {
             ))}
           </div>
           <div className="flex items-center gap-5">
-            <HelpCircle size={18} className="text-gray-500" />
-            <Settings size={18} className="text-gray-500" />
-            <Bell size={18} className="text-gray-500" />
-            <div className="h-8 w-px bg-white/5 mx-2" />
-            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[11px] font-bold text-gray-300 cursor-pointer">
+            <HelpCircle size={18} className="text-[#808080]" />
+            <Settings size={18} className="text-[#808080]" />
+            <Bell size={18} className="text-[#808080]" />
+            <div className="h-8 w-px bg-black/[0.04] mx-2" />
+            <div className="flex items-center gap-2 px-3 py-1 bg-black/[0.04] border border-black/[0.08] rounded-lg text-[11px] font-bold text-[#363636] cursor-pointer">
               <Users size={12} className="mr-1" /> Buyer
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
                 <div className="text-[10px] font-bold">Admin</div>
-                <div className="text-[9px] text-gray-500">FactWise Demo</div>
+                <div className="text-[9px] text-[#808080]">FactWise Demo</div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 border border-black/[0.08]" />
             </div>
           </div>
         </header>
@@ -85,12 +85,12 @@ export default function DashboardMockup() {
         <div className="flex-1 overflow-auto p-6 flex flex-col gap-6 scrollbar-hide">
           
           <div className="flex justify-between items-center mb-2">
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-[#808080]">
                <ChevronLeft size={16} />
                <span className="text-[11px] font-bold uppercase tracking-wider">Back</span>
             </div>
-            <h1 className="text-[15px] font-bold text-white absolute left-1/2 -translate-x-1/2">
-              Bid Analytics: K-A RFQ - 25 Apr '26 07:13 pm
+            <h1 className="text-[15px] font-bold text-[#000000] absolute left-1/2 -translate-x-1/2">
+              Bid Analytics: K-A RFQ - 25 Apr &apos;26 07:13 pm
             </h1>
             <div className="flex gap-4 items-center">
               <div className="flex items-center gap-1 text-[11px] font-bold text-blue-400 cursor-pointer">
@@ -107,30 +107,30 @@ export default function DashboardMockup() {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-             <div className="bg-white/[0.03] p-5 rounded-xl border border-white/5 flex flex-col items-center justify-center gap-1">
+             <div className="bg-black/[0.03] p-5 rounded-xl border border-black/[0.06] flex flex-col items-center justify-center gap-1">
                 <div className="text-3xl font-bold text-[#10b981]">0.02 Hours</div>
-                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Avg vendor response time</div>
+                <div className="text-[10px] text-[#808080] font-bold uppercase tracking-widest">Avg vendor response time</div>
              </div>
-             <div className="bg-white/[0.03] p-5 rounded-xl border border-white/5 flex flex-col items-center justify-center gap-1">
+             <div className="bg-black/[0.03] p-5 rounded-xl border border-black/[0.06] flex flex-col items-center justify-center gap-1">
                 <div className="text-3xl font-bold text-[#10b981]">8 %</div>
-                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Vendor participation</div>
+                <div className="text-[10px] text-[#808080] font-bold uppercase tracking-widest">Vendor participation</div>
              </div>
-             <div className="bg-white/[0.03] p-5 rounded-xl border border-white/5 flex flex-col items-center justify-center gap-1">
+             <div className="bg-black/[0.03] p-5 rounded-xl border border-black/[0.06] flex flex-col items-center justify-center gap-1">
                 <div className="text-3xl font-bold text-[#10b981]">Thrift Co.</div>
-                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Most competitive vendor</div>
+                <div className="text-[10px] text-[#808080] font-bold uppercase tracking-widest">Most competitive vendor</div>
              </div>
-             <div className="bg-white/[0.03] p-5 rounded-xl border border-white/5 flex flex-col items-center justify-center gap-1">
+             <div className="bg-black/[0.03] p-5 rounded-xl border border-black/[0.06] flex flex-col items-center justify-center gap-1">
                 <div className="text-3xl font-bold text-[#10b981]">0.67</div>
-                <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Avg unique vendors bidding per item</div>
+                <div className="text-[10px] text-[#808080] font-bold uppercase tracking-widest">Avg unique vendors bidding per item</div>
              </div>
           </div>
 
           <div className="grid grid-cols-12 gap-4 h-64">
             {/* Raw material 1 Chart */}
-            <div className="col-span-8 bg-white/[0.02] border border-white/5 rounded-xl p-6 relative">
-               <div className="text-[10px] font-bold text-gray-400 mb-6 uppercase">Raw material 1</div>
+            <div className="col-span-8 bg-black/[0.02] border border-black/[0.06] rounded-xl p-6 relative">
+               <div className="text-[10px] font-bold text-[#808080] mb-6 uppercase">Raw material 1</div>
                <div className="flex h-40 gap-4 items-end px-4 relative">
-                  <div className="absolute left-0 inset-y-0 flex flex-col justify-between text-[9px] text-gray-500 font-mono">
+                  <div className="absolute left-0 inset-y-0 flex flex-col justify-between text-[9px] text-[#808080] font-mono">
                     <span>₹1.00</span>
                     <span>₹0.80</span>
                     <span>₹0.60</span>
@@ -145,11 +145,11 @@ export default function DashboardMockup() {
                        transition={{ duration: 1.2, ease: "circOut" }}
                        className="w-10 bg-yellow-400 border border-black relative"
                      />
-                     <span className="text-[10px] text-gray-400">Thrift Co</span>
+                     <span className="text-[10px] text-[#808080]">Thrift Co</span>
                   </div>
                   <div className="flex-1" />
                </div>
-               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 text-[9px] text-gray-500">
+               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4 text-[9px] text-[#808080]">
                   <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-blue-400" /> Base Rate</div>
                   <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-purple-400" /> Effective Rate</div>
                   <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-yellow-400" /> Landed Rate</div>
@@ -157,15 +157,15 @@ export default function DashboardMockup() {
             </div>
 
             {/* Overall Rank Donut */}
-            <div className="col-span-4 bg-white/[0.02] border border-white/5 rounded-xl p-6 flex flex-col items-center justify-center relative">
-               <div className="absolute top-6 left-6 text-[10px] font-bold text-gray-400 uppercase">Thrift Co.</div>
-               <div className="absolute top-6 right-6 text-[9px] text-gray-500">Invited to: 4/8 items</div>
+            <div className="col-span-4 bg-black/[0.02] border border-black/[0.06] rounded-xl p-6 flex flex-col items-center justify-center relative">
+               <div className="absolute top-6 left-6 text-[10px] font-bold text-[#808080] uppercase">Thrift Co.</div>
+               <div className="absolute top-6 right-6 text-[9px] text-[#808080]">Invited to: 4/8 items</div>
                
                <div className="relative w-40 h-40 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle 
                       cx="80" cy="80" r="60" 
-                      stroke="rgba(255,255,255,0.05)" strokeWidth="20" fill="transparent" 
+                      stroke="rgba(0,0,0,0.07)" strokeWidth="20" fill="transparent"
                     />
                     <motion.circle 
                       initial={{ strokeDasharray: "0 1000" }}
@@ -177,7 +177,7 @@ export default function DashboardMockup() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-[10px] text-gray-400">Overall Rank</div>
+                    <div className="text-[10px] text-[#808080]">Overall Rank</div>
                     <div className="text-3xl font-black">1</div>
                   </div>
                </div>
@@ -188,7 +188,7 @@ export default function DashboardMockup() {
                     { label: 'Non-Competitive bids (0)', color: '#ef4444' },
                     { label: 'Competitive bids (4)', color: '#10b981' }
                   ].map(l => (
-                    <div key={l.label} className="flex items-center gap-1.5 text-[8px] text-gray-500">
+                    <div key={l.label} className="flex items-center gap-1.5 text-[8px] text-[#808080]">
                       <div className="w-2 h-2 rounded-full" style={{ background: l.color }} /> {l.label}
                     </div>
                   ))}
@@ -197,20 +197,20 @@ export default function DashboardMockup() {
           </div>
 
           {/* Bid Database Table */}
-          <div className="bg-white/[0.02] border border-white/5 rounded-xl overflow-hidden mb-20">
-             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+          <div className="bg-black/[0.02] border border-black/[0.06] rounded-xl overflow-hidden mb-20">
+             <div className="p-4 border-b border-black/[0.06] flex justify-between items-center bg-black/[0.02]">
                 <div className="flex items-center gap-3">
                    <h2 className="text-xs font-bold uppercase tracking-wider">Bid Database</h2>
                    <div className="flex gap-2">
-                     <Search size={14} className="text-gray-500" />
-                     <Filter size={14} className="text-gray-500" />
+                     <Search size={14} className="text-[#808080]" />
+                     <Filter size={14} className="text-[#808080]" />
                    </div>
                 </div>
                 <div className="flex gap-4">
-                   <div className="flex items-center gap-1.5 text-[9px] text-gray-400">
+                   <div className="flex items-center gap-1.5 text-[9px] text-[#808080]">
                      <div className="w-2.5 h-2.5 bg-blue-500" /> RFQ
                    </div>
-                   <div className="flex items-center gap-1.5 text-[9px] text-gray-400">
+                   <div className="flex items-center gap-1.5 text-[9px] text-[#808080]">
                      <div className="w-2.5 h-2.5 bg-[#10b981]" /> Vendor Response
                    </div>
                 </div>
@@ -219,13 +219,13 @@ export default function DashboardMockup() {
              <div className="overflow-x-auto text-[10px]">
                <table className="w-full">
                   <thead>
-                    <tr className="text-gray-500 text-left bg-white/[0.02]">
-                      <th className="p-3 pl-5 border-r border-white/5">T...</th>
-                      <th className="p-3 border-r border-white/5">Item Name</th>
-                      <th className="p-3 border-r border-white/5">Target Eff. Rate</th>
-                      <th className="p-3 border-r border-white/5">Vendor</th>
-                      <th className="p-3 border-r border-white/5">Quantity</th>
-                      <th className="p-3 border-r border-white/5">Landed rate</th>
+                    <tr className="text-[#808080] text-left bg-black/[0.02]">
+                      <th className="p-3 pl-5 border-r border-black/[0.06]">T...</th>
+                      <th className="p-3 border-r border-black/[0.06]">Item Name</th>
+                      <th className="p-3 border-r border-black/[0.06]">Target Eff. Rate</th>
+                      <th className="p-3 border-r border-black/[0.06]">Vendor</th>
+                      <th className="p-3 border-r border-black/[0.06]">Quantity</th>
+                      <th className="p-3 border-r border-black/[0.06]">Landed rate</th>
                       <th className="p-3">Total Landed Cost</th>
                     </tr>
                   </thead>
@@ -236,18 +236,18 @@ export default function DashboardMockup() {
                       { id: 3, name: 'Raw material 2', target: '₹100.00 / Pieces', vendor: 'Thrift Co.', qty: '1.00 Pieces(s)', rate: '₹743.85 / Pieces', total: '₹743.85' },
                       { id: 4, name: 'Raw material 2', target: '₹1.0000 / Pieces', vendor: 'Thrift Co.', qty: '1.00 Pieces(s)', rate: '₹285.24 / Pieces', total: '₹285.24' }
                     ].map((row) => (
-                      <tr key={row.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                        <td className="p-3 pl-5 border-r border-white/5 flex items-center gap-2">
-                           <span className="text-gray-500">{row.id}</span>
+                      <tr key={row.id} className="border-b border-black/[0.06] hover:bg-black/[0.02] transition-colors">
+                        <td className="p-3 pl-5 border-r border-black/[0.06] flex items-center gap-2">
+                           <span className="text-[#808080]">{row.id}</span>
                            <Trophy size={12} className="text-yellow-500" />
                         </td>
-                        <td className="p-3 border-r border-white/5 font-medium">{row.name}</td>
-                        <td className="p-3 border-r border-white/5 text-gray-400 font-mono">{row.target}</td>
-                        <td className="p-3 border-r border-white/5 text-blue-400 font-bold flex items-center gap-1">
+                        <td className="p-3 border-r border-black/[0.06] font-medium">{row.name}</td>
+                        <td className="p-3 border-r border-black/[0.06] text-[#808080] font-mono">{row.target}</td>
+                        <td className="p-3 border-r border-black/[0.06] text-blue-400 font-bold flex items-center gap-1">
                           {row.vendor} <div className="w-2.5 h-2.5 bg-blue-500 rounded-full flex items-center justify-center text-[6px] text-white">✓</div>
                         </td>
-                        <td className="p-3 border-r border-white/5 text-gray-400">{row.qty}</td>
-                        <td className="p-3 border-r border-white/5 font-bold font-mono">{row.rate}</td>
+                        <td className="p-3 border-r border-black/[0.06] text-[#808080]">{row.qty}</td>
+                        <td className="p-3 border-r border-black/[0.06] font-bold font-mono">{row.rate}</td>
                         <td className="p-3 font-bold font-mono">{row.total}</td>
                       </tr>
                     ))}

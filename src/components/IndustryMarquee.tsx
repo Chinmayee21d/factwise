@@ -2,6 +2,8 @@
 
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
+import { GLOBAL_LAYOUT } from './LayoutConfig';
+
 
 const industriesRow1 = [
   { label: 'Automotive', category: 'Manufacturing', image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1000&auto=format&fit=crop' },
@@ -153,7 +155,7 @@ export default function IndustryMarquee() {
         </motion.div>
       </motion.div>
 
-      <div className="relative min-h-[500px]">
+      <div className="relative min-h-[500px]" style={{ marginTop: 40 }}>
         <AnimatePresence mode="wait">
           {viewMode === 'marquee' ? (
             <motion.div
@@ -199,8 +201,9 @@ export default function IndustryMarquee() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-[1400px] mx-auto px-6 md:px-10 flex flex-col gap-10"
-            >
+            style={{ maxWidth: GLOBAL_LAYOUT.maxWidth, margin: '0 auto', paddingLeft: GLOBAL_LAYOUT.paddingX, paddingRight: GLOBAL_LAYOUT.paddingX }}
+            className="flex flex-col gap-10"
+          >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                 {industriesRow1.map((ind) => (
                   <IndustryCard key={ind.label} ind={ind} />
@@ -219,7 +222,14 @@ export default function IndustryMarquee() {
   );
 }
 
-function IndustryCard({ ind, isMarquee = false }: { ind: any, isMarquee?: boolean }) {
+type Industry = {
+  label: string;
+  category: string;
+  image: string;
+  _key?: string;
+};
+
+function IndustryCard({ ind, isMarquee = false }: { ind: Industry, isMarquee?: boolean }) {
   return (
     <div
       className={`group flex flex-col gap-4 cursor-pointer transition-all duration-500 hover:scale-[1.02] ${isMarquee ? 'w-[280px] md:w-[320px] shrink-0 mx-4' : ''}`}

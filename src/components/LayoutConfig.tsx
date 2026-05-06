@@ -5,8 +5,8 @@
  * Defines the standard constraints for all landing page sections.
  */
 export const GLOBAL_LAYOUT = {
-  maxWidth: 1400,
-  paddingX: '40px',
+  maxWidth: 1800,
+  paddingX: 'clamp(24px, 5vw, 80px)',
   paddingY: '110px',
   gap: 80,
   

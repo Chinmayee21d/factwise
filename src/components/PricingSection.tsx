@@ -4,6 +4,7 @@ import React from "react";
 import { motion, Variants } from "framer-motion";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GLOBAL_LAYOUT } from './LayoutConfig';
 
 const pricingTiers = [
   {
@@ -72,15 +73,20 @@ const itemVariants: Variants = {
 
 export default function PricingSection() {
   return (
-    <section className="w-full bg-[#0a0a0c] py-24 px-6 md:px-12 lg:px-24 border-t border-[rgba(255,255,255,0.07)]">
-      <div className="max-w-[1400px] mx-auto">
+    <section 
+      className="w-full bg-[#f6f9fc] border-t border-[rgba(0,0,0,0.07)]"
+      style={{ padding: `96px 0` }}
+    >
+      <div 
+        style={{ maxWidth: GLOBAL_LAYOUT.maxWidth, margin: '0 auto', paddingLeft: GLOBAL_LAYOUT.paddingX, paddingRight: GLOBAL_LAYOUT.paddingX }}
+      >
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8, mb-16">
           <div className="max-w-2xl">
-            <span className="text-[11px] uppercase tracking-[0.25em] font-medium text-[#7c5cfc] mb-6 block">
+            <span className="text-[11px] uppercase tracking-[0.25em] font-medium text-[#3666ff] mb-6 block">
               Pricing Plans
             </span>
-            <h2 className="text-[40px] md:text-[56px] font-light leading-[1.1] tracking-[-0.02em] text-[#f4f4f5]">
+            <h2 className="text-[40px] md:text-[56px] font-light leading-[1.1] tracking-[-0.02em] text-[#000000]">
               Simple, transparent <br />
               <strong className="font-semibold">pricing for everyone.</strong>
             </h2>
@@ -92,8 +98,10 @@ export default function PricingSection() {
 
         {/* Pricing Cards */}
         <motion.div
-          initial="visible"
-          animate="visible"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {pricingTiers.map((tier) => (
@@ -101,22 +109,22 @@ export default function PricingSection() {
               key={tier.name}
               variants={itemVariants}
               className={cn(
-                "relative bg-[#111116] border border-[rgba(255,255,255,0.07)] rounded-[16px] p-8 transition-all duration-300 flex flex-col group",
+                "relative bg-white border border-[rgba(0,0,0,0.07)] rounded-[16px] p-8 transition-all duration-300 flex flex-col group",
                 tier.popular
-                  ? "border-[#7c5cfc] shadow-[0_0_30px_rgba(124,92,252,0.15)] hover:shadow-[0_0_40px_rgba(124,92,252,0.25)]"
-                  : "hover:border-[rgba(255,255,255,0.2)] hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                  ? "border-[#3666ff] shadow-[0_0_30px_rgba(54,102,255,0.12)] hover:shadow-[0_0_40px_rgba(54,102,255,0.2)]"
+                  : "hover:border-[rgba(0,0,0,0.15)] hover:shadow-[0_0_20px_rgba(0,0,0,0.05)]"
               )}
             >
               {tier.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-[rgba(124,92,252,0.15)] border border-[rgba(124,92,252,0.3)] text-[#7c5cfc] text-[10px] uppercase tracking-[0.1em] font-medium py-1 px-3 rounded-full backdrop-blur-md">
+                  <span className="bg-[rgba(54,102,255,0.1)] border border-[rgba(54,102,255,0.25)] text-[#3666ff] text-[10px] uppercase tracking-[0.1em] font-medium py-1 px-3 rounded-full backdrop-blur-md">
                     Most Popular
                   </span>
                 </div>
               )}
 
               <div className="mb-8">
-                <h3 className="text-[24px] font-medium text-[#f4f4f5] mb-2">
+                <h3 className="text-[24px] font-medium text-[#000000] mb-2">
                   {tier.name}
                 </h3>
                 <p className="text-[#6b6b7a] text-[13px] h-10">
@@ -124,9 +132,9 @@ export default function PricingSection() {
                 </p>
               </div>
 
-              <div className="mb-8 pb-8 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="mb-8 pb-8 border-b border-[rgba(0,0,0,0.07)]">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[48px] font-light tracking-[-0.02em] text-[#f4f4f5]">
+                  <span className="text-[48px] font-light tracking-[-0.02em] text-[#000000]">
                     {tier.price}
                   </span>
                   {tier.period && (
@@ -144,10 +152,10 @@ export default function PricingSection() {
                       className={cn(
                         "mt-1 w-[14px] h-[14px] rounded-full flex items-center justify-center shrink-0",
                         tier.color === "violet"
-                          ? "bg-[#7c5cfc]"
+                          ? "bg-[#3666ff]"
                           : tier.color === "blue"
-                          ? "bg-[#4b8bff]"
-                          : "bg-[#e8433a]"
+                            ? "bg-[#4b8bff]"
+                            : "bg-[#e8433a]"
                       )}
                     >
                       <Check className="w-[10px] h-[10px] text-white" strokeWidth={3} />
@@ -159,10 +167,10 @@ export default function PricingSection() {
 
               <button
                 className={cn(
-                  "w-full py-4 rounded-[12px] text-[14px] font-medium transition-all duration-300",
+                  "w-full py-4 rounded-[16px] text-[14px] font-medium transition-all duration-300",
                   tier.popular
-                    ? "bg-[#7c5cfc] text-white hover:bg-[#8f73ff]"
-                    : "bg-[rgba(255,255,255,0.05)] text-[#f4f4f5] hover:bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.05)]"
+                    ? "bg-[#3666ff] text-white hover:bg-[#2a55ee]"
+                    : "bg-[rgba(0,0,0,0.04)] text-[#000000] hover:bg-[rgba(0,0,0,0.07)] border border-[rgba(0,0,0,0.07)]"
                 )}
               >
                 {tier.buttonText}

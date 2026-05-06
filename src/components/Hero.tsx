@@ -6,93 +6,220 @@ import { ArrowRight } from 'lucide-react';
 import { ShimmerButton } from '@/components/ui/ShimmerButton';
 import { MagicButton } from '@/components/ui/MagicButton';
 
+import { GLOBAL_LAYOUT } from './LayoutConfig';
+
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center bg-[#0a0a0c] overflow-hidden">
+    <section
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ background: '#FFFFFF' }}
+    >
 
-      {/* Background Atmosphere */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-[#7c5cfc]/10 rounded-full blur-[140px]" />
-        <div className="absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-[#34d399]/5 rounded-full blur-[140px]" />
+      {/* ── Atmospheric blobs ── */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2 }}>
+        {/* Main right-side atmospheric bloom */}
+        <div
+          className="absolute"
+          style={{
+            width: '960px',
+            height: '960px',
+            top: '50%',
+            right: '-8%',
+            transform: 'translateY(-52%)',
+            background: 'radial-gradient(circle, rgba(74,111,255,0.26) 0%, rgba(108,142,255,0.15) 32%, rgba(160,180,255,0.07) 58%, transparent 74%)',
+            filter: 'blur(88px)',
+            borderRadius: '50%',
+          }}
+        />
+        {/* Top-left accent — keeps the top corner from feeling flat */}
+        <div
+          className="absolute -top-40 -left-20"
+          style={{
+            width: '560px',
+            height: '560px',
+            background: 'radial-gradient(circle, rgba(74,111,255,0.07) 0%, transparent 65%)',
+            filter: 'blur(90px)',
+            borderRadius: '50%',
+          }}
+        />
+        {/* Bottom-center warm tint */}
+        <div
+          className="absolute bottom-0 left-1/3"
+          style={{
+            width: '600px',
+            height: '300px',
+            background: 'radial-gradient(ellipse, rgba(108,142,255,0.08) 0%, transparent 70%)',
+            filter: 'blur(70px)',
+            borderRadius: '50%',
+          }}
+        />
       </div>
 
-      <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-between px-10 md:px-20 lg:px-24 py-32 gap-16">
+      {/* ── Main content ── */}
+      <div
+        className="relative w-full flex flex-col lg:flex-row items-center justify-between gap-16"
+        style={{ ...GLOBAL_LAYOUT.containerStyle, zIndex: 10 }}
+      >
 
-        {/* Left Content - Balanced & Sized Down */}
-        <div className="flex-1 flex flex-col items-start text-left max-w-[650px]">
-          {/* Badge */}
-          <motion.aside
+        {/* Left — copy */}
+        <div className="flex-1 flex flex-col items-start text-left max-w-[600px]">
+
+          {/* Eyebrow pill */}
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-10 inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/5 bg-white/[0.05] backdrop-blur-xl"
+            transition={{ duration: 0.55 }}
+            className="mb-9 inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full"
+            style={{
+              background: 'rgba(255,255,255,0.70)',
+              border: '1px solid rgba(74,111,255,0.20)',
+              boxShadow: '0 2px 16px rgba(74,111,255,0.10)',
+              backdropFilter: 'blur(12px)',
+            }}
           >
-            <span className="text-[11px] font-bold tracking-[0.15em] text-[#7c5cfc] uppercase">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2ECC8B] opacity-70" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2ECC8B]" />
+            </span>
+            <span
+              className="text-[10.5px] font-semibold tracking-[0.16em] uppercase"
+              style={{ color: '#4A6FFF', fontFamily: 'var(--font-inter)' }}
+            >
               Now Live
             </span>
-            <div className="w-px h-3 bg-white/10" />
-            <a
-              href="#new-version"
-              className="flex items-center gap-1.5 text-[11px] font-medium text-gray-300 hover:text-white transition-all tracking-wide"
+            <div className="w-px h-3 bg-[#1A1D2E]/10" />
+            <span
+              className="flex items-center gap-1 text-[10.5px] font-medium"
+              style={{ color: '#7B82A8', fontFamily: 'var(--font-inter)' }}
             >
               Smarter Sourcing v2.0
-              <ArrowRight size={12} className="text-gray-500" />
-            </a>
-          </motion.aside>
+              <ArrowRight size={11} className="opacity-60" />
+            </span>
+          </motion.div>
 
-          {/* Headline - Scaled Down */}
+          {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-7xl font-light tracking-tight mb-8 leading-[1.1] text-white"
+            transition={{ duration: 0.75, delay: 0.1 }}
+            className="mb-7"
             style={{
-              letterSpacing: '-0.02em'
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
+              fontWeight: 600,
+              letterSpacing: '-0.025em',
+              lineHeight: 1.1,
+              color: '#0D0F1C',
             }}
           >
             One platform.<br />
-            <span className="text-[#7c5cfc]">Everything</span> synced.
+            <span style={{ color: '#4A6FFF' }}>Everything</span> synced.
           </motion.h1>
 
-          {/* Subheadline - Scaled Down */}
+          {/* Subheadline */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-base md:text-lg text-gray-400 max-w-[500px] mb-12 leading-relaxed font-light"
+            transition={{ duration: 0.65, delay: 0.2 }}
+            className="mb-11 max-w-[460px]"
+            style={{
+              fontFamily: 'var(--font-inter)',
+              fontSize: '17px',
+              fontWeight: 400,
+              lineHeight: 1.72,
+              color: '#7B82A8',
+            }}
           >
-            Unify your entire supply chain with the intelligent source-to-pay ecosystem designed to optimize spend and mitigate risk.
+            Go beyond simple sourcing. FactWise unifies Quote-to-Order,
+            Requisition-to-PO and Invoice-to-Pay into one intelligent
+            ecosystem—with 100% visibility.
           </motion.p>
 
-          {/* CTAs - Scaled Down */}
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.28 }}
-            className="flex flex-wrap items-center gap-6"
+            transition={{ duration: 0.65, delay: 0.28 }}
+            className="flex flex-wrap items-center gap-10"
           >
-            <MagicButton 
-              label1="Request Demo" 
-              label2="Join FactWise" 
-              className="scale-110 origin-left" 
+            <MagicButton
+              label1="Request Demo"
+              label2="Join FactWise"
+              className="scale-110 origin-left"
             />
-            <ShimmerButton
-              variant="secondary"
-              className="rounded-xl text-gray-400 hover:text-white border border-white/5 h-[52px] px-8 hover:bg-white/[0.02] text-sm"
-            >
+            <ShimmerButton variant="secondary" showArrow>
               Explore Ecosystem
             </ShimmerButton>
           </motion.div>
+
+          {/* Trust micro-line */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-8 text-[12px] tracking-wide"
+            style={{ color: '#B0B5CC', fontFamily: 'var(--font-inter)' }}
+          >
+            No credit card required · Free 14-day trial · SOC 2 certified
+          </motion.p>
         </div>
 
-        {/* Right Content - Video Section */}
+        {/* Right — video */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.98, x: 30 }}
+          initial={{ opacity: 0, scale: 0.97, x: 30 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 1.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 1.4, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
           className="flex-1 w-full flex items-center justify-center lg:justify-end"
         >
-          <div className="relative w-full max-w-[700px] h-full flex items-center justify-center">
+          <div className="relative w-full max-w-[680px] flex items-center justify-center">
+
+            {/* Video-specific blob — inner vivid core */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '88%',
+                height: '88%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'radial-gradient(ellipse at center, rgba(74,111,255,0.50) 0%, rgba(108,142,255,0.32) 30%, rgba(138,160,255,0.14) 55%, transparent 74%)',
+                filter: 'blur(40px)',
+                borderRadius: '50%',
+                zIndex: 1,
+              }}
+            />
+            {/* Mid halo */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '125%',
+                height: '125%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'radial-gradient(ellipse at center, rgba(74,111,255,0.18) 0%, rgba(108,142,255,0.09) 42%, transparent 72%)',
+                filter: 'blur(64px)',
+                borderRadius: '50%',
+                zIndex: 1,
+              }}
+            />
+            {/* Outer bloom */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '158%',
+                height: '158%',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'radial-gradient(ellipse at center, rgba(100,130,255,0.07) 0%, transparent 68%)',
+                filter: 'blur(88px)',
+                borderRadius: '50%',
+                zIndex: 1,
+              }}
+            />
+
+            {/* Video */}
             <video
               src="/factwise-hero.mp4"
               autoPlay
@@ -101,14 +228,11 @@ export default function Hero() {
               playsInline
               className="w-full h-auto object-contain"
               style={{
-                maskImage: 'radial-gradient(circle at center, black 45%, transparent 85%)',
-                WebkitMaskImage: 'radial-gradient(circle at center, black 45%, transparent 85%)',
-                mixBlendMode: 'screen'
+                position: 'relative',
+                zIndex: 2,
+                borderRadius: '20px',
               }}
             />
-
-            {/* Subtle glow behind video */}
-            <div className="absolute inset-0 bg-[#7c5cfc]/10 blur-[130px] -z-10 rounded-full scale-90 opacity-40" />
           </div>
         </motion.div>
 

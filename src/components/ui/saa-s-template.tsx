@@ -103,7 +103,10 @@ const Navigation = React.memo(() => {
     <header className="fixed top-0 w-full z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-xl font-semibold text-white">Logo</div>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="FactWise Logo" className="h-8 w-auto" />
+            <span className="text-xl font-semibold text-white">FactWise</span>
+          </div>
           
           <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a href="#getting-started" className="text-sm text-white/60 hover:text-white transition-colors">

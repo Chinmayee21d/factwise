@@ -171,7 +171,7 @@ export const PLATFORM_MODULES = [
 export const ROLES_DATA = [
   {
     icon: '🎯',
-    tag: 'Procurement',
+    tag: 'Sourcing',
     color: '#c9a84c',
     headline: 'Run events, not spreadsheets',
     bullets: [
@@ -231,7 +231,7 @@ export const INTEGRATIONS = [
   { name: 'SAP', category: 'ERP', color: '#0070f3' },
   { name: 'Oracle', category: 'ERP', color: '#e8433a' },
   { name: 'NetSuite', category: 'ERP', color: '#7c5cfc' },
-  { name: 'SAP Ariba', category: 'Procurement', color: '#0070f3' },
+  { name: 'SAP Ariba', category: 'Sourcing', color: '#0070f3' },
   { name: 'Salesforce', category: 'CRM', color: '#00a1e0' },
   { name: 'QuickBooks', category: 'Finance', color: '#2ca01c' },
   { name: 'Digi-Key', category: 'Distributor', color: '#c9a84c' },
@@ -243,7 +243,7 @@ export const INTEGRATIONS = [
 ];
 
 export const INDUSTRIES = [
-  { emoji: '🏗️', name: 'Construction & EPC', desc: 'Multi-site procurement with site-wise budget control and subcontractor management' },
+  { emoji: '🏗️', name: 'Construction & EPC', desc: 'Multi-site operations with site-wise budget control and subcontractor management' },
   { emoji: '🍔', name: 'Food & Beverage', desc: 'Batch tracking, expiry management, and FSSAI compliance for perishable inputs' },
   { emoji: '⚙️', name: 'Industrial Machinery', desc: 'BOM-based sourcing with engineering change order tracking and supplier qualification' },
   { emoji: '🤖', name: 'Factory Automation', desc: 'Electronic component sourcing with live Digi-Key / Mouser price benchmarking' },

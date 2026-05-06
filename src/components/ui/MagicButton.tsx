@@ -9,11 +9,11 @@ interface MagicButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
   className?: string;
 }
 
-export const MagicButton = ({ 
-  label1 = "Request Demo", 
-  label2 = "Starting Now...", 
-  className, 
-  ...props 
+export const MagicButton = ({
+  label1 = "Request Demo",
+  label2 = "Starting Now...",
+  className,
+  ...props
 }: MagicButtonProps) => {
   return (
     <div className={cn("btn-wrapper", className)}>
@@ -27,8 +27,8 @@ export const MagicButton = ({
           --border-radius: 20px;
           --padding: 4px;
           --transition: 0.4s;
-          --button-color: #0a0a0c;
-          --highlight-color-hue: 258deg; /* FactWise Violet */
+          --button-color: #3666ff;
+          --highlight-color-hue: 218deg; /* FactWise Blue */
 
           user-select: none;
           display: flex;
@@ -43,12 +43,11 @@ export const MagicButton = ({
           z-index: 1;
 
           box-shadow:
-            inset 0px 1px 1px rgba(255, 255, 255, 0.1),
-            inset 0px 2px 2px rgba(255, 255, 255, 0.05),
-            /* drop */ 
-            0px 4px 20px rgba(0, 0, 0, 0.5);
+            inset 0px 1px 1px rgba(255, 255, 255, 0.15),
+            inset 0px 2px 2px rgba(255, 255, 255, 0.08),
+            0px 4px 20px rgba(54, 102, 255, 0.3);
 
-          border: solid 1px rgba(255, 255, 255, 0.08);
+          border: solid 1px rgba(255, 255, 255, 0.2);
           border-radius: var(--border-radius);
           cursor: pointer;
           transition: all var(--transition);
@@ -68,8 +67,8 @@ export const MagicButton = ({
           z-index: -1;
           transition: all var(--transition);
           box-shadow:
-            0 -8px 8px -6px rgba(124, 92, 252, 0) inset,
-            1px 1px 1px rgba(255, 255, 255, 0.05);
+            0 -8px 8px -6px rgba(73, 204, 249, 0) inset,
+            1px 1px 1px rgba(255, 255, 255, 0.1);
         }
 
         .btn::after {
@@ -97,14 +96,14 @@ export const MagicButton = ({
         .btn-letter {
           position: relative;
           display: inline-block;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.75);
           animation: letter-anim 2.5s ease-in-out infinite;
           transition: all var(--transition);
         }
 
         @keyframes letter-anim {
           50% {
-            text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
             color: #fff;
           }
         }
@@ -113,14 +112,14 @@ export const MagicButton = ({
           height: 20px;
           width: 20px;
           margin-right: 0.75rem;
-          fill: #7c5cfc;
+          fill: #ffffff;
           animation: flicker 3s linear infinite;
-          filter: drop-shadow(0 0 4px rgba(124, 92, 252, 0.6));
+          filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
           transition: all var(--transition);
         }
 
         @keyframes flicker {
-          50% { opacity: 0.5; }
+          50% { opacity: 0.6; }
         }
 
         .txt-wrapper {
@@ -153,25 +152,25 @@ export const MagicButton = ({
 
         .btn:hover .btn-letter {
           color: #fff;
-          text-shadow: 0 0 10px rgba(124, 92, 252, 0.8);
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
         }
 
         .btn:hover .btn-svg {
           fill: #fff;
-          filter: drop-shadow(0 0 8px #7c5cfc);
+          filter: drop-shadow(0 0 8px #49ccf9);
           transform: scale(1.1) rotate(10deg);
         }
 
         .btn:hover::before {
           box-shadow:
-            0 -12px 12px -6px rgba(124, 92, 252, 0.4) inset,
-            0 0 20px rgba(124, 92, 252, 0.2);
-          border-color: rgba(124, 92, 252, 0.4);
+            0 -12px 12px -6px rgba(73, 204, 249, 0.4) inset,
+            0 0 20px rgba(73, 204, 249, 0.2);
+          border-color: rgba(255, 255, 255, 0.35);
         }
 
         .btn:active {
           transform: scale(0.96);
-          background-color: rgba(124, 92, 252, 0.1);
+          background-color: #2a55ee;
         }
 
         /* Staggered animation delays */
@@ -190,12 +189,12 @@ export const MagicButton = ({
         <div className="txt-wrapper">
           <div className="txt-1">
             {label1.split('').map((char, i) => (
-              <span key={i} className="btn-letter">{char === ' ' ? '\u00A0' : char}</span>
+              <span key={i} className="btn-letter">{char === ' ' ? ' ' : char}</span>
             ))}
           </div>
           <div className="txt-2">
             {label2.split('').map((char, i) => (
-              <span key={i} className="btn-letter">{char === ' ' ? '\u00A0' : char}</span>
+              <span key={i} className="btn-letter">{char === ' ' ? ' ' : char}</span>
             ))}
           </div>
         </div>

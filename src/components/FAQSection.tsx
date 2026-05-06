@@ -1,0 +1,346 @@
+'use client';
+
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Minus } from 'lucide-react';
+import SectionHeader from '@/components/SectionHeader';
+import { GLOBAL_LAYOUT } from './LayoutConfig';
+
+const CATEGORIES = ['All', 'Product', 'Sourcing', 'Payments', 'Integration', 'Security', 'Pricing'] as const;
+type Category = (typeof CATEGORIES)[number];
+
+interface FAQ {
+  q: string;
+  a: string;
+  category: Category;
+}
+
+const FAQS: FAQ[] = [
+  {
+    category: 'Product',
+    q: 'What is FactWise?',
+    a: 'FactWise is an end-to-end source-to-pay platform covering the entire operational lifecycle -- from requisitions and RFQs to purchase orders, goods receipt, invoice matching, and payments. It replaces fragmented spreadsheets and email-based workflows with a single connected system, giving every team real-time visibility into spend, suppliers, and approvals.',
+  },
+  {
+    category: 'Product',
+    q: 'Who is FactWise built for?',
+    a: 'FactWise is built for mid-to-large manufacturing and enterprise companies with active sourcing and supply chain operations. Operations leaders get end-to-end visibility, finance teams get spend control, sourcing teams get advanced bidding tools, and IT gets a secure, API-first platform -- all in one place.',
+  },
+  {
+    category: 'Product',
+    q: 'How long does onboarding take?',
+    a: 'Most teams are fully live within 4-6 weeks. FactWise includes guided onboarding, vendor master migration support, and pre-built ERP connectors. There is no months-long implementation cycle -- a dedicated customer success manager works alongside your team from day one.',
+  },
+  {
+    category: 'Sourcing',
+    q: 'How does the RFQ and bidding process work?',
+    a: 'You create an RFQ event, define line items and bid criteria, then invite vendors. FactWise sends secure, time-limited bid links -- vendors respond without needing an account. You can run multiple negotiation rounds, compare bids using a landed cost breakdown (base rate + freight + taxes + duties), and award to one or split across multiple vendors. POs are auto-generated from the award.',
+  },
+  {
+    category: 'Sourcing',
+    q: 'Can vendors bid without creating a FactWise account?',
+    a: 'Yes. Vendors receive a secure, tokenised bid link via email. They can submit bids, attach supporting documents, and respond to clarification queries without registering on the platform. This maximises vendor participation and keeps response rates high.',
+  },
+  {
+    category: 'Payments',
+    q: 'What is 3-way matching and how does it work?',
+    a: 'Three-way matching automatically cross-checks the Purchase Order, the Goods Receipt Note (GRN), and the Supplier Invoice across price, quantity, tax, and payment terms. If any of 7 defined mismatch conditions are detected -- such as a price deviation or missing GRN -- the invoice is automatically held and flagged for review before payment is released. This eliminates overpayments and reduces fraud risk.',
+  },
+  {
+    category: 'Payments',
+    q: 'How are credits, prepayments, and deductions handled?',
+    a: 'FactWise tracks prepayments, QC rejection credits, and netting across invoices in a unified credit ledger. Deductions from quality rejections can be linked directly to the affected GRN and netted against the corresponding invoice -- no manual reconciliation needed.',
+  },
+  {
+    category: 'Integration',
+    q: 'Does FactWise integrate with our ERP or accounting system?',
+    a: 'Yes. FactWise provides a REST API with webhooks for real-time bi-directional sync. Pre-built connectors are available for SAP, Oracle, Tally, and other common ERPs. Your master data (vendor masters, item codes, cost centres) can be imported and kept in sync automatically. Custom integrations can be built using the documented API.',
+  },
+  {
+    category: 'Security',
+    q: 'How does FactWise handle data security and compliance?',
+    a: 'FactWise is SOC 2 Type II certified. All data is encrypted with AES-256 at rest and in transit. Role-based access controls (RBAC), field-level permissions, and audit logs are built in. Single Sign-On (SAML 2.0 / OAuth 2.0) integrates with your identity provider. Data residency options are available for enterprise customers.',
+  },
+  {
+    category: 'Pricing',
+    q: 'How is FactWise priced?',
+    a: 'FactWise is priced by module and scales with your transaction volume -- not by per-seat headcount. You activate the modules your team needs (Sourcing, Purchase Orders, Invoice Matching, Analytics) and pay based on usage. Contact us for a quote tailored to your operational volume and team structure.',
+  },
+  {
+    category: 'Pricing',
+    q: 'Is there a free trial or product demo?',
+    a: 'We offer a guided live demo built around your actual use cases -- not a generic slide deck. A product specialist walks your team through the workflows most relevant to you, with sample data from your industry. Reach out to schedule a 45-minute session.',
+  },
+];
+
+export default function FAQSection() {
+  const [activeCategory, setActiveCategory] = useState<Category>('Product');
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const filtered = FAQS.filter(
+    (f) => activeCategory === 'All' || f.category === activeCategory
+  );
+
+  return (
+    <section
+      style={{
+        width: '100%',
+        background: '#ffffff',
+        padding: `96px ${GLOBAL_LAYOUT.paddingX}`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Radial glow */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: '10%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 600,
+          height: 400,
+          background: 'radial-gradient(ellipse, rgba(54,102,255,0.06) 0%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+
+      <div style={{ maxWidth: 860, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <SectionHeader
+          label="Frequently asked"
+          title={
+            <>
+              Questions we{' '}
+              <span style={{ color: '#808080', fontWeight: 300, fontStyle: 'italic' }}>
+                always get asked.
+              </span>
+            </>
+          }
+          description="Everything you need to know about FactWise -- how it works, how it fits your stack, and what it takes to get started."
+          align="center"
+        />
+
+        {/* Category filter pills */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 8,
+            justifyContent: 'center',
+            marginBottom: 48,
+          }}
+        >
+          {CATEGORIES.map((cat) => {
+            const isActive = cat === activeCategory;
+            return (
+              <button
+                key={cat}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setOpenIndex(null);
+                }}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 100,
+                  border: `1px solid ${isActive ? 'rgba(54,102,255,0.4)' : 'rgba(0,0,0,0.09)'}`,
+                  background: isActive ? 'rgba(54,102,255,0.08)' : 'transparent',
+                  color: isActive ? '#3666ff' : '#808080',
+                  fontSize: 11,
+                  fontWeight: 500,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'inherit',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.borderColor = 'rgba(0,0,0,0.18)';
+                    e.currentTarget.style.color = '#000000';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.borderColor = 'rgba(0,0,0,0.09)';
+                    e.currentTarget.style.color = '#808080';
+                  }
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Accordion */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <AnimatePresence mode="popLayout">
+            {filtered.map((faq, i) => {
+              const isOpen = openIndex === i;
+              return (
+                <motion.div
+                  key={`${activeCategory}-${faq.q}`}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22, delay: i * 0.04 }}
+                  style={{
+                    background: isOpen ? '#eef2f7' : '#ffffff',
+                    border: `1px solid ${isOpen ? 'rgba(54,102,255,0.22)' : 'rgba(0,0,0,0.08)'}`,
+                    borderRadius: 12,
+                    overflow: 'hidden',
+                    transition: 'background 0.2s ease, border-color 0.2s ease',
+                  }}
+                >
+                  {/* Question row */}
+                  <button
+                    onClick={() => setOpenIndex(isOpen ? null : i)}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 16,
+                      padding: '18px 20px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+                      {/* Category pill */}
+                      <span
+                        style={{
+                          fontSize: 9,
+                          fontWeight: 600,
+                          letterSpacing: '0.12em',
+                          textTransform: 'uppercase',
+                          color: '#3666ff',
+                          background: 'rgba(54,102,255,0.08)',
+                          border: '1px solid rgba(54,102,255,0.22)',
+                          padding: '2px 8px',
+                          borderRadius: 100,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {faq.category}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 400,
+                          color: isOpen ? '#000000' : '#363636',
+                          letterSpacing: '-0.01em',
+                          lineHeight: 1.4,
+                          transition: 'color 0.2s ease',
+                        }}
+                      >
+                        {faq.q}
+                      </span>
+                    </div>
+
+                    {/* Toggle icon */}
+                    <div
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: '50%',
+                        border: `1px solid ${isOpen ? 'rgba(54,102,255,0.35)' : 'rgba(0,0,0,0.1)'}`,
+                        background: isOpen ? 'rgba(54,102,255,0.12)' : 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      {isOpen
+                        ? <Minus size={11} color="#3666ff" />
+                        : <Plus size={11} color="rgba(0,0,0,0.35)" />
+                      }
+                    </div>
+                  </button>
+
+                  {/* Answer */}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="answer"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.25, 0, 0.25, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div
+                          style={{
+                            padding: '14px 20px 22px 20px',
+                            fontSize: 13,
+                            color: '#808080',
+                            lineHeight: 1.8,
+                            fontWeight: 400,
+                            borderTop: '1px solid rgba(0,0,0,0.07)',
+                          }}
+                        >
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom CTA */}
+        <div
+          style={{
+            marginTop: 52,
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 14,
+          }}
+        >
+          <p style={{ fontSize: 13, color: '#808080', fontWeight: 400 }}>
+            Still have questions?
+          </p>
+          <a
+            href="/contact"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 26px',
+              borderRadius: 100,
+              border: '1px solid rgba(54,102,255,0.35)',
+              background: 'rgba(54,102,255,0.10)',
+              color: '#3666ff',
+              fontSize: 13,
+              fontWeight: 500,
+              letterSpacing: '0.03em',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(54,102,255,0.18)';
+              e.currentTarget.style.borderColor = 'rgba(54,102,255,0.55)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(54,102,255,0.10)';
+              e.currentTarget.style.borderColor = 'rgba(54,102,255,0.35)';
+            }}
+          >
+            Talk to the team &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { useRef } from 'react';
+import { GLOBAL_LAYOUT } from './LayoutConfig';
 
 /* ── Data ──────────────────────────────────────── */
 const pillars = [
@@ -31,7 +32,7 @@ const pillars = [
     stat: '50%',
     title: 'Usability & Governance',
     headline: 'Automated approval requests and intuitive user interface to improve user experience',
-    color: '#7c5cfc',
+    color: '#3666ff',
     features: [
       {
         title: 'Improve compliance',
@@ -60,7 +61,7 @@ const pillars = [
       },
       {
         title: 'Reduce research time',
-        desc: 'Enable real-time data throughout the procurement journey to receive the latest insights.',
+        desc: 'Enable real-time data throughout the sourcing & operations journey to receive the latest insights.',
       },
       {
         title: 'Reconcile payments automatically',
@@ -131,7 +132,7 @@ const PillarHeader = ({ pillar, index, total, scrollYProgress }: PillarProps) =>
           fontWeight: 300,
           letterSpacing: '-0.02em',
           lineHeight: 1.2,
-          color: '#f4f4f5',
+          color: '#000000',
           marginBottom: 14,
         }}
       >
@@ -181,13 +182,13 @@ const PillarCard = ({ pillar, index, total, scrollYProgress }: PillarProps) => {
         style={{
           padding: '40px',
           borderRadius: 24,
-          background: 'rgba(16,16,21,0.82)',
+          background: '#ffffff',
           backdropFilter: 'blur(28px)',
           WebkitBackdropFilter: 'blur(28px)',
-          border: '1px solid rgba(255,255,255,0.07)',
+          border: '1px solid rgba(0,0,0,0.07)',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 40px 100px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04)',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.07)',
         }}
       >
         {/* Thick top-border accent */}
@@ -238,7 +239,7 @@ const PillarCard = ({ pillar, index, total, scrollYProgress }: PillarProps) => {
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: pillar.color }} />
               </div>
               <div>
-                <h3 style={{ fontSize: 16, fontWeight: 500, color: '#f4f4f5', marginBottom: 6, lineHeight: 1.3 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 500, color: '#000000', marginBottom: 6, lineHeight: 1.3 }}>
                   {feature.title}
                 </h3>
                 <p style={{ fontSize: 14, color: '#6b6b7a', lineHeight: 1.7 }}>{feature.desc}</p>
@@ -301,7 +302,7 @@ export default function ValuePillars() {
   return (
     <section ref={containerRef} style={{ position: 'relative', height: '300vh' }}>
       {/* ── Sticky viewport ─── */}
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', background: '#0a0a0c' }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', background: '#f6f9fc' }}>
 
         {/* ── Parallax bokeh background ─── */}
         <motion.div
@@ -313,7 +314,7 @@ export default function ValuePillars() {
             width: 760,
             height: 760,
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(124,92,252,0.14) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(54,102,255,0.08) 0%, transparent 70%)',
             filter: 'blur(90px)',
             pointerEvents: 'none',
           }}
@@ -353,9 +354,9 @@ export default function ValuePillars() {
             position: 'relative',
             zIndex: 10,
             width: '100%',
-            maxWidth: 1200,
+            maxWidth: GLOBAL_LAYOUT.maxWidth,
             margin: '0 auto',
-            padding: '0 40px',
+            padding: `0 ${GLOBAL_LAYOUT.paddingX}`,
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: 72,
@@ -374,8 +375,8 @@ export default function ValuePillars() {
                   gap: 8,
                   padding: '6px 16px',
                   borderRadius: 100,
-                  background: 'rgba(124,92,252,0.1)',
-                  border: '1px solid rgba(124,92,252,0.22)',
+                  background: 'rgba(54,102,255,0.08)',
+                  border: '1px solid rgba(54,102,255,0.2)',
                   backdropFilter: 'blur(12px)',
                 }}
               >
@@ -384,7 +385,7 @@ export default function ValuePillars() {
                     width: 6,
                     height: 6,
                     borderRadius: '50%',
-                    background: '#7c5cfc',
+                    background: '#3666ff',
                     animation: 'glow-pulse 2s ease-in-out infinite',
                   }}
                 />
@@ -392,7 +393,7 @@ export default function ValuePillars() {
                   style={{
                     fontSize: 11,
                     fontWeight: 700,
-                    color: '#7c5cfc',
+                    color: '#3666ff',
                     textTransform: 'uppercase',
                     letterSpacing: '0.2em',
                   }}

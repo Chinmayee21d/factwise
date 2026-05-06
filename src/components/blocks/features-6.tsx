@@ -10,7 +10,7 @@ export function FactWiseEcosystem() {
                       <span style={{ color: '#6b6b7a' }}>unifies your supply chain</span>
                     </h2>
                     <p className="max-w-sm sm:ml-auto text-[#6b6b7a] leading-relaxed">
-                      Empower your procurement team with automated workflows that manage everything from initial requisition to final payment in a single, unified source of truth.
+                      Empower your operations team with automated workflows that manage everything from initial requisition to final payment in a single, unified source of truth.
                     </p>
                 </div>
                 
@@ -66,7 +66,7 @@ export function FactWiseEcosystem() {
                     <div className="space-y-2 p-4 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
                         <div className="flex items-center gap-2">
                             <Sparkles className="size-4 text-[#7c5cfc]" />
-                            <h3 className="text-sm font-medium">Procurement AI</h3>
+                            <h3 className="text-sm font-medium">Sourcing Intelligence</h3>
                         </div>
                         <p className="text-[#6b6b7a] text-sm">AI-driven bid scoring and risk assessment helps you award the best deal every single time.</p>
                     </div>

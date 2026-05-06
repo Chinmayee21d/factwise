@@ -53,7 +53,7 @@ const stats = [
     label: 'Increase in preferred spend',
     description:
       'Redirect purchase volume to preferred suppliers by limiting maverick spend with guardrails.',
-    color: '#7c5cfc',
+    color: '#3666ff',
   },
   {
     value: 50,
@@ -61,7 +61,7 @@ const stats = [
     label: 'Reduction in excess spend',
     description:
       'Automated approval workflows and compliance guardrails eliminate wasteful and unauthorized purchasing.',
-    color: '#7c5cfc',
+    color: '#3666ff',
   },
   {
     value: 93,
@@ -82,8 +82,8 @@ function StatCard({ stat, index }: { stat: typeof stats[0], index: number }) {
         padding: '48px 32px',
         borderRadius: 24,
         overflow: 'hidden',
-        background: '#111116',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: '#ffffff',
+        border: '1px solid rgba(0,0,0,0.07)',
         backdropFilter: 'blur(40px)',
         cursor: 'default',
         display: 'flex',
@@ -93,11 +93,11 @@ function StatCard({ stat, index }: { stat: typeof stats[0], index: number }) {
       className="group"
     >
       {/* Animated Top Border Beam */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
-        <motion.div 
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
+        <motion.div
           animate={{ x: ['-100%', '200%'] }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+          className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-black/20 to-transparent"
         />
       </div>
 
@@ -128,7 +128,7 @@ function StatCard({ stat, index }: { stat: typeof stats[0], index: number }) {
           style={{
             fontSize: 16,
             fontWeight: 600,
-            color: '#f4f4f5',
+            color: '#000000',
             marginBottom: 12,
             lineHeight: 1.4,
             letterSpacing: '-0.01em',
@@ -170,7 +170,7 @@ export default function StatsSection() {
   return (
     <section
       ref={sectionRef}
-      style={{ position: 'relative', width: '100%', padding: '160px 0', overflow: 'hidden', background: '#0a0a0c' }}
+      style={{ position: 'relative', width: '100%', padding: '160px 0', overflow: 'hidden', background: '#f6f9fc' }}
     >
       {/* Parallax bokeh orbs */}
       <motion.div
@@ -182,7 +182,7 @@ export default function StatsSection() {
           width: 740,
           height: 740,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124,92,252,0.1) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(54,102,255,0.07) 0%, transparent 70%)',
           filter: 'blur(100px)',
           pointerEvents: 'none',
         }}
@@ -205,7 +205,7 @@ export default function StatsSection() {
       <div style={GLOBAL_LAYOUT.containerStyle}>
         <SectionHeader 
           label="Real Results"
-          title={<>Measurable impact across<br />your entire procurement stack.</>}
+          title={<>Measurable impact across<br />your entire operational ecosystem.</>}
           description="Every metric backed by real customer outcomes. We help enterprises optimize spend, reduce waste, and ensure 100% compliance."
           accentColor="#34d399"
           align="center"

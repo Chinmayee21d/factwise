@@ -1,161 +1,241 @@
 'use client';
 
-import { motion, useScroll, useTransform, useMotionValue } from 'framer-motion';
-import { useRef, useEffect } from 'react';
-import { MagicButton } from '@/components/ui/MagicButton';
-import { ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { GLOBAL_LAYOUT } from './LayoutConfig';
 
-/* ── Antigravity Grid Background ─────────────── */
-function AntigravityGrid({ mouseX, mouseY }: { mouseX: any, mouseY: any }) {
-  const gridX = useTransform(mouseX, [0, 1920], [15, -15]);
-  const gridY = useTransform(mouseY, [0, 1080], [15, -15]);
-  return (
-    <motion.div style={{ x: gridX, y: gridY }} className="absolute inset-0 z-0 pointer-events-none opacity-[0.05]">
-      <svg className="w-full h-full" viewBox="0 0 1440 800" fill="none">
-        {[...Array(15)].map((_, i) => (
-          <path 
-            key={i} 
-            d={`M 0 ${50 + i * 50} C 400 ${70 + i * 45} 1000 ${30 + i * 55} 1440 ${50 + i * 50}`} 
-            stroke="#7c5cfc" 
-            strokeWidth="0.5" 
-            strokeOpacity="0.5" 
-          />
-        ))}
-      </svg>
-    </motion.div>
-  );
-}
-
-/* ── Atmospheric Particles ───────────────────── */
-function AmbientParticles() {
-  return (
-    <div className="absolute inset-0 pointer-events-none z-1 overflow-hidden">
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full bg-white/20"
-          initial={{ 
-            x: Math.random() * 100 + "%", 
-            y: "110%", 
-            opacity: 0,
-            scale: Math.random() * 0.5 + 0.5
-          }}
-          animate={{ 
-            y: "-10%", 
-            opacity: [0, 1, 0],
-            x: (Math.random() * 100 - 50) + "%" 
-          }}
-          transition={{ 
-            duration: Math.random() * 10 + 10, 
-            repeat: Infinity, 
-            delay: Math.random() * 20,
-            ease: "linear"
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+const TRUST_ITEMS = ['No credit card required', '4-week onboarding', 'SOC 2 Type II'];
 
 export default function CTASection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
-  
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
-
-  const orb1Y  = useTransform(scrollYProgress, [0, 1], [100,  -100]);
-  const orb2Y  = useTransform(scrollYProgress, [0, 1], [70,   -70]);
-  const textY  = useTransform(scrollYProgress, [0, 1], [40,   -40]);
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
     <section
-      ref={sectionRef}
-      className="relative w-full py-32 bg-[#0a0a0c] overflow-hidden"
+      style={{
+        width: '100%',
+        background: '#f6f9fc',
+        padding: `80px ${GLOBAL_LAYOUT.paddingX}`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
     >
-      <AntigravityGrid mouseX={mouseX} mouseY={mouseY} />
-      <AmbientParticles />
-
-      {/* Top border glow */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#7c5cfc]/50 to-transparent z-10" />
-
-      {/* Bokeh orbs */}
-      <motion.div
-        style={{ y: orb1Y }}
-        className="absolute top-[8%] left-[12%] w-[720px] h-[720px] rounded-full bg-radial-gradient blur-[80px] pointer-events-none"
-        data-color="violet"
-      />
-      <motion.div
-        style={{ y: orb2Y }}
-        className="absolute bottom-[8%] right-[8%] w-[560px] h-[560px] rounded-full bg-radial-gradient blur-[80px] pointer-events-none"
-        data-color="pink"
-      />
-
-      {/* Content */}
-      <motion.div
-        style={{ y: textY }}
-        className="relative z-20 max-w-[1400px] mx-auto px-10 text-center"
+      <div
+        ref={ref}
+        style={{ maxWidth: GLOBAL_LAYOUT.maxWidth, margin: '0 auto', position: 'relative', zIndex: 1 }}
       >
-        <motion.div>
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-[#7c5cfc]/10 border border-[#7c5cfc]/20 backdrop-blur-xl mb-10">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#7c5cfc] animate-pulse" />
-            <span className="text-[10px] font-black text-[#7c5cfc] uppercase tracking-[0.3em]">
-              Start Today — It&apos;s Free
-            </span>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, ease: [0.25, 0, 0.25, 1] }}
+        >
+          {/* Card */}
+          <motion.div
+            animate={{
+              boxShadow: [
+                '0 0 0 1px rgba(54,102,255,0.10), 0 8px 40px rgba(0,0,0,0.07)',
+                '0 0 0 1px rgba(54,102,255,0.22), 0 8px 40px rgba(0,0,0,0.07), 0 0 50px rgba(54,102,255,0.07)',
+                '0 0 0 1px rgba(54,102,255,0.10), 0 8px 40px rgba(0,0,0,0.07)',
+              ],
+            }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              position: 'relative',
+              background: '#ffffff',
+              borderRadius: 20,
+              padding: '52px 56px',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 48,
+            }}
+          >
+            {/* ── Decorative background ── */}
 
-          {/* Headline - REDUCED SIZE */}
-          <h2 className="text-4xl md:text-6xl font-light text-white tracking-tight leading-[1.1] mb-2">
-            Transform your
-          </h2>
-          <h2 className="text-4xl md:text-6xl font-light text-white/30 tracking-tight leading-[1.1] mb-10">
-            procurement, today.
-          </h2>
-
-          <p className="text-lg text-white/30 font-light max-w-lg mx-auto leading-relaxed mb-12">
-            Join forward-thinking enterprises eliminating procurement fragmentation with one unified, intelligent platform.
-          </p>
-
-          {/* CTAs - UPDATED BUTTON STYLE */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <MagicButton 
-              label1="Start Free Trial" 
-              label2="Join FactWise" 
-              onClick={() => {}}
+            {/* Grid fade in from top-left */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', inset: 0,
+                backgroundImage:
+                  'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
+                backgroundSize: '44px 44px',
+                maskImage: 'radial-gradient(ellipse 65% 80% at 0% 0%, black, transparent)',
+                WebkitMaskImage: 'radial-gradient(ellipse 65% 80% at 0% 0%, black, transparent)',
+                pointerEvents: 'none',
+              }}
             />
 
-            <button
-              className="group relative flex items-center gap-3 px-8 py-3.5 rounded-[20px] bg-white/[0.03] border border-white/5 text-white/60 text-[14px] font-medium transition-all hover:bg-white/[0.08] hover:border-white/20 hover:text-white"
-            >
-              Schedule a Demo
-              <ArrowRight size={14} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-            </button>
-          </div>
+            {/* Violet glow — top-left corner */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', top: '-30%', left: '-10%',
+                width: 500, height: 400,
+                background: 'radial-gradient(ellipse, rgba(54,102,255,0.13) 0%, transparent 65%)',
+                pointerEvents: 'none',
+              }}
+            />
 
-          <p className="text-[10px] font-mono text-white/10 uppercase tracking-widest mt-16">
-            No credit card required &nbsp;·&nbsp; Free forever plan available &nbsp;·&nbsp; Setup in minutes
-          </p>
+            {/* Mint/teal accent — bottom-right */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', bottom: '-20%', right: '5%',
+                width: 400, height: 340,
+                background: 'radial-gradient(ellipse, rgba(0,184,132,0.10) 0%, rgba(240,251,248,0.6) 50%, transparent 70%)',
+                pointerEvents: 'none',
+              }}
+            />
+
+            {/* Horizontal light streak */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+                background: 'linear-gradient(90deg, transparent 0%, rgba(54,102,255,0.5) 30%, rgba(54,102,255,0.2) 60%, transparent 100%)',
+              }}
+            />
+
+            {/* ── Left — text ── */}
+            <motion.div
+              initial={{ opacity: 0, x: -16 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.55, delay: 0.1, ease: [0.25, 0, 0.25, 1] }}
+              style={{ flex: 1, minWidth: 0, position: 'relative', zIndex: 1 }}
+            >
+              {/* Badge */}
+              <div
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 7,
+                  padding: '5px 14px', borderRadius: 100, marginBottom: 22,
+                  background: 'rgba(54,102,255,0.1)',
+                  border: '1px solid rgba(54,102,255,0.22)',
+                }}
+              >
+                <Sparkles size={10} color="#3666ff" />
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#3666ff', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                  Start Today
+                </span>
+              </div>
+
+              {/* Heading */}
+              <h2
+                style={{
+                  fontSize: 'clamp(24px, 2.6vw, 38px)',
+                  fontWeight: 300,
+                  color: '#000000',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.15,
+                  marginBottom: 12,
+                }}
+              >
+                Transform your operations.{' '}
+                <span style={{ color: '#808080' }}>Today.</span>
+              </h2>
+
+              {/* Sub-text */}
+              <p
+                style={{
+                  fontSize: 13,
+                  color: '#808080',
+                  lineHeight: 1.75,
+                  fontWeight: 400,
+                  maxWidth: 420,
+                  marginBottom: 24,
+                }}
+              >
+                Join enterprises replacing fragmented spreadsheets with one
+                connected, intelligent source-to-pay ecosystem.
+              </p>
+
+              {/* Trust items */}
+              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                {TRUST_ITEMS.map((item, i) => (
+                  <span key={item} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {i > 0 && (
+                      <span style={{ color: 'rgba(0,0,0,0.18)', margin: '0 10px', fontSize: 12 }}>·</span>
+                    )}
+                    <span style={{ fontSize: 11, color: 'rgba(0,0,0,0.4)', fontWeight: 400, letterSpacing: '0.05em' }}>
+                      {item}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Vertical divider */}
+            <div
+              aria-hidden
+              style={{
+                width: 1, alignSelf: 'stretch',
+                background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.08), transparent)',
+                flexShrink: 0,
+              }}
+            />
+
+            {/* ── Right — buttons ── */}
+            <motion.div
+              initial={{ opacity: 0, x: 16 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.55, delay: 0.18, ease: [0.25, 0, 0.25, 1] }}
+              style={{
+                display: 'flex', flexDirection: 'column', gap: 10,
+                alignItems: 'stretch', flexShrink: 0, minWidth: 180,
+                position: 'relative', zIndex: 1,
+              }}
+            >
+              <motion.a
+                href="/contact"
+                whileHover={{ scale: 1.03, boxShadow: '0 0 40px rgba(54,102,255,0.5)' }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '13px 28px', borderRadius: 100,
+                  background: '#3666ff', color: '#fff',
+                  fontSize: 13, fontWeight: 500, letterSpacing: '0.03em',
+                  textDecoration: 'none',
+                  boxShadow: '0 0 28px rgba(54,102,255,0.3)',
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >
+                Book a Demo
+                <ArrowRight size={13} />
+              </motion.a>
+
+              <motion.a
+                href="/contact"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '13px 28px', borderRadius: 100,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  background: 'rgba(0,0,0,0.02)',
+                  color: '#808080', fontSize: 13, fontWeight: 400,
+                  letterSpacing: '0.03em', textDecoration: 'none',
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                  transition: 'color 0.2s, border-color 0.2s, background 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#000000';
+                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)';
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#808080';
+                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)';
+                  e.currentTarget.style.background = 'rgba(0,0,0,0.02)';
+                }}
+              >
+                Talk to Sales
+              </motion.a>
+            </motion.div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-      
-      <style jsx>{`
-        .bg-radial-gradient[data-color="violet"] {
-          background: radial-gradient(circle, rgba(124,92,252,0.1) 0%, transparent 65%);
-        }
-        .bg-radial-gradient[data-color="pink"] {
-          background: radial-gradient(circle, rgba(255,60,172,0.1) 0%, transparent 65%);
-        }
-      `}</style>
+      </div>
     </section>
   );
 }

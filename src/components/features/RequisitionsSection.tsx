@@ -150,7 +150,7 @@ const REQUISITIONS_DATA: FeatureSectionData = {
   title: 'Request-to-order\nsimplified',
   description: 'Empower your team to create requisitions with ease. FactWise automatically validates requests against budgets and preferred supplier lists to ensure compliance from the start.',
   features: [
-    { icon: '🛒', label: 'Intuitive PR creation', desc: 'A consumer-grade shopping experience for enterprise procurement. Search catalogs or add custom items in seconds.' },
+    { icon: '🛒', label: 'Intuitive PR creation', desc: 'A consumer-grade shopping experience for enterprise operations. Search catalogs or add custom items in seconds.' },
     { icon: '📊', label: 'Budget validation', desc: 'Real-time checks against department budgets. Prevent overspending before it even reaches approval.' },
     { icon: '🔄', label: 'One-click conversion', desc: 'Automatically convert approved requisitions into purchase orders and send them to vendors instantly.' },
   ],

@@ -1,12 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Sora } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["300", "400", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "FactWise | Intelligent Procurement Platform",
-  description: "The next-generation procurement platform. Unifying your entire supply chain in one intelligent ecosystem.",
+  title: "FactWise | Strategic Sourcing & Operations Platform",
+  description: "The next-generation source-to-pay platform. Unifying your entire supply chain in one intelligent ecosystem.",
 };
 
 export default function RootLayout({
@@ -15,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${sora.variable}`}>
+      <body className={dmSans.className} suppressHydrationWarning>
         <div className="noise-bg" />
         {children}
       </body>

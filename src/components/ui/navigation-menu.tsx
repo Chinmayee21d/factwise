@@ -35,7 +35,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-foreground/60 transition-colors hover:bg-white/5 hover:text-foreground focus:bg-white/5 focus:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-white/8 data-[state=open]:bg-white/5 data-[state=open]:text-foreground',
+  'group inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium text-foreground/60 transition-colors hover:bg-black/[0.04] hover:text-foreground focus:bg-black/[0.04] focus:text-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-black/[0.06] data-[state=open]:bg-black/[0.04] data-[state=open]:text-foreground',
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -81,7 +81,7 @@ const NavigationMenuViewport = React.forwardRef<
     <NavigationMenuPrimitive.Viewport
       className={cn(
         'origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-xl',
-        'border border-white/8 bg-[#0a0a0c] shadow-2xl shadow-black/60 backdrop-blur-xl',
+        'border border-black/[0.08] bg-white shadow-2xl shadow-black/[0.08] backdrop-blur-xl',
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90',
         'md:w-[var(--radix-navigation-menu-viewport-width)]',
         className,
@@ -105,7 +105,7 @@ const NavigationMenuIndicator = React.forwardRef<
     )}
     {...props}
   >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-white/10 shadow-md" />
+    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-black/[0.07] shadow-md" />
   </NavigationMenuPrimitive.Indicator>
 ));
 NavigationMenuIndicator.displayName = NavigationMenuPrimitive.Indicator.displayName;

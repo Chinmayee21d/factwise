@@ -9,13 +9,9 @@ export function useScroll(threshold: number) {
 	}, [threshold]);
 
 	React.useEffect(() => {
+		onScroll(); // initial check
 		window.addEventListener('scroll', onScroll);
 		return () => window.removeEventListener('scroll', onScroll);
-	}, [onScroll]);
-
-	// also check on first load
-	React.useEffect(() => {
-		onScroll();
 	}, [onScroll]);
 
 	return scrolled;
