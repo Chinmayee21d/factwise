@@ -3,20 +3,26 @@
 import { Header } from '@/components/ui/header-2';
 import Hero from '@/components/Hero';
 import StatsStrip from '@/components/StatsStrip';
-import PainSection from '@/components/PainSection';
 import ProblemSection from '@/components/ProblemSection';
 // import BentoGrid from '@/components/BentoGrid';
 
 // import PersonaSection from '@/components/PersonaSection';
 // import ImpactBento from '@/components/ImpactBento';
 import IntegrationsShowcase from '@/components/IntegrationsShowcase';
-// import IndustryMarquee from '@/components/IndustryMarquee';
+import IndustryMarquee from '@/components/IndustryMarquee';
+import { ExpandingIndustrySection } from '@/components/ExpandingIndustryCards';
+import ParallaxMethodology from '@/components/ParallaxMethodology';
 
 import FAQSection from '@/components/FAQSection';
 import CTASection from '@/components/CTASection';
+import Testimonials from '@/components/testimonials';
+import CaseStudies from '@/components/CaseStudies';
+import ModernCaseStudies from '@/components/ModernCaseStudies';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
 import ProductHubAnimation from '@/components/product copy';
-import ProductFlowShowcase from '@/components/ProductFlowShowcase';
+// import ProductFlowShowcase from '@/components/ProductFlowShowcase';
+import ImplementationRoadmap from '@/components/ImplementationRoadmap';
+import MethodologySection from '@/components/Methodology';
 // import ProcurementJourney from '@/components/ProcurementJourney';
 // import ContractManufacturerFlow from '@/components/ContractManufacturerFlow';
 // import PostAwardExecution from '@/components/PostAwardExecution';
@@ -29,7 +35,7 @@ export default function Home() {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'stretch',
         overflowX: 'clip',
         background: '#FFFFFF',
         maxWidth: '100%',
@@ -47,20 +53,15 @@ export default function Home() {
       {/* 3: Problem Section */}
       <ProblemSection />
 
+      {/* 4: Methodology Section */}
+      <ParallaxMethodology />
+      <MethodologySection/>
       {/* 4: Product Hub Animation */}
       <ProductHubAnimation />
-      <ProductFlowShowcase />
-      {/* 4.5: Overview Bento */}
-      {/* <BentoGrid /> */}
+ 
 
-      {/* 4.6: Operations Journey (7 Steps) */}
-      {/* <ProcurementJourney /> */}
-
-      {/* 4.7: Contract Manufacturer Flow */}
-      {/* <ContractManufacturerFlow /> */}
-
-      {/* 4.8: Post-award Execution Flow */}
-      {/* <PostAwardExecution /> */}
+      {/* 5: Implementation Roadmap */}
+      <ImplementationRoadmap />
 
       {/* 6: Persona Deep Dive */}
       {/* <PersonaSection />  */}
@@ -70,9 +71,16 @@ export default function Home() {
 
       {/* 8 */}
       <IntegrationsShowcase />
-      {/* 9 */}
-      {/*<IndustryMarquee /> */}
+      
+      {/* 9: Testimonials */}
+      <Testimonials />
+
+      {/* 10: Case Studies */}
+      <ModernCaseStudies />
       {/* 10 */}
+      <IndustryMarquee />
+      <ExpandingIndustrySection />
+      
       <FAQSection />
 
       <CTASection />

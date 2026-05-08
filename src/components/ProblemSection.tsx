@@ -15,7 +15,7 @@ const SevereValueLossAnimation = () => {
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      <svg width="280" height="280" viewBox="0 0 280 280" fill="none">
+      <svg width="100%" height="100%" viewBox="0 0 280 280" fill="none" style={{ maxWidth: 280, maxHeight: 280 }}>
         <defs>
           <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="4" result="blur" />
@@ -109,7 +109,7 @@ const SevereValueLossAnimation = () => {
 const InefficiencyAnimation = () => {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      <svg width="280" height="280" viewBox="0 0 280 280" fill="none">
+      <svg width="100%" height="100%" viewBox="0 0 280 280" fill="none" style={{ maxWidth: 280, maxHeight: 280 }}>
         <defs>
           <filter id="glow-yellow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3.5" result="blur" />
@@ -175,7 +175,8 @@ const InefficiencyAnimation = () => {
               key={i}
               r="1"
               fill="#f59e0b"
-              initial={{ cx: 145, cy: 140 }}
+              cx={145}
+              cy={140}
               animate={{
                 cx: [145, targetX],
                 cy: [140, targetY],
@@ -228,7 +229,7 @@ const ZeroVisibilityAnimation = () => {
 
   return (
     <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-      <svg width="280" height="280" viewBox="0 0 280 280" fill="none">
+      <svg width="100%" height="100%" viewBox="0 0 280 280" fill="none" style={{ maxWidth: 280, maxHeight: 280 }}>
         <defs>
           <filter id="glow-cyan-spot" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="5" result="blur" />
@@ -350,7 +351,8 @@ export default function ProblemSection() {
         paddingTop: '96px',
         paddingBottom: '96px',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        scrollMarginTop: '100px'
       }}
     >
       {/* Subtle background bloom */}
@@ -369,41 +371,42 @@ export default function ProblemSection() {
       <div style={{ ...GLOBAL_LAYOUT.containerStyle, paddingLeft: '80px', paddingRight: '80px' }}>
 
         {/* Heading */}
-        <div style={{ maxWidth: '1000px', marginBottom: '56px' }}>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            style={{
-              fontFamily: 'var(--font-inter)',
-              fontSize: '11px',
-              fontWeight: 600,
-              color: '#4A6FFF',
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              marginBottom: '24px',
-            }}
-          >
-            The Problem
-          </motion.div>
+        <div style={{ textAlign: 'left', marginBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', maxWidth: '1000px' }}>
+          <div className="section-badge" style={{ marginBottom: 0, fontWeight: 500, letterSpacing: '0.05em' }}>The Problem</div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(28px, 4vw, 44px)',
+              fontFamily: 'var(--font-display), sans-serif',
+              fontSize: 'clamp(32px, 5vw, 54px)',
               fontWeight: 700,
-              letterSpacing: '-0.03em',
+              letterSpacing: '-0.02em',
               color: '#1A1D2E',
               margin: 0,
-              lineHeight: 1.1
+              lineHeight: 1.15
             }}
           >
-            Disconnected operations leads to <br />
-            <span style={{ color: '#7B82A8', fontWeight: 400 }}>massive value leakage.</span>
+            The Gaps Are Costing You <span style={{ color: '#4A6FFF' }}>More Than You Know</span>
           </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            style={{
+              fontFamily: 'var(--font-inter), sans-serif',
+              fontSize: '18px',
+              fontWeight: 500,
+              color: '#7B82A8',
+              margin: 0,
+              lineHeight: 1.6,
+              maxWidth: '720px'
+            }}
+          >
+            From value leakage to operational drag to zero oversight — the cracks in your process are bigger than they look.
+          </motion.p>
         </div>
 
         {/* Problems Grid */}
@@ -419,33 +422,15 @@ export default function ProblemSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -4, transition: { duration: 0.22, ease: 'easeOut' } }}
-              style={{
-                background: '#FFFFFF',
-                border: '1.5px solid #E2E5F0',
-                borderRadius: '20px',
-                padding: '36px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '28px',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'box-shadow 220ms ease',
-              }}
+              className="group relative w-full h-[400px] bg-white border border-[#E2E5F0] rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
             >
-              {/* Visual Area */}
-              <div style={{
-                height: '240px',
-                background: '#F4F5FB',
-                borderRadius: '14px',
-                border: '1px solid rgba(74,111,255,0.08)',
-                position: 'relative'
-              }}>
+              {/* Visual Area (Full height initially, half height on hover) */}
+              <div className="relative w-full h-full transition-all duration-500 group-hover:h-1/2 bg-white flex items-center justify-center">
                 <prob.Animation />
               </div>
 
-              {/* Content */}
-              <div>
+              {/* Content Area (Hidden below initially, slides up on hover) */}
+              <div className="absolute left-0 w-full h-1/2 px-8 transition-all duration-500 flex flex-col justify-center bg-white/95 backdrop-blur-sm opacity-0 group-hover:opacity-100 top-full group-hover:top-1/2">
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -476,88 +461,45 @@ export default function ProblemSection() {
                   fontWeight: 700,
                   letterSpacing: '-0.02em',
                   color: '#1A1D2E',
-                  marginBottom: '14px',
+                  marginBottom: '10px',
                   lineHeight: 1.2,
                 }}>
                   {prob.title}
                 </h3>
                 <p style={{
                   fontFamily: 'var(--font-inter)',
-                  fontSize: '15px',
+                  fontSize: '14px',
                   fontWeight: 400,
                   color: '#7B82A8',
-                  lineHeight: 1.65,
+                  lineHeight: 1.6,
                 }}>
                   {prob.description}
                 </p>
+                <button
+                  className="absolute bottom-6 right-6 border border-gray-200 hover:-rotate-45 transition-all duration-500 rounded-full flex items-center justify-center size-8 text-[#4A6FFF] hover:bg-[#4A6FFF] hover:text-white"
+                >
+                  <ArrowRight size={14} />
+                </button>
               </div>
 
-              {/* Subtle corner glow */}
+              {/* Textured blue gradient corner */}
               <div style={{
                 position: 'absolute',
                 top: 0,
                 right: 0,
-                width: '120px',
-                height: '120px',
-                background: `radial-gradient(circle at top right, ${prob.accent}12, transparent 70%)`,
+                width: '250px',
+                height: '250px',
+                background: `radial-gradient(circle at top right, rgba(74, 111, 255, 0.15), transparent 70%), url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")`,
+                backgroundBlendMode: 'multiply',
                 pointerEvents: 'none',
+                maskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
+                WebkitMaskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
               }} />
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          style={{
-            marginTop: '80px',
-            textAlign: 'center',
-            padding: '40px',
-            border: '1.5px dashed rgba(74,111,255,0.18)',
-            borderRadius: '20px',
-            background: '#F4F5FB',
-          }}
-        >
-          <p style={{
-            fontFamily: 'var(--font-inter)',
-            color: '#7B82A8',
-            fontSize: '16px',
-            fontWeight: 400,
-            marginBottom: '24px',
-          }}>
-            FactWise bridges these gaps by centralizing every operational touchpoint.
-          </p>
-          <button style={{
-            fontFamily: 'var(--font-inter)',
-            background: '#4A6FFF',
-            color: 'white',
-            padding: '12px 32px',
-            borderRadius: '100px',
-            fontWeight: 600,
-            fontSize: '14px',
-            letterSpacing: '0.01em',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            border: 'none',
-            transition: 'transform 180ms ease-out, box-shadow 180ms ease-out',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.02)';
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 24px rgba(74,111,255,0.30)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-          }}
-          >
-            Explore the Platform <ArrowRight size={16} />
-          </button>
-        </motion.div>
-      </div>
-    </section>
+        </div>
+      </section>
   );
 }

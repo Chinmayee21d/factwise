@@ -16,7 +16,7 @@ const STATS = [
     sub: 'Audit-ready spend and quality data',
   },
   {
-    value: '10 Modules',
+    value: '20+ Modules',
     label: 'Integrated Suite',
     sub: 'From Requisitions to Payments',
   },
@@ -57,8 +57,8 @@ export default function StatsStrip() {
               color: '#7B82A8',
             }}
           >
-            Beyond simple procurement. FactWise unifies strategic sourcing, 
-            supply chain operations, and quality management into one 
+            Beyond simple procurement. FactWise unifies strategic sourcing,
+            supply chain operations, and quality management into one
             connected, intelligent ecosystem.
           </p>
         </motion.div>

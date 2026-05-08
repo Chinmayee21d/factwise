@@ -3,250 +3,276 @@
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { GLOBAL_LAYOUT } from './LayoutConfig';
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Clock, ArrowRight } from "lucide-react";
 
+interface IndustryData {
+    id: string | number;
+    title: string;
+    description: string;
+    category: string;
+    image: string;
+    specialist: {
+        name: string;
+        avatar: string;
+    };
+    date: string;
+    readTime: string;
+}
 
-const industriesRow1 = [
-  { label: 'Automotive', category: 'Manufacturing', image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Pharmaceuticals', category: 'Health & Science', image: 'https://images.unsplash.com/photo-1563213126-a4273aed2016?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Fashion & Apparel', category: 'Retail & Consumer', image: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Construction Materials', category: 'Infrastructure', image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Electronics', category: 'Technology', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop' },
+const industriesRow1: IndustryData[] = [
+    {
+        id: 1,
+        title: "Automotive Manufacturing",
+        description: "Optimizing multi-tier supply chains and managing complex BOMs for global EV production and component sourcing.",
+        category: "Manufacturing",
+        image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "David Miller", avatar: "https://i.pravatar.cc/150?u=1" },
+        date: "May 2024",
+        readTime: "6 min"
+    },
+    {
+        id: 2,
+        title: "Pharmaceuticals",
+        description: "Ensuring 100% compliance and cold-chain transparency for life-critical drug manufacturing and distribution.",
+        category: "Health & Science",
+        image: "https://images.unsplash.com/photo-1563213126-a4273aed2016?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Sarah Chen", avatar: "https://i.pravatar.cc/150?u=2" },
+        date: "Apr 2024",
+        readTime: "5 min"
+    },
+    {
+        id: 3,
+        title: "Fashion & Apparel",
+        description: "Accelerating go-to-market cycles with automated vendor collaboration and sustainable material sourcing.",
+        category: "Retail",
+        image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Elena Rossi", avatar: "https://i.pravatar.cc/150?u=3" },
+        date: "Jun 2024",
+        readTime: "4 min"
+    },
+    {
+        id: 4,
+        title: "Construction Materials",
+        description: "Managing heavy logistics and commodity-linked pricing for large-scale infrastructure projects.",
+        category: "Infrastructure",
+        image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Marc Thompson", avatar: "https://i.pravatar.cc/150?u=4" },
+        date: "May 2024",
+        readTime: "7 min"
+    },
+    {
+        id: 5,
+        title: "Electronics",
+        description: "High-speed sourcing for rapidly evolving component markets and semiconductor shortages.",
+        category: "Technology",
+        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Alex Wong", avatar: "https://i.pravatar.cc/150?u=5" },
+        date: "Jul 2024",
+        readTime: "5 min"
+    },
 ];
 
-const industriesRow2 = [
-  { label: 'Food & Beverage', category: 'Consumer Goods', image: 'https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Industrial Machinery', category: 'Heavy Industry', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Industrial Automation', category: 'Technology', image: 'https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Logistics & Supply', category: 'Operations', image: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=1000&auto=format&fit=crop' },
-  { label: 'Healthcare', category: 'Medical', image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=1000&auto=format&fit=crop' },
+const industriesRow2: IndustryData[] = [
+    {
+        id: 6,
+        title: "Food & Beverage",
+        description: "Maintaining freshness and quality through strict batch-level tracking and rapid RFQ cycles.",
+        category: "Consumer Goods",
+        image: "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "John Baker", avatar: "https://i.pravatar.cc/150?u=6" },
+        date: "Jun 2024",
+        readTime: "4 min"
+    },
+    {
+        id: 7,
+        title: "Industrial Machinery",
+        description: "Coordinating procurement for complex capital equipment with thousands of unique parts.",
+        category: "Heavy Industry",
+        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Hans Weber", avatar: "https://i.pravatar.cc/150?u=7" },
+        date: "Apr 2024",
+        readTime: "8 min"
+    },
+    {
+        id: 8,
+        title: "Industrial Automation",
+        description: "Sourcing for the next generation of smart factories and IoT-enabled production lines.",
+        category: "Technology",
+        image: "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Lisa Park", avatar: "https://i.pravatar.cc/150?u=8" },
+        date: "May 2024",
+        readTime: "6 min"
+    },
+    {
+        id: 9,
+        title: "Logistics & Supply",
+        description: "Optimizing 3PL partnerships and last-mile delivery networks with real-time analytics.",
+        category: "Operations",
+        image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Tom Cruise", avatar: "https://i.pravatar.cc/150?u=9" },
+        date: "Jun 2024",
+        readTime: "5 min"
+    },
+    {
+        id: 10,
+        title: "Healthcare",
+        description: "Strategic sourcing for hospital systems and medical equipment manufacturers.",
+        category: "Medical",
+        image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=1000&auto=format&fit=crop",
+        specialist: { name: "Dr. Jane Smith", avatar: "https://i.pravatar.cc/150?u=10" },
+        date: "May 2024",
+        readTime: "6 min"
+    },
 ];
 
 export default function IndustryMarquee() {
-  const [viewMode, setViewMode] = useState<'marquee' | 'grid'>('marquee');
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  });
+    const [isPaused, setIsPaused] = useState(false);
+    const sectionRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ['start end', 'end start'],
+    });
 
-  const orb1Y    = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const orb2Y    = useTransform(scrollYProgress, [0, 1], [70,  -70]);
-  const headingY = useTransform(scrollYProgress, [0, 1], [50,  -20]);
+    const headingY = useTransform(scrollYProgress, [0, 1], [50, -20]);
 
-  return (
-    <section
-      ref={sectionRef}
-      style={{
-        position: 'relative',
-        width: '100%',
-        padding: '80px 0',
-        overflow: 'hidden',
-        background: '#0a0a0c',
-        borderTop:    '1px solid rgba(255,255,255,0.04)',
-        borderBottom: '1px solid rgba(255,255,255,0.04)',
-      }}
-    >
-      {/* Parallax bokeh orbs */}
-      <motion.div
-        style={{
-          y: orb1Y,
-          position: 'absolute',
-          top: '15%',
-          left: '-8%',
-          width: 640,
-          height: 640,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124,92,252,0.09) 0%, transparent 70%)',
-          filter: 'blur(90px)',
-          pointerEvents: 'none',
-        }}
-      />
-      <motion.div
-        style={{
-          y: orb2Y,
-          position: 'absolute',
-          top: '5%',
-          right: '-6%',
-          width: 540,
-          height: 540,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(54,102,255,0.08) 0%, transparent 70%)',
-          filter: 'blur(90px)',
-          pointerEvents: 'none',
-        }}
-      />
+    return (
+        <section
+            ref={sectionRef}
+            className="relative w-full py-24 overflow-hidden bg-white border-y border-slate-50"
+        >
+            {/* Background Accents */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-slate-50/50 via-transparent to-transparent pointer-events-none" />
 
-      {/* Left/right edge fades */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(90deg, #0a0a0c 0%, transparent 10%, transparent 90%, #0a0a0c 100%)',
-          zIndex: 10,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Section heading */}
-      <motion.div
-        style={{ y: headingY, position: 'relative', zIndex: 20, textAlign: 'center', marginBottom: 40, padding: '0 40px' }}
-      >
-        <motion.div>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '7px 16px',
-              borderRadius: 100,
-              background: 'rgba(124,92,252,0.1)',
-              border: '1px solid rgba(124,92,252,0.2)',
-              marginBottom: 24,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 11,
-                fontWeight: 500,
-                color: '#7c5cfc',
-                textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-              }}
+            {/* Section heading */}
+            <motion.div
+                style={{ y: headingY, position: 'relative', zIndex: 20, textAlign: 'center', marginBottom: 60, padding: '0 40px' }}
             >
-              Industries We Serve
-            </span>
-          </div>
-          <h2
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: 'clamp(26px,4vw,44px)',
-              fontWeight: 300,
-              letterSpacing: '-0.02em',
-              color: '#f4f4f5',
-              lineHeight: 1.2,
-              marginBottom: 14,
-            }}
-          >
-            Built for every industry.
-          </h2>
-          <p
-            style={{ fontSize: 16, color: '#6b6b7a', maxWidth: 420, margin: '0 auto', lineHeight: 1.6, fontWeight: 400 }}
-          >
-            From automotive to pharma, FactWise adapts to your sector&apos;s unique sourcing complexity.
-          </p>
+                <div style={{ textAlign: 'center', marginBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <div className="section-badge" style={{ marginBottom: 0, fontWeight: 500, letterSpacing: '0.05em' }}>Industries We Serve</div>
+                    <h2
+                        style={{
+                            fontFamily: 'var(--font-display), sans-serif',
+                            fontSize: 'clamp(32px, 5vw, 54px)',
+                            fontWeight: 700,
+                            letterSpacing: '-0.02em',
+                            color: '#1A1D2E',
+                            margin: 0,
+                            lineHeight: 1.15
+                        }}
+                    >
+                        Built for <span style={{ color: '#4A6FFF' }}>every industry.</span>
+                    </h2>
+                    <p
+                        style={{
+                            fontFamily: 'var(--font-inter), sans-serif',
+                            fontSize: '18px',
+                            fontWeight: 500,
+                            color: '#7B82A8',
+                            margin: 0,
+                            lineHeight: 1.6,
+                            maxWidth: '720px'
+                        }}
+                    >
+                        From automotive to pharma, FactWise adapts to your sector&apos;s unique sourcing complexity.
+                    </p>
+                </div>
+            </motion.div>
 
-          {/* View Mode Toggle */}
-          <div className="flex items-center justify-center mt-10">
-            <div className="p-1 bg-white/5 border border-white/10 rounded-full flex gap-1 shadow-2xl">
-              <button 
-                onClick={() => setViewMode('marquee')}
-                className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-widest transition-all duration-300 ${viewMode === 'marquee' ? 'bg-[#7c5cfc] text-white shadow-[0_0_20px_rgba(124,92,252,0.4)]' : 'text-white/40 hover:text-white'}`}
-              >
-                MARQUEE
-              </button>
-              <button 
-                onClick={() => setViewMode('grid')}
-                className={`px-6 py-2 rounded-full text-[10px] font-bold tracking-widest transition-all duration-300 ${viewMode === 'grid' ? 'bg-[#7c5cfc] text-white shadow-[0_0_20px_rgba(124,92,252,0.4)]' : 'text-white/40 hover:text-white'}`}
-              >
-                GRID
-              </button>
+            <div className="relative min-h-[500px] mt-10">
+                <div className="flex flex-col gap-12">
+                    {/* Row 1 — left → right */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: 'max-content',
+                            animation: 'marquee-fw 60s linear infinite',
+                            animationPlayState: isPaused ? 'paused' : 'running',
+                        }}
+                    >
+                        {[0, 1, 2].flatMap((copy) => industriesRow1.map((ind) => ({ ...ind, _id: `r1-${copy}-${ind.id}` }))).map((ind) => (
+                            <IndustryCard
+                                key={ind._id}
+                                ind={ind}
+                                isMarquee
+                                onHover={setIsPaused}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Row 2 — right → left */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: 'max-content',
+                            animation: 'marquee-fw-reverse 70s linear infinite',
+                            animationPlayState: isPaused ? 'paused' : 'running',
+                        }}
+                    >
+                        {[0, 1, 2].flatMap((copy) => industriesRow2.map((ind) => ({ ...ind, _id: `r2-${copy}-${ind.id}` }))).map((ind) => (
+                            <IndustryCard
+                                key={ind._id}
+                                ind={ind}
+                                isMarquee
+                                onHover={setIsPaused}
+                            />
+                        ))}
+                    </div>
+                </div>
             </div>
-          </div>
-        </motion.div>
-      </motion.div>
-
-      <div className="relative min-h-[500px]" style={{ marginTop: 40 }}>
-        <AnimatePresence mode="wait">
-          {viewMode === 'marquee' ? (
-            <motion.div
-              key="marquee"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="group/marquee flex flex-col gap-8"
-            >
-              {/* Row 1 — left → right */}
-              <div
-                className="group-hover/marquee:[animation-play-state:paused] transition-opacity duration-500 group-hover/marquee:opacity-50 hover:!opacity-100"
-                style={{
-                  display: 'flex',
-                  width: 'max-content',
-                  animation: 'marquee-fw 40s linear infinite',
-                }}
-              >
-                {[0, 1, 2].flatMap((copy) => industriesRow1.map((ind) => ({ ...ind, _key: `r1-${copy}-${ind.label}` }))).map((ind) => (
-                  <IndustryCard key={ind._key} ind={ind} isMarquee />
-                ))}
-              </div>
-
-              {/* Row 2 — right → left */}
-              <div
-                className="group-hover/marquee:[animation-play-state:paused] transition-opacity duration-500 group-hover/marquee:opacity-50 hover:!opacity-100"
-                style={{
-                  display: 'flex',
-                  width: 'max-content',
-                  animation: 'marquee-fw-reverse 50s linear infinite',
-                }}
-              >
-                {[0, 1, 2].flatMap((copy) => industriesRow2.map((ind) => ({ ...ind, _key: `r2-${copy}-${ind.label}` }))).map((ind) => (
-                  <IndustryCard key={ind._key} ind={ind} isMarquee />
-                ))}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="grid"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            style={{ maxWidth: GLOBAL_LAYOUT.maxWidth, margin: '0 auto', paddingLeft: GLOBAL_LAYOUT.paddingX, paddingRight: GLOBAL_LAYOUT.paddingX }}
-            className="flex flex-col gap-10"
-          >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                {industriesRow1.map((ind) => (
-                  <IndustryCard key={ind.label} ind={ind} />
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                {industriesRow2.map((ind) => (
-                  <IndustryCard key={ind.label} ind={ind} />
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
 
-type Industry = {
-  label: string;
-  category: string;
-  image: string;
-  _key?: string;
-};
+function IndustryCard({ ind, isMarquee = false, onHover }: { ind: IndustryData, isMarquee?: boolean, onHover?: (val: boolean) => void }) {
+    return (
+        <motion.div
+            className={isMarquee ? "w-[400px] shrink-0 mx-6" : "w-full"}
+            onMouseEnter={() => onHover?.(true)}
+            onMouseLeave={() => onHover?.(false)}
+        >
+            <div className="group relative h-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-500 hover:border-blue-500 hover:shadow-[0_15px_40px_rgba(74,111,255,0.1)]">
+                {/* Image Section (Initially Full) */}
+                <div className="absolute inset-0 z-0 transition-all duration-700 group-hover:h-24">
+                    <img
+                        src={ind.image}
+                        alt={ind.title}
+                        className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0" />
+                </div>
 
-function IndustryCard({ ind, isMarquee = false }: { ind: Industry, isMarquee?: boolean }) {
-  return (
-    <div
-      className={`group flex flex-col gap-4 cursor-pointer transition-all duration-500 hover:scale-[1.02] ${isMarquee ? 'w-[280px] md:w-[320px] shrink-0 mx-4' : ''}`}
-    >
-      <div className="w-full aspect-[4/3] rounded-[24px] overflow-hidden bg-[#111116] border border-white/5 relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img 
-          src={ind.image} 
-          alt={ind.label}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-        />
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors duration-500" />
-      </div>
-      <div className="flex flex-col px-1">
-        <span className="text-[16px] font-medium text-[#f4f4f5] tracking-tight mb-1">{ind.label}</span>
-        <span className="text-[13px] text-[#6b6b7a]">{ind.category}</span>
-      </div>
-    </div>
-  );
+                {/* Floating Title (Initially Visible at Bottom) */}
+                <div className="absolute bottom-6 left-6 right-6 z-10 transition-all duration-700 group-hover:opacity-0 group-hover:translate-y-10">
+                    <Badge className="bg-blue-600 border-none text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full mb-2">
+                        {ind.category}
+                    </Badge>
+                    <h3 className="text-xl font-bold text-white leading-tight tracking-tight">
+                        {ind.title}
+                    </h3>
+                </div>
+
+                {/* Detail Panel (Revealed on Hover - Slides from Bottom) */}
+                <div className="absolute inset-x-0 bottom-0 z-20 bg-white p-6 translate-y-full transition-transform duration-500 ease-out group-hover:translate-y-0 h-[calc(100%-6rem)] border-t border-slate-50 flex flex-col justify-start">
+                    <div className="flex items-center justify-between mb-3">
+                        <Badge className="bg-blue-50 text-blue-600 border-blue-100 text-[9px] font-bold px-2.5 py-0.5 rounded-full">
+                            {ind.category}
+                        </Badge>
+                        <div className="flex items-center gap-1.5 text-slate-400">
+                            <Clock className="size-3" />
+                            <span className="text-[9px] font-bold uppercase tracking-tight">{ind.readTime}</span>
+                        </div>
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-1.5 leading-tight">
+                        {ind.title}
+                    </h3>
+                    <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-3">
+                        {ind.description}
+                    </p>
+                </div>
+            </div>
+        </motion.div>
+    );
 }

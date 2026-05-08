@@ -27,38 +27,27 @@ export default function SectionHeader({
       flexDirection: 'column',
       alignItems: isCenter ? 'center' : 'flex-start'
     }}>
-      {/* Label and Pulse */}
+      {/* Label/Eyebrow Badge */}
       <motion.div
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 24 }}
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="section-badge"
       >
-        <div style={{
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: accentColor,
-          boxShadow: `0 0 10px ${accentColor}`,
-        }} />
-        <span style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: accentColor,
-          textTransform: 'uppercase',
-          letterSpacing: '0.2em'
-        }}>
-          {label}
-        </span>
+        {label}
       </motion.div>
 
 
       {/* Title */}
       <motion.h2
         style={{
-          fontSize: 'clamp(32px, 5vw, 52px)',
-          fontWeight: 300,
-          letterSpacing: '-0.025em',
-          color: '#000000',
-          lineHeight: 1.08,
-          marginBottom: 16,
+          fontFamily: 'var(--font-display), sans-serif',
+          fontSize: 'clamp(32px, 5vw, 54px)',
+          fontWeight: 700,
+          letterSpacing: '-0.02em',
+          color: '#1A1D2E',
+          lineHeight: 1.15,
+          margin: '0 0 16px 0',
           maxWidth: 800,
         }}
       >
@@ -69,11 +58,13 @@ export default function SectionHeader({
       {description && (
         <motion.p
           style={{
-            fontSize: 16,
-            color: '#808080',
-            maxWidth: 540,
+            fontFamily: 'var(--font-inter), sans-serif',
+            fontSize: '18px',
+            fontWeight: 500,
+            color: '#7B82A8',
+            maxWidth: 720,
             lineHeight: 1.6,
-            fontWeight: 400
+            margin: 0
           }}
         >
           {description}

@@ -1,26 +1,47 @@
 'use client'
 import { useEffect } from 'react'
 
-const HTML = `<div id="product-hub-animation" style="background:#ffffff;color:#000;font-family:'Geist',sans-serif;padding:100px 0;overflow:hidden">
-  <div style="max-width:1400px;margin:0 auto;padding:0 40px">
-    <div style="margin-bottom:64px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <div style="width:24px;height:1px;background:#3666ff"></div>
-        <span style="text-transform:uppercase;letter-spacing:2.5px;font-size:11px;font-weight:700;color:#3666ff">AI First Flow</span>
-      </div>
-      <h2 style="font-size:clamp(32px,5vw,48px);font-weight:800;margin-bottom:20px;line-height:1.1;letter-spacing:-0.03em">One Platform. <span style="color:#666">Every Workflow.</span></h2>
-      <p style="color:#888;max-width:650px;font-size:19px;line-height:1.6">Experience high-fidelity automation across every procurement journey. From the first request to the final payment.</p>
+const HTML = `<div id="product-hub-animation" style="background:#ffffff;color:#1A1D2E;font-family:'Inter',sans-serif;padding:100px 0 80px;overflow:hidden;scroll-margin-top:100px">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:60px;display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div class="section-badge" style="margin-bottom:0;font-weight:500;letter-spacing:0.05em">AI-Powered Workflows</div>
+      <h2 style="font-size:clamp(32px,5vw,54px);font-weight:700;margin:0;line-height:1.15;letter-spacing:-0.02em;color:#1A1D2E;font-family:var(--font-display), sans-serif">
+        One Platform. <span style="color:#4A6FFF">Every Workflow.</span>
+      </h2>
+      <p style="color:#7B82A8;max-width:720px;font-size:18px;line-height:1.6;font-weight:500;margin:0;font-family:var(--font-inter), sans-serif">
+        Experience high-fidelity automation across every procurement journey. From the first request to the final payment, FactWise handles the complexity.
+      </p>
     </div>
-    <div style="display:flex;gap:16px;margin-bottom:48px;flex-wrap:wrap;justify-content:center">
+    <div style="display:flex;gap:12px;margin-bottom:48px;flex-wrap:wrap;justify-content:center">
       <button class="ftab active" data-flow="p2q">Quote to Order</button>
       <button class="ftab" data-flow="r2po">Requisition to PO</button>
       <button class="ftab" data-flow="i2p">Invoice to Pay</button>
     </div>
-    <div id="phub-root" style="min-height:520px;border-radius:20px;overflow:hidden"></div>
+    <div id="phub-root" style="min-height:540px;background:transparent;overflow:hidden"></div>
   </div>
   <style>
-    .ftab{background:transparent;border:1px solid rgba(0,0,0,0.1);color:#888;padding:12px 28px;border-radius:14px;cursor:pointer;font-weight:700;font-size:14px;font-family:'Geist',sans-serif;transition:all 0.4s}
-    .ftab.active{border-color:#3666ff;color:#000;background:rgba(54,102,255,0.08);box-shadow:0 4px 20px rgba(54,102,255,0.2)}
+    .ftab {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      padding: 10px 24px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-weight: 300;
+      font-size: 13px;
+      font-family:'Inter',sans-serif;
+      transition: all 0.3s ease;
+    }
+    .ftab:hover {
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+    .ftab.active {
+      border-color: #4A6FFF;
+      color: #ffffff;
+      background: #4A6FFF;
+      box-shadow: 0 4px 12px rgba(74, 111, 255, 0.25);
+    }
     @keyframes bulletAppear{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
   </style>
 </div>`
@@ -49,16 +70,15 @@ function clamp(v,a,b){return v<a?a:v>b?b:v;}
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function sparkle(size){
-  var s=size||20;
-  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none"><path d="M12 2L13.8 10.2L22 12L13.8 13.8L12 22L10.2 13.8L2 12L10.2 10.2Z" fill="#F5B731"/></svg>';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#4A6FFF"/></svg>';
 }
 function arrowUp(color){
   return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>';
 }
 
 function userBubble(prompt){
-  return '<div style="max-width:340px;background:#e8e7e3;border-radius:18px 18px 4px 18px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.08)">'+
-    '<p style="margin:0;color:#1a1a1a;font-size:14px;line-height:1.65;font-weight:500">'+escHtml(prompt)+'</p>'+
+  return '<div style="max-width:340px;background:#E6EEFF;border-radius:18px 18px 4px 18px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.08)">'+
+    '<p style="margin:0;color:#1A1D2E;font-size:14px;line-height:1.65;font-weight:400;font-family:var(--font-inter), sans-serif">'+escHtml(prompt)+'</p>'+
   '</div>';
 }
 
@@ -87,8 +107,8 @@ function aiTypingRow(procMs,flowColor,opacity){
 function renderChat(ms,flowKey,flowColor){
   var PROMPT=PROMPTS[flowKey]||'';
   var BG='#ffffff';
-  var BAR_BG='#eef2f7';
-  var BAR_BORDER='rgba(0,0,0,0.08)';
+  var BAR_BG='#ffffff';
+  var BAR_BORDER='rgba(0,0,0,0.12)';
 
   /* 1 – Blob */
   if(ms<CP.BLOB_END){
@@ -134,7 +154,7 @@ function renderChat(ms,flowKey,flowColor){
     return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
-        '<span style="flex:1;color:rgba(0,0,0,0.85);font-size:14px;white-space:nowrap;overflow:hidden">'+escHtml(txt)+cur+'</span>'+
+        '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(txt)+cur+'</span>'+
         '<div style="width:40px;height:40px;border-radius:50%;background:'+btnBg+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'+arrowUp('#fff')+'</div>'+
       '</div>'+
     '</div>';
@@ -147,7 +167,7 @@ function renderChat(ms,flowKey,flowColor){
     return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
-        '<span style="flex:1;color:rgba(0,0,0,0.85);font-size:14px;white-space:nowrap;overflow:hidden">'+escHtml(PROMPT)+pauseCur+'</span>'+
+        '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(PROMPT)+pauseCur+'</span>'+
         '<div style="width:40px;height:40px;border-radius:50%;background:'+flowColor+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'+arrowUp('#fff')+'</div>'+
       '</div>'+
     '</div>';
@@ -167,7 +187,7 @@ function renderChat(ms,flowKey,flowColor){
     return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+borderGlow+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
-        '<span style="flex:1;color:rgba(0,0,0,0.85);font-size:14px;white-space:nowrap;overflow:hidden">'+escHtml(PROMPT)+'</span>'+
+        '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(PROMPT)+'</span>'+
         '<div style="width:40px;height:40px;border-radius:50%;background:'+flowColor+';flex-shrink:0;display:flex;align-items:center;justify-content:center;transform:scale('+btnSc+')">'+arrowUp('#fff')+'</div>'+
       '</div>'+
     '</div>';
@@ -186,7 +206,7 @@ function renderChat(ms,flowKey,flowColor){
       '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">'+
         '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08);opacity:'+barOp+';transform:scale('+barSc+')">'+
           sparkle(20)+
-          '<span style="flex:1;color:rgba(0,0,0,0.85);font-size:14px;white-space:nowrap;overflow:hidden">'+escHtml(PROMPT)+'</span>'+
+          '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(PROMPT)+'</span>'+
           '<div style="width:40px;height:40px;border-radius:50%;background:'+flowColor+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'+arrowUp('#fff')+'</div>'+
         '</div>'+
       '</div>'+
@@ -221,7 +241,7 @@ function renderChat(ms,flowKey,flowColor){
 }
 
 /* ── Flow data ── */
-var C={p2q:'#3666ff',r2po:'#4b8bff',i2p:'#10b981'};
+var C={p2q:'#3666ff',r2po:'#4b8bff',i2p:'#3666ff'};
 var FLOWS={
   p2q:{title:'Quote to Order',color:C.p2q,
     desc:'From project scoping to final quote — streamline your entire quoting lifecycle with structured RFQs and intelligent bid evaluation.',
@@ -270,10 +290,9 @@ function tkLg(){return '<svg width="10" height="10" viewBox="0 0 12 10" fill="no
 
 function chip(name,iconKey,done,dimmed,color){
   var ic=ICO[iconKey](done?'#18B87A':color);
-  return '<div style="background:#ffffff;border-radius:12px;border:1.5px solid '+(done?'rgba(24,184,122,0.3)':'rgba(0,0,0,0.06)')+';padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;min-height:120px;box-sizing:border-box;opacity:'+(dimmed?0.25:1)+'">'+
+  return '<div style="background:#ffffff;border-radius:12px;border:1.5px solid '+(done?'rgba(24,184,122,0.3)':'rgba(0,0,0,0.06)')+';padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;min-height:120px;box-sizing:border-box;opacity:'+(dimmed?0.65:1)+'">'+
     '<div style="width:32px;height:32px;border-radius:8px;flex-shrink:0;background:'+(done?'rgba(24,184,122,0.12)':'rgba(0,0,0,0.04)')+';display:flex;align-items:center;justify-content:center">'+ic+'</div>'+
-    '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:'+(done?'#18B87A':'#EEF2FF')+'">'+name+'</div><div style="font-size:9px;color:#808080;margin-top:2px">'+(done?'Complete':'Pending')+'</div></div>'+
-    (done?'<div style="width:16px;height:16px;border-radius:50%;background:#18B87A;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+tk()+'</div>':'')+
+    '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:'+(done?'#18B87A':'#1A1D2E')+'">'+name+'</div><div style="font-size:9px;color:#808080;margin-top:2px">'+(done?'Complete':'Pending')+'</div></div>'+
   '</div>';
 }
 
@@ -283,7 +302,7 @@ function cardOpen(name,iconKey,color,bulletText){
     '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,'+color+','+color+'77);border-radius:12px 12px 0 0"></div>'+
     '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">'+
       '<div style="width:32px;height:32px;border-radius:8px;flex-shrink:0;background:'+color+'1a;border:1px solid '+color+'44;display:flex;align-items:center;justify-content:center">'+ic+'</div>'+
-      '<div><div style="font-size:12px;font-weight:700;color:#000000">'+name+'</div><div style="font-size:9px;color:'+color+';margin-top:2px">Processing</div></div>'+
+      '<div><div style="font-size:12px;font-weight:500;color:#1A1D2E">'+name+'</div><div style="font-size:9px;color:'+color+';margin-top:2px">Processing</div></div>'+
     '</div>'+
     '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:'+color+'08;border:1px solid '+color+'18;border-radius:8px">'+
       '<div style="width:13px;height:13px;border-radius:50%;flex-shrink:0;background:'+color+';display:flex;align-items:center;justify-content:center;margin-top:1px">'+tk()+'</div>'+
@@ -301,12 +320,12 @@ function buildInfoCard(flow,visibleCount){
     bulletsHtml+=
       '<div style="display:flex;align-items:center;gap:14px;padding:12px 0;'+(b<count-1?'border-bottom:1px solid rgba(0,0,0,0.06);':'')+animStyle+'">'+
         '<div style="width:24px;height:24px;border-radius:50%;background:#18B87A;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+tkLg()+'</div>'+
-        '<span style="font-size:14px;font-weight:600;color:rgba(0,0,0,0.92);line-height:1.4">'+flow.bullets[b]+'</span>'+
+        '<span style="font-size:14px;font-weight:400;color:rgba(0,0,0,0.7);line-height:1.4">'+flow.bullets[b]+'</span>'+
       '</div>';
   }
   return '<div>'+
     '<div style="margin-bottom:14px"><span style="text-transform:uppercase;letter-spacing:2.5px;font-size:10px;font-weight:700;color:'+flow.color+'"></span></div>'+
-    '<h3 style="font-size:28px;font-weight:800;color:#000;margin:0 0 12px 0;line-height:1.15;letter-spacing:-0.02em">'+flow.title+'</h3>'+
+    '<h3 style="font-size:28px;font-weight:600;color:#1A1D2E;margin:0 0 12px 0;line-height:1.15;letter-spacing:-0.02em;font-family:var(--font-display), sans-serif">'+flow.title+'</h3>'+
     '<p style="font-size:14px;color:rgba(0,0,0,0.5);line-height:1.7;margin:0 0 24px 0">'+flow.desc+'</p>'+
     '<div style="display:flex;flex-direction:column">'+bulletsHtml+'</div>'+
   '</div>';
