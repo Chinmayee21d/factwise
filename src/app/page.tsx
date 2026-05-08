@@ -76,7 +76,6 @@ export default function Home() {
       <Testimonials />
 
       {/* 10: Case Studies */}
-      <CaseStudies />
       <ModernCaseStudies />
       {/* 10 */}
       <IndustryMarquee />
