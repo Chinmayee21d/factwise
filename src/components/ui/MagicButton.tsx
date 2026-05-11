@@ -127,17 +127,27 @@ export const MagicButton = ({
           display: flex;
           align-items: center;
           min-width: 100px;
+          height: 24px;
         }
 
-        .txt-1, .txt-2 {
-          position: absolute;
+        .txt-1 {
+          position: relative;
           white-space: nowrap;
           transition: all 0.4s ease;
+          display: flex;
+          align-items: center;
         }
 
         .txt-2 {
+          position: absolute;
+          top: 0;
+          left: 0;
+          white-space: nowrap;
+          transition: all 0.4s ease;
           opacity: 0;
           transform: translateY(10px);
+          display: flex;
+          align-items: center;
         }
 
         .btn:hover .txt-1 {

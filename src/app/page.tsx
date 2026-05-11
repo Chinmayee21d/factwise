@@ -1,7 +1,7 @@
 'use client';
 
 import { Header } from '@/components/ui/header-2';
-import Hero from '@/components/Hero';
+import Hero from '@/components/Hero4';
 import StatsStrip from '@/components/StatsStrip';
 import ProblemSection from '@/components/ProblemSection';
 // import BentoGrid from '@/components/BentoGrid';
@@ -9,6 +9,7 @@ import ProblemSection from '@/components/ProblemSection';
 // import PersonaSection from '@/components/PersonaSection';
 // import ImpactBento from '@/components/ImpactBento';
 import IntegrationsShowcase from '@/components/IntegrationsShowcase';
+
 import IndustryMarquee from '@/components/IndustryMarquee';
 import { ExpandingIndustrySection } from '@/components/ExpandingIndustryCards';
 import ParallaxMethodology from '@/components/ParallaxMethodology';
@@ -19,7 +20,7 @@ import Testimonials from '@/components/testimonials';
 import CaseStudies from '@/components/CaseStudies';
 import ModernCaseStudies from '@/components/ModernCaseStudies';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
-import ProductHubAnimation from '@/components/product copy';
+import ProductHubAnimation from '@/components/productflow';
 // import ProductFlowShowcase from '@/components/ProductFlowShowcase';
 import ImplementationRoadmap from '@/components/ImplementationRoadmap';
 import MethodologySection from '@/components/Methodology';
@@ -55,10 +56,10 @@ export default function Home() {
 
       {/* 4: Methodology Section */}
       <ParallaxMethodology />
-      <MethodologySection/>
+      <MethodologySection />
       {/* 4: Product Hub Animation */}
       <ProductHubAnimation />
- 
+
 
       {/* 5: Implementation Roadmap */}
       <ImplementationRoadmap />
@@ -71,7 +72,7 @@ export default function Home() {
 
       {/* 8 */}
       <IntegrationsShowcase />
-      
+
       {/* 9: Testimonials */}
       <Testimonials />
 
@@ -81,7 +82,7 @@ export default function Home() {
       {/* 10 */}
       <IndustryMarquee />
       <ExpandingIndustrySection />
-      
+
       <FAQSection />
 
       <CTASection />

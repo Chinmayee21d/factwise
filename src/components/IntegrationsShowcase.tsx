@@ -1,60 +1,80 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { RefreshCcw, Lock, Zap } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion';
+import { RefreshCcw, Lock, Zap, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import { GLOBAL_LAYOUT } from './LayoutConfig';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 /* ── Constants ──────────────────────────────────── */
-const CX = 310;       // SVG center x
-const CY = 310;       // SVG center y
-const RADIUS = 232;   // spoke length
-const NODE = 92;      // slightly larger node card size
+const CX = 360;       // Center
+const CY = 360;       // Center
+const RADIUS = 280;   // spoke length
+const NODE = 92;      // node size
 const HALF = NODE / 2;
 
 /* ── Data ───────────────────────────────────────── */
 const integrations = [
-  { name: 'SAP',      color: '#0FAAFF', category: 'ERP',         angle: -90  }, // top
-  { name: 'Oracle',   color: '#F80000', category: 'ERP',         angle: -45  }, // top-right
-  { name: 'Dynamics', color: '#0078D4', category: 'ERP',         angle: 0    }, // right
-  { name: 'Workday',  color: '#005CB9', category: 'Finance',     angle: 45   }, // bottom-right
-  { name: 'NetSuite', color: '#3288C1', category: 'Cloud',       angle: 90   }, // bottom
-  { name: 'Coupa',    color: '#E87722', category: 'Sourcing', angle: 135  }, // bottom-left
-  { name: 'Ariba',    color: '#0070C0', category: 'Sourcing',    angle: 180  }, // left
-  { name: 'Infor',    color: '#7B2D8B', category: 'ERP',         angle: -135 }, // top-left
+  { 
+    id: 1, name: 'SAP', color: '#0FAAFF', category: 'ERP', angle: -90,
+    content: 'Unified enterprise resource planning with real-time financial tracking and inventory management.',
+    status: 'active', energy: 96, relatedIds: [4, 7]
+  },
+  { 
+    id: 2, name: 'Oracle', color: '#F80000', category: 'ERP', angle: -45,
+    content: 'Cloud-based business applications providing deep insights into global procurement and spend.',
+    status: 'active', energy: 88, relatedIds: [5, 8]
+  },
+  { 
+    id: 3, name: 'Dynamics', color: '#0078D4', category: 'ERP', angle: 0,
+    content: 'Microsoft-integrated business logic for seamless cross-departmental data synchronization.',
+    status: 'active', energy: 92, relatedIds: [1, 2]
+  },
+  { 
+    id: 4, name: 'Workday', color: '#005CB9', category: 'Finance', angle: 45,
+    content: 'Connect procurement spend with human capital and financial planning. Optimize headcount and resource allocation.',
+    status: 'active', energy: 75, relatedIds: [2, 7]
+  },
+  { 
+    id: 5, name: 'NetSuite', color: '#3288C1', category: 'Cloud', angle: 90,
+    content: 'Comprehensive cloud ERP for mid-market businesses seeking total visibility into their supply chain.',
+    status: 'active', energy: 94, relatedIds: [4, 6]
+  },
+  { 
+    id: 6, name: 'Coupa', color: '#E87722', category: 'Sourcing', angle: 135,
+    content: 'Business spend management platform focused on operational efficiency and sustainable sourcing.',
+    status: 'active', energy: 82, relatedIds: [7, 8]
+  },
+  { 
+    id: 7, name: 'Ariba', color: '#0070C0', category: 'Sourcing', angle: 180,
+    content: 'Strategic sourcing and network integration for high-volume enterprise procurement workflows.',
+    status: 'active', energy: 90, relatedIds: [1, 4]
+  },
+  { 
+    id: 8, name: 'Infor', color: '#7B2D8B', category: 'ERP', angle: -135,
+    content: 'Industry-specific business applications designed for complex manufacturing and distribution.',
+    status: 'active', energy: 85, relatedIds: [2, 3]
+  },
 ];
 
 const highlights = [
-  { 
-    icon: <RefreshCcw size={20} />, 
-    label: 'Real-time sync', 
-    desc: 'Bidirectional data flow with your ERP — zero manual entry.',
-    accent: '#3666ff'
-  },
-  { 
-    icon: <Lock size={20} />, 
-    label: 'Encrypted transfers', 
-    desc: 'End-to-end TLS-secured data propagation across every system.',
-    accent: '#3666ff'
-  },
-  { 
-    icon: <Zap size={20} />, 
-    label: 'Sub-second latency', 
-    desc: 'Changes reflect instantly across POs, invoices, and receipts.',
-    accent: '#3666ff'
-  },
+  { icon: <RefreshCcw size={20} />, label: 'Real-time sync', desc: 'Bidirectional data flow with your ERP — zero manual entry.' },
+  { icon: <Lock size={20} />, label: 'Encrypted transfers', desc: 'End-to-end TLS-secured data propagation across every system.' },
+  { icon: <Zap size={20} />, label: 'Sub-second latency', desc: 'Changes reflect instantly across POs, invoices, and receipts.' },
 ];
 
-function nodeXY(angle: number) {
-  const rad = (angle * Math.PI) / 180;
-  return {
-    nx: Math.round(CX + RADIUS * Math.cos(rad)),
-    ny: Math.round(CY + RADIUS * Math.sin(rad)),
-  };
-}
-
 export default function IntegrationsShowcase() {
+  const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
+  const [activeHighlightIndex, setActiveHighlightIndex] = useState<number | null>(null);
+  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  
+  // Rotation Motion Values
+  const rotation = useMotionValue(0);
+  const smoothRotation = useSpring(rotation, { stiffness: 45, damping: 20, mass: 1 });
+  
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
 
@@ -62,312 +82,366 @@ export default function IntegrationsShowcase() {
   const orb2Y    = useTransform(scrollYProgress, [0, 1], [80,   -80]);
   const contentY = useTransform(scrollYProgress, [0, 1], [30,   -30]);
 
+  // Benefit-to-Integration Mapping
+  const highlightMappings = [
+    [1, 2, 3], // Real-time sync -> ERPs (SAP, Oracle, Dynamics)
+    [4, 5],    // Encrypted transfers -> Finance/Cloud (Workday, NetSuite)
+    [6, 7, 8], // Sub-second latency -> Sourcing/ERP (Coupa, Ariba, Infor)
+  ];
+
+  // Auto-rotation controller
+  useEffect(() => {
+    let controls;
+    if (autoRotate) {
+      controls = animate(rotation, rotation.get() + 360, {
+        duration: 90,
+        repeat: Infinity,
+        ease: "linear"
+      });
+    }
+    return () => controls?.stop();
+  }, [autoRotate, rotation]);
+
+  const handleNodeClick = (id: number, angle: number) => {
+    setActiveHighlightIndex(null); // Clear benefit filter on node click
+    if (activeNodeId === id) {
+      setActiveNodeId(null);
+      setAutoRotate(true);
+    } else {
+      setActiveNodeId(id);
+      setAutoRotate(false);
+      rotation.set(rotation.get() % 360); 
+      const target = -90 - angle;
+      animate(rotation, target, { 
+        type: "spring", 
+        stiffness: 50, 
+        damping: 18 
+      });
+    }
+  };
+
+  const handleHighlightClick = (index: number) => {
+    if (activeHighlightIndex === index) {
+      setActiveHighlightIndex(null);
+    } else {
+      setActiveHighlightIndex(index);
+      setActiveNodeId(null); // Close any open cards
+    }
+  };
+
+  const handleBackgroundClick = () => {
+    setActiveNodeId(null);
+    setActiveHighlightIndex(null);
+    setAutoRotate(true);
+  };
+
   return (
     <section
       ref={sectionRef}
-      style={{ position: 'relative', width: '100%', padding: '160px 0 128px', overflow: 'hidden', background: '#ffffff', zIndex: 1 }}
+      onClick={handleBackgroundClick}
+      className="relative w-full overflow-hidden bg-white z-10"
+      style={{ padding: '120px 0 128px' }}
     >
       {/* Bokeh orbs */}
-      <motion.div style={{ y: orb1Y, position: 'absolute', top: '0%', left: '-6%', width: 760, height: 760, borderRadius: '50%', background: 'radial-gradient(circle, rgba(54,102,255,0.10) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
-      <motion.div style={{ y: orb2Y, position: 'absolute', bottom: '-8%', right: '-4%', width: 660, height: 660, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,184,132,0.12) 0%, transparent 70%)', filter: 'blur(90px)', pointerEvents: 'none' }} />
+      <motion.div style={{ y: orb1Y }} className="absolute top-0 -left-[6%] w-[760px] h-[760px] rounded-full bg-[radial-gradient(circle,rgba(54,102,255,0.1)0%,transparent70%)] blur-[90px] pointer-events-none" />
+      <motion.div style={{ y: orb2Y }} className="absolute -bottom-[8%] -right-[4%] w-[660px] h-[660px] rounded-full bg-[radial-gradient(circle,rgba(0,184,132,0.12)0%,transparent70%)] blur-[90px] pointer-events-none" />
 
-      <motion.div style={{ y: contentY, position: 'relative', zIndex: 10, maxWidth: 1400, margin: '0 auto', padding: '0 40px' }}>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+      <motion.div style={{ y: contentY }} className="max-w-[1440px] mx-auto px-10 relative z-10 flex flex-col items-center">
+        
+        {/* Centered Header */}
+        <div className="w-full max-w-3xl mb-12 text-center">
+          <SectionHeader 
+            label="Seamless Integration"
+            title="Integrate with every system in your stack."
+            description="Track goods from source to delivery to payment on a single platform. Connect with leading ERP and accounting systems worldwide."
+            accentColor="#3666ff"
+            align="center"
+          />
+        </div>
+        
+        {/* Row Layout: Cards on Left, Hub on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center w-full">
           
-          {/* Left Column: Header + Cards */}
-          <div className="flex flex-col items-start space-y-12">
-            <SectionHeader 
-              label="Seamless Integration"
-              title={<>Integrate with every system in your stack.</>}
-              description="Track goods from source to delivery to payment on a single platform. Connect with leading ERP and accounting systems worldwide."
-              accentColor="#3666ff"
-              align="left"
-            />
-
-            <div className="flex flex-col gap-6 w-full max-w-lg">
-              {highlights.map((h, i) => (
+          {/* Left Column: Stacked Cards (5/12 cols) */}
+          <div className="lg:col-span-5 flex flex-col gap-6 w-full max-w-md mx-auto lg:mx-0 lg:translate-x-16">
+            {highlights.map((h, i) => {
+              const isActive = activeHighlightIndex === i;
+              return (
                 <motion.div
                   key={h.label}
+                  onClick={(e) => { e.stopPropagation(); handleHighlightClick(i); }}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  whileHover={{ x: 8 }}
-                  style={{ 
-                    position: 'relative',
-                    display: 'flex', 
-                    flexDirection: 'row',
-                    alignItems: 'flex-start', 
-                    gap: 20, 
-                    padding: '24px 28px', 
-                    borderRadius: 20, 
-                    background: '#ffffff',
-                    border: '1px solid rgba(0,0,0,0.06)',
-                    backdropFilter: 'blur(20px)',
-                    textAlign: 'left',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 12px -2px rgba(0,0,0,0.03)',
-                  }}
-                  className="group"
+                  whileHover={{ x: 10, scale: 1.01 }}
+                  className={`group relative flex items-start gap-6 p-7 rounded-[32px] cursor-pointer transition-all duration-500 border overflow-hidden
+                    ${isActive 
+                      ? 'bg-white border-[#3666ff]/40 shadow-[0_20px_50px_-15px_rgba(54,102,255,0.15)] ring-1 ring-[#3666ff]/10' 
+                      : 'bg-[#F8FAFF]/50 border-gray-100 shadow-sm hover:shadow-xl hover:bg-white hover:border-[#3666ff]/20'
+                    }
+                  `}
                 >
-                  {/* Hover Glow Beam */}
-                  <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#3666ff]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden">
-                    <motion.div 
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-[#3666ff]/40 to-transparent"
-                    />
-                  </div>
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,rgba(54,102,255,0.08),transparent_70%)] transition-opacity duration-500 
+                    ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+                  `} />
 
-                  <div style={{ 
-                    color: '#3666ff',
-                    flexShrink: 0, 
-                    marginTop: 4,
-                    opacity: 0.9,
-                    transition: 'all 0.3s ease'
-                  }} className="group-hover:scale-110">
+                  <div className={`relative z-10 text-[#3666ff] w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 
+                    ${isActive ? 'bg-[#3666ff] text-white scale-110 shadow-lg' : 'bg-white text-[#3666ff] shadow-sm border border-gray-100 group-hover:scale-110 group-hover:rotate-3 group-hover:border-[#3666ff]/30'}
+                  `}>
                     {h.icon}
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: '#000000', marginBottom: 6, letterSpacing: '-0.01em' }}>
-                      {h.label}
-                    </div>
-                    <div style={{ fontSize: 13, color: '#808080', lineHeight: 1.6, fontWeight: 300 }}>
-                      {h.desc}
-                    </div>
+                  <div className="relative z-10 flex flex-col pt-1">
+                    <span className={`text-[16px] font-bold mb-2 transition-colors duration-300 ${isActive ? 'text-[#3666ff]' : 'text-[#1A1D2E]'}`}>{h.label}</span>
+                    <span className="text-[13px] text-[#7B82A8] leading-relaxed font-medium">{h.desc}</span>
                   </div>
                 </motion.div>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {/* Right Column: Hub Diagram */}
-          <div className="relative w-full flex justify-center lg:justify-end pt-24">
-            <div 
-              className="scale-[0.7] lg:scale-[0.8] origin-center lg:origin-center"
-              style={{ position: 'relative', width: 620, height: 620, maxWidth: '100%' }}
-            >
-              {/* Static Back Glow for Hub */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: CY - 120,
-                  left: CX - 120,
-                  width: 240,
-                  height: 240,
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(54,102,255,0.12) 0%, transparent 70%)',
-                  filter: 'blur(40px)',
-                  zIndex: 0,
-                  pointerEvents: 'none',
+          {/* Right Column: Orbital Hub (7/12 cols) */}
+          <div className="lg:col-span-7 relative w-full flex justify-center items-center min-h-[540px]">
+            <div className="scale-[0.65] lg:scale-[0.75] xl:scale-[0.85] origin-center relative w-[720px] h-[720px]">
+              
+              {/* Central hub - STATIC */}
+              <motion.div 
+                animate={{ 
+                  opacity: activeNodeId ? 0.05 : (activeHighlightIndex !== null ? 0.4 : 1),
+                  filter: activeNodeId ? 'blur(8px)' : 'blur(0px)',
+                  scale: activeNodeId ? 0.9 : 1
                 }}
-              />
-
-              {/* SVG Hub Logic */}
-              <svg
-                viewBox={`0 0 ${CX * 2} ${CY * 2}`}
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
+                transition={{ duration: 0.5 }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center w-[154px] h-[154px] rounded-full bg-white border border-[#3666ff]/20 shadow-[0_0_60px_rgba(54,102,255,0.08),0_20px_40px_rgba(0,0,0,0.04)]"
               >
-                <defs>
-                  {integrations.map((intg) => (
-                    <filter key={`glow-${intg.name}`} id={`glow-${intg.name}`} x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="3" result="blur" />
-                      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                    </filter>
-                  ))}
-                  {integrations.map((intg) => {
-                    const { nx, ny } = nodeXY(intg.angle);
-                    const gradId = `grad-${intg.name}`;
-                    return (
-                      <linearGradient key={gradId} id={gradId} x1={CX} y1={CY} x2={nx} y2={ny} gradientUnits="userSpaceOnUse">
-                        <stop offset="0%"   stopColor="#3666ff" stopOpacity="0.4" />
-                        <stop offset="100%" stopColor="#3666ff" stopOpacity="0.05" />
-                      </linearGradient>
-                    );
-                  })}
-                  {integrations.map((intg) => {
-                    const { nx, ny } = nodeXY(intg.angle);
-                    return (
-                      <path key={`path-${intg.name}`} id={`path-${intg.name}`} d={`M ${CX} ${CY} L ${nx} ${ny}`} />
-                    );
-                  })}
-                </defs>
-
-                <circle cx={CX} cy={CY} r={RADIUS + 34} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
-                <circle cx={CX} cy={CY} r={RADIUS + 66} fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
-
-                {integrations.map((intg) => {
-                  const { nx, ny } = nodeXY(intg.angle);
-                  return (
-                    <g key={`line-group-${intg.name}`}>
-                      {/* Static Base Line */}
-                      <line
-                        x1={CX} y1={CY} x2={nx} y2={ny}
-                        stroke={`url(#grad-${intg.name})`}
-                        strokeWidth="1.5"
-                        opacity="0.6"
-                      />
-                      {/* Flowing Energy Line */}
-                      <motion.line
-                        x1={CX} y1={CY} x2={nx} y2={ny}
-                        stroke="#3666ff"
-                        strokeWidth="1.5"
-                        strokeDasharray="4 12"
-                        animate={{ strokeDashoffset: [-100, 0] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        opacity="0.3"
-                      />
-                    </g>
-                  );
-                })}
-
-                {integrations.map((intg, i) => (
-                  <circle
-                    key={`pkt-${intg.name}`}
-                    r="3.5"
-                    fill="#3666ff"
-                    filter={`url(#glow-${intg.name})`}
-                  >
-                    <animateMotion
-                      dur={`${2.2 + i * 0.3}s`}
-                      begin={`${i * 0.4}s`}
-                      repeatCount="indefinite"
-                    >
-                      <mpath href={`#path-${intg.name}`} />
-                    </animateMotion>
-                    <animate
-                      attributeName="opacity"
-                      values="0;0;1;1;0"
-                      keyTimes="0;0.1;0.2;0.8;1"
-                      dur={`${2.2 + i * 0.3}s`}
-                      begin={`${i * 0.4}s`}
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                ))}
-              </svg>
-
-              {/* Center hub - Constant and Stable */}
-              <motion.div
-                initial={{ opacity: 0, x: '-50%', y: '-50%' }}
-                whileInView={{ opacity: 1, x: '-50%', y: '-50%' }}
-                transition={{ duration: 0.8 }}
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  zIndex: 25,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 146,
-                  height: 146,
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #f8faff 100%)',
-                  border: '1px solid rgba(54,102,255,0.25)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 0 60px rgba(54,102,255,0.12), 0 10px 30px rgba(0,0,0,0.04)',
-                }}
-              >
-                <div style={{ 
-                  position: 'absolute', 
-                  inset: -1, 
-                  borderRadius: '50%', 
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 100%)',
-                  pointerEvents: 'none'
-                }} />
-                
-                <span style={{ fontSize: 18, fontWeight: 500, color: '#000000', letterSpacing: '-0.025em', position: 'relative' }}>
-                  fact<span style={{ fontWeight: 300 }}>wise</span>
-                </span>
-                <div style={{ fontSize: 10, color: '#3666ff', marginTop: 5, textTransform: 'uppercase', letterSpacing: '0.2em', fontWeight: 700, position: 'relative', opacity: 0.8 }}>
-                  Hub
+                <div className="flex items-baseline">
+                  <span className="text-[20px] font-bold text-[#1A1D2E] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Fact</span>
+                  <span className="text-[20px] font-light text-[#1A1D2E] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Wise</span>
+                </div>
+                <div className="mt-2 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-100/50">
+                  <span className="text-[8px] text-[#3666ff] uppercase tracking-[0.25em] font-black">Hub</span>
                 </div>
               </motion.div>
 
-              {/* Integration nodes */}
-              {integrations.map((intg, i) => {
-                const { nx, ny } = nodeXY(intg.angle);
-                return (
-                  <motion.div
-                    key={intg.name}
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    animate={{
-                      y: [0, -10, 0],
-                    }}
-                    transition={{
-                      opacity: { delay: i * 0.08 },
-                      scale: { delay: i * 0.08 },
-                      y: {
-                        duration: 3.5 + i * 0.25,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }
-                    }}
-                    whileHover={{ 
-                      scale: 1.08, 
-                      zIndex: 40,
-                      boxShadow: `0 25px 50px -12px rgba(0,0,0,0.08), 0 0 20px -2px ${intg.color}15`,
-                      borderColor: `${intg.color}40`,
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: ny - HALF,
-                      left: nx - HALF,
-                      width: NODE,
-                      height: NODE,
-                      zIndex: 10,
-                      borderRadius: 24,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: `#ffffff`,
-                      border: `1px solid rgba(0,0,0,0.05)`,
-                      backdropFilter: 'blur(20px)',
-                      boxShadow: `0 12px 30px -10px rgba(0,0,0,0.05), 0 4px 10px -2px rgba(0,0,0,0.02)`,
-                      cursor: 'pointer',
-                      transition: 'border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-                    }}
-                  >
+                {/* ROTATING CONTAINER */}
+                <motion.div 
+                  style={{ rotate: smoothRotation }} 
+                  className="absolute inset-0 w-full h-full flex items-center justify-center z-40"
+                >
+                  {/* SVG Lines & Flow */}
+                  <svg viewBox="0 0 720 720" className="absolute inset-0 w-full h-full overflow-visible pointer-events-none">
+                    <defs>
+                      <marker id="arrow-out" markerWidth="8" markerHeight="8" refX="15" refY="4" orient="auto">
+                        <path d="M0,0 L8,4 L0,8" fill="#3666ff" fillOpacity="0.8" />
+                      </marker>
+                      <marker id="arrow-in" markerWidth="8" markerHeight="8" refX="-7" refY="4" orient="auto">
+                        <path d="M8,0 L0,4 L8,8" fill="#3666ff" fillOpacity="0.4" />
+                      </marker>
+                      <filter id="packet-glow">
+                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                    </defs>
+
+                    {integrations.map((intg, i) => {
+                      const rad = (intg.angle * Math.PI) / 180;
+                      const activeRadius = activeNodeId ? 280 : 232;
+                      
+                      const isBenefitRelated = activeHighlightIndex !== null && highlightMappings[activeHighlightIndex].includes(intg.id);
+                      const isDimmed = (activeHighlightIndex !== null && !isBenefitRelated) || (activeNodeId !== null && activeNodeId !== intg.id);
+
+                      const targetX = CX + activeRadius * Math.cos(rad);
+                      const targetY = CY + activeRadius * Math.sin(rad);
+
+                      return (
+                        <g key={intg.id}>
+                          {/* 1. Background Spoke Line */}
+                          <motion.line 
+                            initial={false}
+                            animate={{ 
+                              x2: targetX,
+                              y2: targetY,
+                              opacity: isDimmed ? 0.05 : 0.1
+                            }}
+                            x1={CX} y1={CY} 
+                            stroke="#3666ff" strokeWidth="1"
+                          />
+                          
+                          {/* 2. OUTGOING STREAMING ARROWS (Hub -> Node) */}
+                          {!isDimmed && (
+                            <motion.line 
+                              initial={false}
+                              animate={{ 
+                                x2: targetX,
+                                y2: targetY,
+                                opacity: isBenefitRelated ? 0.8 : 0.4,
+                                strokeDashoffset: [0, -40] 
+                              }}
+                              x1={CX} y1={CY} 
+                              stroke="#3666ff" 
+                              strokeWidth="2.5" 
+                              strokeDasharray="4 12" 
+                              markerEnd="url(#arrow-out)"
+                              transition={{ 
+                                strokeDashoffset: { duration: 1.5, repeat: Infinity, ease: "linear" },
+                                x2: { type: "spring", damping: 25, stiffness: 120 },
+                                y2: { type: "spring", damping: 25, stiffness: 120 }
+                              }} 
+                            />
+                          )}
+
+                          {/* 3. INCOMING STREAMING ARROWS (Node -> Hub) */}
+                          {!isDimmed && (
+                            <motion.line 
+                              initial={false}
+                              animate={{ 
+                                x2: targetX,
+                                y2: targetY,
+                                opacity: isBenefitRelated ? 0.6 : 0.2,
+                                strokeDashoffset: [0, 40] 
+                              }}
+                              x1={CX} y1={CY} 
+                              stroke="#3666ff" 
+                              strokeWidth="1.5" 
+                              strokeDasharray="3 15" 
+                              markerStart="url(#arrow-in)"
+                              transition={{ 
+                                strokeDashoffset: { duration: 2, repeat: Infinity, ease: "linear" },
+                                x2: { type: "spring", damping: 25, stiffness: 120 },
+                                y2: { type: "spring", damping: 25, stiffness: 120 }
+                              }} 
+                            />
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
+
+                {/* Nodes */}
+                {integrations.map((intg) => {
+                  const rad = (intg.angle * Math.PI) / 180;
+                  const isExpanded = activeNodeId === intg.id;
+                  const activeRadius = activeNodeId ? 280 : 232; // Dynamic Radius
+                  
+                  const isBenefitRelated = activeHighlightIndex !== null && highlightMappings[activeHighlightIndex].includes(intg.id);
+                  const isDimmed = (activeHighlightIndex !== null && !isBenefitRelated) || (activeNodeId !== null && !isExpanded);
+
+                  return (
                     <motion.div
-                      animate={{
-                        opacity: [0.6, 1, 0.6],
-                        scale: [1, 1.2, 1],
+                      key={intg.id}
+                      onClick={(e) => { e.stopPropagation(); handleNodeClick(intg.id, intg.angle); }}
+                      initial={false}
+                      animate={{ 
+                        left: CX + activeRadius * Math.cos(rad) - HALF,
+                        top: CY + activeRadius * Math.sin(rad) - HALF,
+                        opacity: isDimmed ? 0.8 : 1,
+                        scale: isBenefitRelated ? [1, 1.05, 1] : (isExpanded ? 1.05 : 1),
+                        boxShadow: isBenefitRelated ? '0 0 30px rgba(54,102,255,0.3)' : (isExpanded ? '0 15px 30px rgba(0,0,0,0.08)' : '0 1px 2px rgba(0,0,0,0.05)')
                       }}
-                      transition={{
-                        duration: 2.5 + i * 0.4,
-                        repeat: Infinity,
-                        ease: "easeInOut"
+                      transition={{ 
+                        left: { type: "spring", damping: 25, stiffness: 120 },
+                        top: { type: "spring", damping: 25, stiffness: 120 },
+                        scale: isBenefitRelated ? { duration: 2, repeat: Infinity } : { duration: 0.3 }
                       }}
-                      style={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: '50%',
-                        background: intg.color,
-                        marginBottom: 10,
-                        boxShadow: `0 0 15px ${intg.color}60`,
+                      style={{ 
+                        rotate: useTransform(smoothRotation, (v) => -v),
+                        borderColor: isExpanded || isBenefitRelated ? intg.color : 'rgba(0,0,0,0.05)'
                       }}
-                    />
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#000000', letterSpacing: '-0.01em' }}>
-                      {intg.name}
-                    </div>
-                    <div style={{ fontSize: 9, fontWeight: 500, color: '#999', marginTop: 3, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                      {intg.category}
-                    </div>
+                      className={`absolute w-[92px] h-[92px] rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-colors
+                        ${isExpanded ? 'bg-white border-2 z-50 shadow-xl' : 'bg-white border z-20 hover:border-[#3666ff]/30 hover:shadow-lg'}
+                        ${isBenefitRelated ? 'border-2' : ''}
+                      `}
+                    >
+                      <motion.div 
+                        animate={{ 
+                          scale: isBenefitRelated ? [1, 1.4, 1] : [1, 1.2, 1], 
+                          opacity: isBenefitRelated ? [0.8, 1, 0.8] : [0.7, 1, 0.7] 
+                        }} 
+                        transition={{ duration: isBenefitRelated ? 1.5 : 2.5, repeat: Infinity }} 
+                        style={{ background: intg.color }} 
+                        className="w-2.5 h-2.5 rounded-full mb-2.5" 
+                      />
+                      <span className="text-[13px] font-semibold text-black tracking-tight">{intg.name}</span>
+                      <span className="text-[9px] text-gray-400 mt-0.5 uppercase tracking-wider font-medium">{intg.category}</span>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Central Expanded Card Overlay - More Compact for better reach */}
+              <AnimatePresence>
+                {activeNodeId && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+                    animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+                    exit={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="absolute top-1/2 left-1/2 z-[100] pointer-events-auto"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {(() => {
+                      const intg = integrations.find(i => i.id === activeNodeId);
+                      if (!intg) return null;
+                      return (
+                        <Card className="w-[280px] bg-white/98 backdrop-blur-2xl border-gray-200/60 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] rounded-[32px] overflow-hidden">
+                          <CardHeader className="pb-2 pt-6 px-6">
+                            <div className="flex justify-between items-center mb-3">
+                              <Badge style={{ background: `${intg.color}10`, color: intg.color }} className="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase border-none">{intg.status}</Badge>
+                              <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest">Core</span>
+                            </div>
+                            <CardTitle className="text-lg font-bold text-gray-900">{intg.name}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="px-6 pb-8">
+                            <p className="text-[12px] text-gray-600 leading-relaxed opacity-90 mb-6">{intg.content}</p>
+                            
+                            <div className="space-y-5">
+                              <div className="pt-5 border-t border-gray-100">
+                                <div className="flex justify-between items-center text-[9px] mb-2 font-bold text-gray-400 uppercase tracking-widest">
+                                  <span className="flex items-center"><Zap size={10} className="mr-2" style={{ color: intg.color }} />Strength</span>
+                                  <span style={{ color: intg.color }} className="font-mono text-xs">{intg.energy}%</span>
+                                </div>
+                                <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                                  <motion.div initial={{ width: 0 }} animate={{ width: `${intg.energy}%` }} transition={{ duration: 1.2, ease: "circOut" }} className="h-full" style={{ background: intg.color }} />
+                                </div>
+                              </div>
+
+                              <div className="pt-5 border-t border-gray-100">
+                                <div className="flex items-center mb-3">
+                                  <LinkIcon size={10} className="text-gray-400 mr-2" />
+                                  <h4 className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Related</h4>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {intg.relatedIds.slice(0, 2).map((relId) => {
+                                    const related = integrations.find(ri => ri.id === relId);
+                                    return (
+                                      <Button 
+                                        key={relId} 
+                                        variant="outline" 
+                                        size="sm" 
+                                        onClick={() => {
+                                          const relatedAngle = related?.angle ?? 0;
+                                          handleNodeClick(relId, relatedAngle);
+                                        }}
+                                        className="h-7 px-3 text-[10px] font-semibold rounded-full border-gray-100 bg-gray-50/50 hover:bg-white transition-all flex items-center shadow-sm"
+                                      >
+                                        {related?.name} <ArrowRight size={8} className="ml-1.5 opacity-40" />
+                                      </Button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })()}
                   </motion.div>
-                );
-              })}
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
-
       </motion.div>
     </section>
   );
 }
-

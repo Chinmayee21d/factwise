@@ -11,7 +11,12 @@ import { ChevronDown } from 'lucide-react';
 
 export function Header() {
 	const [open, setOpen] = React.useState(false);
-	const scrolled = useScroll(10);
+	const [mounted, setMounted] = React.useState(false);
+	const scrolled = useScroll(20);
+
+	React.useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	const links = [
 		{
@@ -57,6 +62,8 @@ export function Header() {
 			className={cn(
 				'fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-in-out mx-auto w-full',
 				{
+					'opacity-0': !mounted,
+					'opacity-100': mounted,
 					// Initial: Transparent
 					'top-0 bg-transparent py-4 md:max-w-[1800px]': !scrolled && !open,
 					// Scrolled: White Floating Pill
@@ -76,13 +83,13 @@ export function Header() {
 			>
 				<div className="flex items-center gap-3">
 					<img
-						src={scrolled || open ? "/logo.png" : "/logowhite.png"}
+						src={(scrolled || open || !mounted) ? "/logo.png" : "/logowhite.png"}
 						alt="FactWise Logo"
 						className="h-8 w-auto transition-all duration-500 rounded-tl-sm rounded-br-sm"
 					/>
 					<span className={cn("text-[17px] font-bold tracking-tight transition-colors duration-500", {
-						"text-white": !scrolled && !open,
-						"text-black": scrolled || open,
+						"text-white": !scrolled && !open && mounted,
+						"text-black": scrolled || open || !mounted,
 					})}>FactWise</span>
 				</div>
 

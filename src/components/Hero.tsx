@@ -48,7 +48,7 @@ export default function Hero() {
   return (
     <section className="h-screen w-full relative pt-16 md:pt-0">
       <div className="relative h-full w-full overflow-hidden">
-        
+
         {/* Background video */}
         <video
           autoPlay
@@ -60,8 +60,8 @@ export default function Hero() {
         />
 
         {/* Noise overlay */}
-        <div 
-          className="pointer-events-none absolute inset-0 opacity-[0.15] mix-blend-overlay" 
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.15] mix-blend-overlay"
           style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}
         />
 
@@ -69,20 +69,20 @@ export default function Hero() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-8 sm:px-6 md:px-10 lg:pb-16">
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-0 sm:px-6 md:px-10 lg:pb-0">
           <div className="grid grid-cols-12 items-end gap-6">
-            
+
             <div className="col-span-12 lg:col-span-8">
               <h1
-                className="font-medium leading-[0.85] tracking-[-0.07em] text-[22vw] sm:text-[20vw] md:text-[18vw] lg:text-[16vw] xl:text-[15vw]"
+                className="font-medium leading-[0.8] tracking-[-0.05em] text-[15vw] sm:text-[13vw] md:text-[11vw] lg:text-[10vw] xl:text-[9vw]"
                 style={{ color: "#E1E0CC", fontFamily: "var(--font-display)" }}
               >
                 <WordsPullUp text="FactWise" />
               </h1>
             </div>
 
-            <div className="col-span-12 flex flex-col gap-6 pb-4 lg:col-span-4 lg:pb-8">
-              
+            <div className="col-span-12 flex flex-col gap-6 pb-4 lg:col-span-4 lg:pb-4">
+
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -113,7 +113,7 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      
+
       {/* Inline style for noise if needed, but using inline style bg-image above */}
       <style jsx>{`
         .noise-overlay {

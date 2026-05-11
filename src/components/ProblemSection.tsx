@@ -244,7 +244,7 @@ const InefficiencyAnimation = () => {
 
         {/* Labels for components */}
         <g fill="#f59e0b" fillOpacity="0.7" fontSize="9" fontWeight="700" letterSpacing="0.05em" textAnchor="middle">
-          <text x="55" y="250">SCATTERED DATA</text>
+          <text x="55" y="262">SCATTERED DATA</text>
           <text x="145" y="205">BOTTLENECKS</text>
           <text x="245" y="190">DELAY</text>
         </g>

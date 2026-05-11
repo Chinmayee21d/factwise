@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -65,7 +67,6 @@
       font-family: var(--font-sans), sans-serif;
     }
 
-  
   /* Grain noise overlay like Pipe */
   body::before {
     content: '';
@@ -324,9 +325,9 @@
   color: #3666ff;
 }
 
-/* ── Scrollbar ──────────────────────────────────── */
+/* ── Invisible Native Scrollbar (Using Custom Indicator instead) ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 0px;
 }
 
 ::-webkit-scrollbar-track {
@@ -334,12 +335,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
 }
 
 /* ── Bento grid feature badge ─────────────────── */
@@ -494,7 +490,7 @@
 .preserve-3d {
   transform-style: preserve-3d;
 }
- 
+
 .section-badge {
   display: inline-flex;
   align-items: center;
@@ -520,4 +516,32 @@
 @keyframes marquee-fw-reverse {
   0% { transform: translateX(-33.33%); }
   100% { transform: translateX(0); }
+}
+
+:root {
+  --font-mono: "PPSupplyMono", monospace;
+  --font-sans: "PP Neue Montreal", sans-serif;
+  --font-display: "Cormorant Garamond", serif;
+  --color-bg: #0a0a0a;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+  --color-text-light: rgba(255, 255, 255, 0.5);
+  --color-accent: #d4af37;
+  --font-size-mono: clamp(10px, 1.2vw, 12px);
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+}
+
+@theme inline {
+  --font-mono: var(----font-mono);
+  --font-sans: var(----font-sans);
+  --font-display: var(----font-display);
+  --color-color-bg: var(----color-bg);
+  --color-color-text: var(----color-text);
+  --color-color-text-muted: var(----color-text-muted);
+  --color-color-text-light: var(----color-text-light);
+  --color-color-accent: var(----color-accent);
+  --font-size-mono: var(----font-size-mono);
+  --spacing-sm: var(----spacing-sm);
+  --spacing-md: var(----spacing-md);
 }

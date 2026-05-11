@@ -8,6 +8,7 @@ interface SectionHeaderProps {
   description?: string;
   accentColor?: string;
   align?: 'left' | 'center';
+  marginBottom?: number | string;
 }
 
 export default function SectionHeader({
@@ -16,12 +17,13 @@ export default function SectionHeader({
   description,
   accentColor = '#3666ff',
   align = 'left',
+  marginBottom = 64,
 }: SectionHeaderProps) {
   const isCenter = align === 'center';
 
   return (
     <div style={{
-      marginBottom: 64,
+      marginBottom: marginBottom,
       textAlign: isCenter ? 'center' : 'left',
       display: 'flex',
       flexDirection: 'column',

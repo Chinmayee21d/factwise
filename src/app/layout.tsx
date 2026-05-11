@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Sora } from "next/font/google";
 import "./globals.css";
+import { ScrollProgressIndicator } from "@/components/ui/ScrollProgressIndicator";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${sora.variable}`}>
       <body className={dmSans.className} suppressHydrationWarning>
         <div className="noise-bg" />
+        <ScrollProgressIndicator />
         {children}
       </body>
     </html>

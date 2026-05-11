@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { motion, useInView, animate, useMotionValue, useTransform } from 'framer-motion';
 import { GLOBAL_LAYOUT } from './LayoutConfig';
 
 const STATS = [
@@ -22,9 +22,40 @@ const STATS = [
   },
 ];
 
+function Counter({ value, inView }: { value: string; inView: boolean }) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  
+  // Extract numeric part and suffix
+  const numMatch = value.match(/(\d+)/);
+  const target = numMatch ? parseInt(numMatch[1]) : 0;
+  const suffix = value.replace(/\d+/, '');
+
+  useEffect(() => {
+    if (inView) {
+      const controls = animate(count, target, { 
+        duration: 2, 
+        ease: [0.16, 1, 0.3, 1], // Custom cubic-bezier for smooth finish
+        delay: 0.2
+      });
+      return controls.stop;
+    } else {
+      // Reset count to 0 when it leaves the view so it can animate again
+      count.set(0);
+    }
+  }, [inView, count, target]);
+
+  return (
+    <>
+      <motion.span>{rounded}</motion.span>
+      <span>{suffix}</span>
+    </>
+  );
+}
+
 export default function StatsStrip() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const inView = useInView(ref, { once: false, margin: '-60px' });
 
   return (
     <section
@@ -82,8 +113,8 @@ export default function StatsStrip() {
               className="flex-1 flex flex-col gap-1.5 px-0 sm:px-10 py-6 sm:py-0"
               style={{ borderColor: 'rgba(74,111,255,0.10)' }}
             >
-              {/* Big number */}
-              <span
+              {/* Big number with counter animation */}
+              <div
                 className="leading-none"
                 style={{
                   fontFamily: 'var(--font-display)',
@@ -93,8 +124,8 @@ export default function StatsStrip() {
                   letterSpacing: '-0.04em',
                 }}
               >
-                {stat.value}
-              </span>
+                <Counter value={stat.value} inView={inView} />
+              </div>
               {/* Primary label */}
               <span
                 style={{
