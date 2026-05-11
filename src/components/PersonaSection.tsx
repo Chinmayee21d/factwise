@@ -172,7 +172,7 @@ function PersonaCard({
       {/* Top accent gradient line */}
       <motion.div
         aria-hidden
-        animate={{ 
+        animate={{
           opacity: isHovered ? 1 : 0.4,
           scaleX: isHovered ? 1.1 : 1
         }}
@@ -194,7 +194,7 @@ function PersonaCard({
         }}
       >
         <motion.div
-          animate={{ 
+          animate={{
             scale: isHovered ? 1.1 : 1,
             rotate: isHovered ? 5 : 0,
             background: isHovered ? p.accent : p.accentAlpha
@@ -261,9 +261,9 @@ function PersonaCard({
           {p.description}
         </p>
 
-        <motion.div 
+        <motion.div
           initial={false}
-          animate={{ 
+          animate={{
             height: isHovered ? 'auto' : 0,
             opacity: isHovered ? 1 : 0,
             marginTop: isHovered ? 0 : -10
@@ -296,7 +296,7 @@ function PersonaCard({
         {p.stats.map((s) => (
           <div key={s.label}>
             <motion.div
-              animate={{ 
+              animate={{
                 scale: isHovered ? 1.05 : 1,
                 color: isHovered ? '#fff' : p.accent
               }}

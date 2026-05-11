@@ -106,7 +106,7 @@ export default function Testimonials() {
             id="testimonials"
         >
             {/* Rounded Background Container */}
-            <div 
+            <div
                 className="absolute inset-0 mx-2 md:mx-10 bg-no-repeat bg-cover bg-center rounded-[2rem] md:rounded-[2rem] overflow-hidden"
                 style={{
                     backgroundImage: "url('TexturedGradient.png')",

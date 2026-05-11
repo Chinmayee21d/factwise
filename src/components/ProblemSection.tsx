@@ -33,17 +33,46 @@ const SevereValueLossAnimation = () => {
           return (
             <g key={val}>
               <line x1="55" y1={y} x2="255" y2={y} stroke="#1A1D2E" strokeOpacity="0.07" strokeWidth="1" />
-              <text x="20" y={y + 4} fill="#7B82A8" fontSize="10" fontWeight="400">{val}</text>
+              <text x="25" y={y + 4} fill="#7B82A8" fontSize="10" fontWeight="400">{val}</text>
             </g>
           );
         })}
 
+        {/* Y-Axis Title */}
+        <text
+          x="12"
+          y="145"
+          textAnchor="middle"
+          fill="#1A1D2E"
+          fillOpacity="0.4"
+          fontSize="9"
+          fontWeight="700"
+          letterSpacing="0.1em"
+          transform="rotate(-90, 12, 145)"
+        >
+          COST ($)
+        </text>
+
         {/* X-Axis Labels */}
         {points.map((p, i) => (
-          <text key={i} x={p.x} y="260" textAnchor="middle" fill="#7B82A8" fontSize="11" fontWeight="400">
+          <text key={i} x={p.x} y="255" textAnchor="middle" fill="#7B82A8" fontSize="11" fontWeight="400">
             {p.label}
           </text>
         ))}
+
+        {/* X-Axis Title */}
+        <text
+          x="150"
+          y="275"
+          textAnchor="middle"
+          fill="#1A1D2E"
+          fillOpacity="0.4"
+          fontSize="9"
+          fontWeight="700"
+          letterSpacing="0.1em"
+        >
+          PROCUREMENT STAGE
+        </text>
 
         {/* Price Escalation Indicator */}
         <motion.g
@@ -211,6 +240,13 @@ const InefficiencyAnimation = () => {
             />
           </motion.g>
           <circle cx="0" cy="0" r="3.5" fill="#f59e0b" />
+        </g>
+
+        {/* Labels for components */}
+        <g fill="#f59e0b" fillOpacity="0.7" fontSize="9" fontWeight="700" letterSpacing="0.05em" textAnchor="middle">
+          <text x="55" y="250">SCATTERED DATA</text>
+          <text x="145" y="205">BOTTLENECKS</text>
+          <text x="245" y="190">DELAY</text>
         </g>
       </svg>
     </div>
@@ -426,6 +462,20 @@ export default function ProblemSection() {
             >
               {/* Visual Area (Full height initially, half height on hover) */}
               <div className="relative w-full h-full transition-all duration-500 group-hover:h-1/2 bg-white flex items-center justify-center">
+                {/* Initial Title Overlay (Bottom, Grey) */}
+                <div className="absolute bottom-8 left-8 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-4">
+                  <h3 style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    letterSpacing: '-0.01em',
+                    color: '#7B82A8',
+                    margin: 0,
+                    lineHeight: 1.2,
+                  }}>
+                    {prob.title}
+                  </h3>
+                </div>
                 <prob.Animation />
               </div>
 
@@ -499,7 +549,7 @@ export default function ProblemSection() {
           ))}
         </div>
 
-        </div>
-      </section>
+      </div>
+    </section>
   );
 }

@@ -15,7 +15,7 @@ export default function CTASection() {
     <section
       style={{
         width: '100%',
-        background: '#f6f9fc',
+        background: '#ffffff',
         padding: `80px ${GLOBAL_LAYOUT.paddingX}`,
         position: 'relative',
         overflow: 'hidden',
@@ -26,214 +26,122 @@ export default function CTASection() {
         style={{ maxWidth: GLOBAL_LAYOUT.maxWidth, margin: '0 auto', position: 'relative', zIndex: 1 }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.25, 0, 0.25, 1] }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Card */}
-          <motion.div
-            animate={{
-              boxShadow: [
-                '0 0 0 1px rgba(54,102,255,0.10), 0 8px 40px rgba(0,0,0,0.07)',
-                '0 0 0 1px rgba(54,102,255,0.22), 0 8px 40px rgba(0,0,0,0.07), 0 0 50px rgba(54,102,255,0.07)',
-                '0 0 0 1px rgba(54,102,255,0.10), 0 8px 40px rgba(0,0,0,0.07)',
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          {/* Main CTA Card */}
+          <div
             style={{
               position: 'relative',
-              background: '#ffffff',
-              borderRadius: 20,
-              padding: '52px 56px',
+              background: '#3666ff',
+              borderRadius: 40,
+              padding: '100px 40px',
               overflow: 'hidden',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 48,
+              justifyContent: 'center',
+              textAlign: 'center',
+              boxShadow: '0 20px 50px rgba(54,102,255,0.3)',
             }}
           >
             {/* ── Decorative background ── */}
-
-            {/* Grid fade in from top-left */}
+            {/* White Grid Overlay */}
             <div
               aria-hidden
               style={{
                 position: 'absolute', inset: 0,
                 backgroundImage:
-                  'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
-                backgroundSize: '44px 44px',
-                maskImage: 'radial-gradient(ellipse 65% 80% at 0% 0%, black, transparent)',
-                WebkitMaskImage: 'radial-gradient(ellipse 65% 80% at 0% 0%, black, transparent)',
+                  'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                backgroundSize: '60px 60px',
+                pointerEvents: 'none',
+                opacity: 0.5,
+              }}
+            />
+
+            {/* Glowing Orbs */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', top: '-20%', left: '-10%',
+                width: 600, height: 600,
+                background: 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)',
                 pointerEvents: 'none',
               }}
             />
 
-            {/* Violet glow — top-left corner */}
-            <div
-              aria-hidden
-              style={{
-                position: 'absolute', top: '-30%', left: '-10%',
-                width: 500, height: 400,
-                background: 'radial-gradient(ellipse, rgba(54,102,255,0.13) 0%, transparent 65%)',
-                pointerEvents: 'none',
-              }}
-            />
-
-            {/* Mint/teal accent — bottom-right */}
-            <div
-              aria-hidden
-              style={{
-                position: 'absolute', bottom: '-20%', right: '5%',
-                width: 400, height: 340,
-                background: 'radial-gradient(ellipse, rgba(0,184,132,0.10) 0%, rgba(240,251,248,0.6) 50%, transparent 70%)',
-                pointerEvents: 'none',
-              }}
-            />
-
-            {/* Horizontal light streak */}
-            <div
-              aria-hidden
-              style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: 1,
-                background: 'linear-gradient(90deg, transparent 0%, rgba(54,102,255,0.5) 30%, rgba(54,102,255,0.2) 60%, transparent 100%)',
-              }}
-            />
-
-            {/* ── Left — text ── */}
-            <motion.div
-              initial={{ opacity: 0, x: -16 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.55, delay: 0.1, ease: [0.25, 0, 0.25, 1] }}
-              style={{ flex: 1, minWidth: 0, position: 'relative', zIndex: 1 }}
-            >
-              {/* Badge */}
-              <div
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 7,
-                  padding: '5px 14px', borderRadius: 100, marginBottom: 22,
-                  background: 'rgba(54,102,255,0.1)',
-                  border: '1px solid rgba(54,102,255,0.22)',
-                }}
-              >
-                <Sparkles size={10} color="#3666ff" />
-                <span style={{ fontSize: 10, fontWeight: 600, color: '#3666ff', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
-                  Start Today
-                </span>
-              </div>
-
+            <div style={{ position: 'relative', zIndex: 2, maxWidth: 800 }}>
               {/* Heading */}
               <h2
                 style={{
-                  fontSize: 'clamp(24px, 2.6vw, 38px)',
-                  fontWeight: 300,
-                  color: '#000000',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 'clamp(32px, 4vw, 54px)',
+                  fontWeight: 700,
+                  color: '#ffffff',
                   letterSpacing: '-0.02em',
-                  lineHeight: 1.15,
-                  marginBottom: 12,
+                  lineHeight: 1.1,
+                  marginBottom: 24,
                 }}
               >
-                Transform your operations.{' '}
-                <span style={{ color: '#808080' }}>Today.</span>
+                Transform your procurement <span className="italic" style={{ color: '#E1E0CC' }}>ecosystem.</span>
               </h2>
 
               {/* Sub-text */}
               <p
                 style={{
-                  fontSize: 13,
-                  color: '#808080',
-                  lineHeight: 1.75,
-                  fontWeight: 400,
-                  maxWidth: 420,
-                  marginBottom: 24,
+                  fontFamily: 'var(--font-inter)',
+                  fontSize: 'clamp(16px, 1.2vw, 18px)',
+                  color: 'rgba(255,255,255,0.85)',
+                  lineHeight: 1.6,
+                  fontWeight: 500,
+                  maxWidth: 640,
+                  margin: '0 auto 48px auto',
                 }}
               >
-                Join enterprises replacing fragmented spreadsheets with one
-                connected, intelligent source-to-pay ecosystem.
+                Join global enterprises replacing fragmented spreadsheets with one connected, intelligent source-to-pay platform. Start your journey to 100% visibility today.
               </p>
 
-              {/* Trust items */}
-              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                {TRUST_ITEMS.map((item, i) => (
-                  <span key={item} style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    {i > 0 && (
-                      <span style={{ color: 'rgba(0,0,0,0.18)', margin: '0 10px', fontSize: 12 }}>·</span>
-                    )}
-                    <span style={{ fontSize: 11, color: 'rgba(0,0,0,0.4)', fontWeight: 400, letterSpacing: '0.05em' }}>
-                      {item}
-                    </span>
-                  </span>
-                ))}
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center' }}>
+                <motion.a
+                  href="/contact"
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255,255,255,0.3)' }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: '16px 40px',
+                    borderRadius: 100,
+                    background: '#ffffff',
+                    color: '#3666ff',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  Book a Demo
+                </motion.a>
+                <motion.a
+                  href="/contact"
+                  whileHover={{ scale: 1.05, background: 'rgba(255,255,255,0.1)' }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: '16px 40px',
+                    borderRadius: 100,
+                    border: '1px solid rgba(255,255,255,0.4)',
+                    background: 'transparent',
+                    color: '#ffffff',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  Contact Sales
+                </motion.a>
               </div>
-            </motion.div>
-
-            {/* Vertical divider */}
-            <div
-              aria-hidden
-              style={{
-                width: 1, alignSelf: 'stretch',
-                background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.08), transparent)',
-                flexShrink: 0,
-              }}
-            />
-
-            {/* ── Right — buttons ── */}
-            <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.55, delay: 0.18, ease: [0.25, 0, 0.25, 1] }}
-              style={{
-                display: 'flex', flexDirection: 'column', gap: 10,
-                alignItems: 'stretch', flexShrink: 0, minWidth: 180,
-                position: 'relative', zIndex: 1,
-              }}
-            >
-              <motion.a
-                href="/contact"
-                whileHover={{ scale: 1.03, boxShadow: '0 0 40px rgba(54,102,255,0.5)' }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  padding: '13px 28px', borderRadius: 100,
-                  background: '#3666ff', color: '#fff',
-                  fontSize: 13, fontWeight: 500, letterSpacing: '0.03em',
-                  textDecoration: 'none',
-                  boxShadow: '0 0 28px rgba(54,102,255,0.3)',
-                  cursor: 'pointer', whiteSpace: 'nowrap',
-                }}
-              >
-                Book a Demo
-                <ArrowRight size={13} />
-              </motion.a>
-
-              <motion.a
-                href="/contact"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  padding: '13px 28px', borderRadius: 100,
-                  border: '1px solid rgba(0,0,0,0.1)',
-                  background: 'rgba(0,0,0,0.02)',
-                  color: '#808080', fontSize: 13, fontWeight: 400,
-                  letterSpacing: '0.03em', textDecoration: 'none',
-                  cursor: 'pointer', whiteSpace: 'nowrap',
-                  transition: 'color 0.2s, border-color 0.2s, background 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#000000';
-                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)';
-                  e.currentTarget.style.background = 'rgba(0,0,0,0.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#808080';
-                  e.currentTarget.style.borderColor = 'rgba(0,0,0,0.1)';
-                  e.currentTarget.style.background = 'rgba(0,0,0,0.02)';
-                }}
-              >
-                Talk to Sales
-              </motion.a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

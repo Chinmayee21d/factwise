@@ -128,7 +128,7 @@ export function FlickeringFooter({ className, ...props }: React.ComponentProps<'
 						<div className="relative z-10 mt-10 flex flex-col gap-12 md:flex-row xl:mt-0 items-start">
 							<AnimatedContainer className="w-full max-w-sm min-w-2xs space-y-6">
 								<Link href="/" className="flex items-center gap-3">
-                                    <img src="/logowhite.png" alt="FactWise Logo" className="h-9 w-auto rounded-lg" />
+                                    <img src="/logowhite.png" alt="FactWise Logo" className="h-8 w-auto rounded-tl-sm rounded-br-sm" />
                                     <span className="text-xl font-bold text-white tracking-tight">FactWise</span>
                                 </Link>
 								<p className="text-slate-400 mt-8 text-sm md:mt-0 leading-relaxed max-w-[280px]">
@@ -137,7 +137,7 @@ export function FlickeringFooter({ className, ...props }: React.ComponentProps<'
 								</p>
 								<div className="flex gap-2">
 									{socialLinks.map((link) => (
-										<Button key={link.title} size="icon" variant="outline" className="size-9 rounded-full border-white/10 bg-white/5 text-white hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all">
+										<Button key={link.title} size="icon" variant="outline" className="size-9 rounded-none border-white/10 bg-white/5 text-white hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all">
 											<link.icon className="size-4" />
 										</Button>
 									))}

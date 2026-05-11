@@ -109,13 +109,10 @@ export default function FAQSection() {
 
       <div style={{ maxWidth: 860, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <SectionHeader
-          label="Frequently asked"
+          label="Support"
           title={
             <>
-              Questions we{' '}
-              <span style={{ color: '#808080', fontWeight: 300, fontStyle: 'italic' }}>
-                always get asked.
-              </span>
+              Frequently Asked <span className="italic" style={{ color: '#3666ff' }}>Questions</span>
             </>
           }
           description="Everything you need to know about FactWise -- how it works, how it fits your stack, and what it takes to get started."
@@ -142,29 +139,26 @@ export default function FAQSection() {
                   setOpenIndex(null);
                 }}
                 style={{
-                  padding: '6px 16px',
+                  padding: '8px 24px',
                   borderRadius: 100,
-                  border: `1px solid ${isActive ? 'rgba(54,102,255,0.4)' : 'rgba(0,0,0,0.09)'}`,
-                  background: isActive ? 'rgba(54,102,255,0.08)' : 'transparent',
-                  color: isActive ? '#3666ff' : '#808080',
-                  fontSize: 11,
-                  fontWeight: 500,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
+                  border: 'none',
+                  background: isActive ? '#3666ff' : '#f0f4ff',
+                  color: isActive ? '#ffffff' : '#3666ff',
+                  fontSize: 14,
+                  fontWeight: 600,
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   fontFamily: 'inherit',
+                  boxShadow: isActive ? '0 4px 12px rgba(54,102,255,0.25)' : 'none',
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = 'rgba(0,0,0,0.18)';
-                    e.currentTarget.style.color = '#000000';
+                    e.currentTarget.style.background = '#e6eeff';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.borderColor = 'rgba(0,0,0,0.09)';
-                    e.currentTarget.style.color = '#808080';
+                    e.currentTarget.style.background = '#f0f4ff';
                   }
                 }}
               >
@@ -187,11 +181,13 @@ export default function FAQSection() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.22, delay: i * 0.04 }}
                   style={{
-                    background: isOpen ? '#eef2f7' : '#ffffff',
-                    border: `1px solid ${isOpen ? 'rgba(54,102,255,0.22)' : 'rgba(0,0,0,0.08)'}`,
-                    borderRadius: 12,
+                    background: isOpen ? '#eef4ff' : '#ffffff',
+                    border: 'none',
+                    borderRadius: 16,
                     overflow: 'hidden',
-                    transition: 'background 0.2s ease, border-color 0.2s ease',
+                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                    marginBottom: 12,
+                    boxShadow: isOpen ? 'none' : '0 4px 20px rgba(0,0,0,0.03)',
                   }}
                 >
                   {/* Question row */}
@@ -211,32 +207,15 @@ export default function FAQSection() {
                       fontFamily: 'inherit',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                      {/* Category pill */}
+                    <div style={{ flex: 1 }}>
                       <span
                         style={{
-                          fontSize: 9,
-                          fontWeight: 600,
-                          letterSpacing: '0.12em',
-                          textTransform: 'uppercase',
-                          color: '#3666ff',
-                          background: 'rgba(54,102,255,0.08)',
-                          border: '1px solid rgba(54,102,255,0.22)',
-                          padding: '2px 8px',
-                          borderRadius: 100,
-                          flexShrink: 0,
-                        }}
-                      >
-                        {faq.category}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 14,
-                          fontWeight: 400,
-                          color: isOpen ? '#000000' : '#363636',
+                          fontSize: 17,
+                          fontWeight: 700,
+                          color: isOpen ? '#3666ff' : '#000000',
                           letterSpacing: '-0.01em',
                           lineHeight: 1.4,
-                          transition: 'color 0.2s ease',
+                          transition: 'color 0.3s ease',
                         }}
                       >
                         {faq.q}
@@ -246,21 +225,18 @@ export default function FAQSection() {
                     {/* Toggle icon */}
                     <div
                       style={{
-                        width: 26,
-                        height: 26,
-                        borderRadius: '50%',
-                        border: `1px solid ${isOpen ? 'rgba(54,102,255,0.35)' : 'rgba(0,0,0,0.1)'}`,
-                        background: isOpen ? 'rgba(54,102,255,0.12)' : 'transparent',
+                        width: 24,
+                        height: 24,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
-                        transition: 'all 0.2s ease',
+                        transition: 'all 0.3s ease',
                       }}
                     >
                       {isOpen
-                        ? <Minus size={11} color="#3666ff" />
-                        : <Plus size={11} color="rgba(0,0,0,0.35)" />
+                        ? <Minus size={20} color={isOpen ? "#3666ff" : "#000000"} strokeWidth={2.5} />
+                        : <Plus size={20} color="#000000" strokeWidth={2.5} />
                       }
                     </div>
                   </button>
@@ -278,12 +254,11 @@ export default function FAQSection() {
                       >
                         <div
                           style={{
-                            padding: '14px 20px 22px 20px',
-                            fontSize: 13,
-                            color: '#808080',
-                            lineHeight: 1.8,
-                            fontWeight: 400,
-                            borderTop: '1px solid rgba(0,0,0,0.07)',
+                            padding: '0px 20px 24px 20px',
+                            fontSize: 15,
+                            color: '#4b5563',
+                            lineHeight: 1.6,
+                            fontWeight: 500,
                           }}
                         >
                           {faq.a}

@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { RefreshCcw, Lock, Zap } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import { GLOBAL_LAYOUT } from './LayoutConfig';
@@ -10,7 +10,7 @@ import { GLOBAL_LAYOUT } from './LayoutConfig';
 const CX = 310;       // SVG center x
 const CY = 310;       // SVG center y
 const RADIUS = 232;   // spoke length
-const NODE = 88;      // node card size
+const NODE = 92;      // slightly larger node card size
 const HALF = NODE / 2;
 
 /* ── Data ───────────────────────────────────────── */
@@ -54,7 +54,6 @@ function nodeXY(angle: number) {
   };
 }
 
-/* ── Component ──────────────────────────────────── */
 export default function IntegrationsShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
@@ -90,6 +89,10 @@ export default function IntegrationsShowcase() {
               {highlights.map((h, i) => (
                 <motion.div
                   key={h.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
                   whileHover={{ x: 8 }}
                   style={{ 
                     position: 'relative',
@@ -100,10 +103,11 @@ export default function IntegrationsShowcase() {
                     padding: '24px 28px', 
                     borderRadius: 20, 
                     background: '#ffffff',
-                    border: '1px solid rgba(0,0,0,0.08)',
+                    border: '1px solid rgba(0,0,0,0.06)',
                     backdropFilter: 'blur(20px)',
                     textAlign: 'left',
                     overflow: 'hidden',
+                    boxShadow: '0 4px 12px -2px rgba(0,0,0,0.03)',
                   }}
                   className="group"
                 >
@@ -116,19 +120,13 @@ export default function IntegrationsShowcase() {
                     />
                   </div>
 
-                  {/* Top Glow Aura */}
-                  <div 
-                    className="absolute -top-12 left-1/4 w-32 h-12 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                    style={{ background: h.accent + '20' }}
-                  />
-
                   <div style={{ 
                     color: '#3666ff',
                     flexShrink: 0, 
                     marginTop: 4,
                     opacity: 0.9,
                     transition: 'all 0.3s ease'
-                  }} className="group-hover:scale-110 group-hover:text-white">
+                  }} className="group-hover:scale-110">
                     {h.icon}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -144,12 +142,28 @@ export default function IntegrationsShowcase() {
             </div>
           </div>
 
-          {/* Right Column: Hub Diagram - Centered scale origin to prevent misalignment */}
+          {/* Right Column: Hub Diagram */}
           <div className="relative w-full flex justify-center lg:justify-end pt-24">
             <div 
               className="scale-[0.7] lg:scale-[0.8] origin-center lg:origin-center"
               style={{ position: 'relative', width: 620, height: 620, maxWidth: '100%' }}
             >
+              {/* Static Back Glow for Hub */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: CY - 120,
+                  left: CX - 120,
+                  width: 240,
+                  height: 240,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(54,102,255,0.12) 0%, transparent 70%)',
+                  filter: 'blur(40px)',
+                  zIndex: 0,
+                  pointerEvents: 'none',
+                }}
+              />
+
               {/* SVG Hub Logic */}
               <svg
                 viewBox={`0 0 ${CX * 2} ${CY * 2}`}
@@ -167,8 +181,8 @@ export default function IntegrationsShowcase() {
                     const gradId = `grad-${intg.name}`;
                     return (
                       <linearGradient key={gradId} id={gradId} x1={CX} y1={CY} x2={nx} y2={ny} gradientUnits="userSpaceOnUse">
-                        <stop offset="0%"   stopColor="#3666ff" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#3666ff" stopOpacity="0.08" />
+                        <stop offset="0%"   stopColor="#3666ff" stopOpacity="0.4" />
+                        <stop offset="100%" stopColor="#3666ff" stopOpacity="0.05" />
                       </linearGradient>
                     );
                   })}
@@ -180,31 +194,44 @@ export default function IntegrationsShowcase() {
                   })}
                 </defs>
 
-                <circle cx={CX} cy={CY} r={RADIUS + 34} fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
-                <circle cx={CX} cy={CY} r={RADIUS + 66} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={RADIUS + 34} fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={RADIUS + 66} fill="none" stroke="rgba(0,0,0,0.03)" strokeWidth="1" />
 
                 {integrations.map((intg) => {
                   const { nx, ny } = nodeXY(intg.angle);
                   return (
-                    <line
-                      key={`line-${intg.name}`}
-                      x1={CX} y1={CY} x2={nx} y2={ny}
-                      stroke={`url(#grad-${intg.name})`}
-                      strokeWidth="1"
-                    />
+                    <g key={`line-group-${intg.name}`}>
+                      {/* Static Base Line */}
+                      <line
+                        x1={CX} y1={CY} x2={nx} y2={ny}
+                        stroke={`url(#grad-${intg.name})`}
+                        strokeWidth="1.5"
+                        opacity="0.6"
+                      />
+                      {/* Flowing Energy Line */}
+                      <motion.line
+                        x1={CX} y1={CY} x2={nx} y2={ny}
+                        stroke="#3666ff"
+                        strokeWidth="1.5"
+                        strokeDasharray="4 12"
+                        animate={{ strokeDashoffset: [-100, 0] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        opacity="0.3"
+                      />
+                    </g>
                   );
                 })}
 
                 {integrations.map((intg, i) => (
                   <circle
                     key={`pkt-${intg.name}`}
-                    r="3"
+                    r="3.5"
                     fill="#3666ff"
                     filter={`url(#glow-${intg.name})`}
                   >
                     <animateMotion
-                      dur={`${2.0 + i * 0.28}s`}
-                      begin={`${i * 0.42}s`}
+                      dur={`${2.2 + i * 0.3}s`}
+                      begin={`${i * 0.4}s`}
                       repeatCount="indefinite"
                     >
                       <mpath href={`#path-${intg.name}`} />
@@ -212,43 +239,53 @@ export default function IntegrationsShowcase() {
                     <animate
                       attributeName="opacity"
                       values="0;0;1;1;0"
-                      keyTimes="0;0.1;0.2;0.85;1"
-                      dur={`${2.0 + i * 0.28}s`}
-                      begin={`${i * 0.42}s`}
+                      keyTimes="0;0.1;0.2;0.8;1"
+                      dur={`${2.2 + i * 0.3}s`}
+                      begin={`${i * 0.4}s`}
                       repeatCount="indefinite"
                     />
                   </circle>
                 ))}
               </svg>
 
-              {/* Center hub */}
-              <div
+              {/* Center hub - Constant and Stable */}
+              <motion.div
+                initial={{ opacity: 0, x: '-50%', y: '-50%' }}
+                whileInView={{ opacity: 1, x: '-50%', y: '-50%' }}
+                transition={{ duration: 0.8 }}
                 style={{
                   position: 'absolute',
                   top: '50%',
                   left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 20,
+                  zIndex: 25,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: 138,
-                  height: 138,
+                  width: 146,
+                  height: 146,
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle at 40% 35%, rgba(54,102,255,0.1) 0%, #ffffff 60%)',
+                  background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #f8faff 100%)',
                   border: '1px solid rgba(54,102,255,0.25)',
-                  backdropFilter: 'blur(24px)',
-                  boxShadow: '0 0 60px rgba(54,102,255,0.15), 0 0 30px rgba(54,102,255,0.08)',
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 0 60px rgba(54,102,255,0.12), 0 10px 30px rgba(0,0,0,0.04)',
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 500, color: '#000000', letterSpacing: '-0.025em' }}>
+                <div style={{ 
+                  position: 'absolute', 
+                  inset: -1, 
+                  borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 100%)',
+                  pointerEvents: 'none'
+                }} />
+                
+                <span style={{ fontSize: 18, fontWeight: 500, color: '#000000', letterSpacing: '-0.025em', position: 'relative' }}>
                   fact<span style={{ fontWeight: 300 }}>wise</span>
                 </span>
-                <div style={{ fontSize: 9, color: '#3666ff',marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 600 }}>
+                <div style={{ fontSize: 10, color: '#3666ff', marginTop: 5, textTransform: 'uppercase', letterSpacing: '0.2em', fontWeight: 700, position: 'relative', opacity: 0.8 }}>
                   Hub
                 </div>
-              </div>
+              </motion.div>
 
               {/* Integration nodes */}
               {integrations.map((intg, i) => {
@@ -256,7 +293,27 @@ export default function IntegrationsShowcase() {
                 return (
                   <motion.div
                     key={intg.name}
-                    whileHover={{ scale: 1.12, zIndex: 30 }}
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    animate={{
+                      y: [0, -10, 0],
+                    }}
+                    transition={{
+                      opacity: { delay: i * 0.08 },
+                      scale: { delay: i * 0.08 },
+                      y: {
+                        duration: 3.5 + i * 0.25,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }
+                    }}
+                    whileHover={{ 
+                      scale: 1.08, 
+                      zIndex: 40,
+                      boxShadow: `0 25px 50px -12px rgba(0,0,0,0.08), 0 0 20px -2px ${intg.color}15`,
+                      borderColor: `${intg.color}40`,
+                    }}
                     style={{
                       position: 'absolute',
                       top: ny - HALF,
@@ -264,30 +321,43 @@ export default function IntegrationsShowcase() {
                       width: NODE,
                       height: NODE,
                       zIndex: 10,
-                      borderRadius: 20,
+                      borderRadius: 24,
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
                       justifyContent: 'center',
                       background: `#ffffff`,
-                      border: `1px solid rgba(0,0,0,0.08)`,
+                      border: `1px solid rgba(0,0,0,0.05)`,
                       backdropFilter: 'blur(20px)',
-                      boxShadow: `0 4px 16px rgba(0,0,0,0.08)`,
+                      boxShadow: `0 12px 30px -10px rgba(0,0,0,0.05), 0 4px 10px -2px rgba(0,0,0,0.02)`,
                       cursor: 'pointer',
+                      transition: 'border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
                     }}
                   >
-                    <div
+                    <motion.div
+                      animate={{
+                        opacity: [0.6, 1, 0.6],
+                        scale: [1, 1.2, 1],
+                      }}
+                      transition={{
+                        duration: 2.5 + i * 0.4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
                       style={{
-                        width: 8,
-                        height: 8,
+                        width: 10,
+                        height: 10,
                         borderRadius: '50%',
                         background: intg.color,
-                        marginBottom: 7,
-                        boxShadow: `0 0 10px ${intg.color}80`,
+                        marginBottom: 10,
+                        boxShadow: `0 0 15px ${intg.color}60`,
                       }}
                     />
-                    <div style={{ fontSize: 12, fontWeight: 600, color: '#000000', letterSpacing: '0.01em' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: '#000000', letterSpacing: '-0.01em' }}>
                       {intg.name}
+                    </div>
+                    <div style={{ fontSize: 9, fontWeight: 500, color: '#999', marginTop: 3, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                      {intg.category}
                     </div>
                   </motion.div>
                 );
@@ -300,3 +370,4 @@ export default function IntegrationsShowcase() {
     </section>
   );
 }
+
