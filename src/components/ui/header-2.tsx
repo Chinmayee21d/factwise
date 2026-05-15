@@ -8,8 +8,11 @@ import { MagicButton } from '@/components/ui/MagicButton';
 import { useScroll } from '@/components/ui/use-scroll';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
-export function Header() {
+export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark' }) {
+	const pathname = usePathname();
+	const theme = pathname === '/about' ? 'light' : propTheme;
 	const [open, setOpen] = React.useState(false);
 	const [mounted, setMounted] = React.useState(false);
 	const scrolled = useScroll(20);
@@ -35,6 +38,10 @@ export function Header() {
 		{
 			label: 'About Us',
 			href: '/about',
+		},
+		{
+			label: 'Careers',
+			href: '/careers',
 		},
 		{
 			label: 'Enterprise',
@@ -83,13 +90,13 @@ export function Header() {
 			>
 				<div className="flex items-center gap-3">
 					<img
-						src={(scrolled || open || !mounted) ? "/logo.png" : "/logowhite.png"}
+						src={(scrolled || open || !mounted || theme === 'light') ? "/logo.png" : "/logowhite.png"}
 						alt="FactWise Logo"
 						className="h-8 w-auto transition-all duration-500 rounded-tl-sm rounded-br-sm"
 					/>
 					<span className={cn("text-[17px] font-bold tracking-tight transition-colors duration-500", {
-						"text-white": !scrolled && !open && mounted,
-						"text-black": scrolled || open || !mounted,
+						"text-white": !scrolled && !open && mounted && theme === 'dark',
+						"text-black": scrolled || open || !mounted || theme === 'light',
 					})}>FactWise</span>
 				</div>
 
@@ -100,10 +107,9 @@ export function Header() {
 								className={buttonVariants({ 
 									variant: 'ghost', 
 									className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium', {
-										'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open,
-										'text-black/60 hover:text-black hover:bg-black/5': scrolled || open,
-									}) 
-								})}
+										'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
+										'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
+									}) 								})}
 								href={link.href}
 							>
 								{link.label}
@@ -128,14 +134,14 @@ export function Header() {
 						</div>
 					))}
 					<div className={cn("w-px h-4 mx-4 transition-colors duration-500", {
-						"bg-white/20": !scrolled && !open,
-						"bg-black/10": scrolled || open,
+						"bg-white/20": !scrolled && !open && theme === 'dark',
+						"bg-black/10": scrolled || open || theme === 'light',
 					})} />
 					<Button 
 						variant="ghost" 
 						className={cn("text-[14px] font-medium transition-colors duration-500", {
-							"text-white/80 hover:text-white": !scrolled && !open,
-							"text-black/60 hover:text-black": scrolled || open,
+							"text-white/80 hover:text-white": !scrolled && !open && theme === 'dark',
+							"text-black/60 hover:text-black": scrolled || open || theme === 'light',
 						})}
 					>
 						Login
@@ -148,8 +154,8 @@ export function Header() {
 					/>
 				</div>
 				<Button size="icon" variant="ghost" onClick={() => setOpen(!open)} className={cn("md:hidden transition-colors duration-500", {
-					"text-white hover:bg-white/10": !scrolled && !open,
-					"text-black hover:bg-black/5": scrolled || open,
+					"text-white hover:bg-white/10": !scrolled && !open && theme === 'dark',
+					"text-black hover:bg-black/5": scrolled || open || theme === 'light',
 				})}>
 					<MenuToggleIcon open={open} className="size-5" duration={300} />
 				</Button>

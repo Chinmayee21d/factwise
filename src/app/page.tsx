@@ -1,7 +1,7 @@
 'use client';
 
 import { Header } from '@/components/ui/header-2';
-import Hero from '@/components/Hero4';
+import Hero from '@/components/Hero';
 import StatsStrip from '@/components/StatsStrip';
 import ProblemSection from '@/components/ProblemSection';
 // import BentoGrid from '@/components/BentoGrid';
@@ -12,16 +12,16 @@ import IntegrationsShowcase from '@/components/IntegrationsShowcase';
 
 import IndustryMarquee from '@/components/IndustryMarquee';
 import { ExpandingIndustrySection } from '@/components/ExpandingIndustryCards';
-import ParallaxMethodology from '@/components/ParallaxMethodology';
+// import ParallaxMethodology from '@/components/ParallaxMethodology';
 
-import FAQSection from '@/components/FAQSection';
-import CTASection from '@/components/CTASection';
+// import FAQSection from '@/components/FAQSection';
+// import CTASection from '@/components/CTASection';
 import Testimonials from '@/components/testimonials';
-import CaseStudies from '@/components/CaseStudies';
+// import CaseStudies from '@/components/CaseStudies';
 import ModernCaseStudies from '@/components/ModernCaseStudies';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
 import ProductHubAnimation from '@/components/productflow';
-// import ProductFlowShowcase from '@/components/ProductFlowShowcase';
+import ProcurementModules from '@/components/ProcurementModules';
 import ImplementationRoadmap from '@/components/ImplementationRoadmap';
 import MethodologySection from '@/components/Methodology';
 // import ProcurementJourney from '@/components/ProcurementJourney';
@@ -43,8 +43,6 @@ export default function Home() {
         margin: '0',
       }}
     >
-      <Header />
-
       {/* 1: Hero */}
       <Hero />
 
@@ -55,11 +53,13 @@ export default function Home() {
       <ProblemSection />
 
       {/* 4: Methodology Section */}
-      <ParallaxMethodology />
+      {/* <ParallaxMethodology />*/}
       <MethodologySection />
       {/* 4: Product Hub Animation */}
       <ProductHubAnimation />
 
+      {/* New: Core Procurement Modules */}
+      <ProcurementModules />
 
       {/* 5: Implementation Roadmap */}
       <ImplementationRoadmap />
@@ -77,15 +77,13 @@ export default function Home() {
       <Testimonials />
 
       {/* 10: Case Studies */}
-      <CaseStudies />
+
       <ModernCaseStudies />
       {/* 10 */}
-      <IndustryMarquee />
+      {/* <IndustryMarquee /> */}
       <ExpandingIndustrySection />
 
-      <FAQSection />
 
-      <CTASection />
       <FlickeringFooter />
     </main>
   );

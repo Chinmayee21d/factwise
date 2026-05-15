@@ -19,7 +19,7 @@ const ReconciliationMockup = () => {
     <div style={{ paddingTop: '140px' }}>
       <motion.div 
         ref={ref} 
-        style={{ background: '#0a0a0c', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.6)', fontFamily: 'Inter, sans-serif', perspective: '1000px' }}
+        style={{ background: '#0a0a0c', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.6)', fontFamily: 'var(--font-inter), sans-serif', perspective: '1000px' }}
       >
         <BrowserChrome url="factwise.io/payments/reconciliation" />
 

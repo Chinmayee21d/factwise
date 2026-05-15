@@ -69,8 +69,8 @@ export function FeatureLayout({ section }: Readonly<{ section: FeatureSectionDat
   return (
     <div ref={rowRef} style={{ position: 'relative', width: '100%', padding: `${SECTION_LAYOUT.paddingY} 0`, overflow: 'hidden', backgroundColor: '#0a0a0c' }}>
       {/* Bokeh orbs */}
-      <motion.div style={{ y: orb1Y, position: 'absolute', top: '10%', left: isRight ? 'auto' : '-8%', right: isRight ? '-8%' : 'auto', width: 680, height: 680, borderRadius: '50%', background: `radial-gradient(circle, ${section.orbColor1} 0%, transparent 70%)`, filter: 'blur(90px)', opacity: 0.4, pointerEvents: 'none' }} />
-      <motion.div style={{ y: orb2Y, position: 'absolute', bottom: '5%', left: isRight ? '10%' : 'auto', right: isRight ? 'auto' : '10%', width: 480, height: 480, borderRadius: '50%', background: `radial-gradient(circle, ${section.orbColor2} 0%, transparent 70%)`, filter: 'blur(100px)', opacity: 0.3, pointerEvents: 'none' }} />
+      <motion.div style={{ y: orb1Y, position: 'absolute', top: '10%', left: isRight ? 'auto' : '-8%', right: isRight ? '-8%' : 'auto', width: 680, height: 680, borderRadius: '50%', background: `radial-gradient(circle, ${section.orbColor1} 0%, transparent 70%)`, opacity: 0.4, pointerEvents: 'none', willChange: 'transform' }} />
+      <motion.div style={{ y: orb2Y, position: 'absolute', bottom: '5%', left: isRight ? '10%' : 'auto', right: isRight ? 'auto' : '10%', width: 480, height: 480, borderRadius: '50%', background: `radial-gradient(circle, ${section.orbColor2} 0%, transparent 70%)`, opacity: 0.3, pointerEvents: 'none', willChange: 'transform' }} />
 
         <div
           style={{
@@ -100,7 +100,7 @@ export function FeatureLayout({ section }: Readonly<{ section: FeatureSectionDat
           </div>
 
           {/* Title */}
-          <h2 style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(30px,4vw,50px)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#f4f4f5', marginBottom: 18, whiteSpace: 'pre-line' }}>
+          <h2 style={{ fontFamily: 'var(--font-inter), sans-serif', fontSize: 'clamp(30px,4vw,50px)', fontWeight: 300, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#f4f4f5', marginBottom: 18, whiteSpace: 'pre-line' }}>
             {section.title}
           </h2>
 

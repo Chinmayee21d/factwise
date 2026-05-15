@@ -14,7 +14,7 @@ interface WordsPullUpProps {
 
 const WordsPullUp = ({ text, className = "", showAsterisk = false, style }: WordsPullUpProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: false });
   const words = text.split(" ");
 
   return (
@@ -41,8 +41,8 @@ const WordsPullUp = ({ text, className = "", showAsterisk = false, style }: Word
   );
 };
 
-/* ---------------- Hero ---------------- */
-const navItems = ["Platform", "Solutions", "Methodology", "Case Studies", "Enterprise"];
+import Magnetic from "./ui/Magnetic";
+import ScrollReveal from "./ui/ScrollReveal";
 
 export default function Hero() {
   return (
@@ -73,46 +73,49 @@ export default function Hero() {
           <div className="grid grid-cols-12 items-end gap-6">
 
             <div className="col-span-12 lg:col-span-8">
-              <h1
-                className="font-medium leading-[0.8] tracking-[-0.05em] text-[15vw] sm:text-[13vw] md:text-[11vw] lg:text-[10vw] xl:text-[9vw]"
-                style={{ color: "#E1E0CC", fontFamily: "var(--font-display)" }}
-              >
-                <WordsPullUp text="FactWise" />
-              </h1>
+              <ScrollReveal type="split-chars" stagger={0.03}>
+                <h1
+                  className="font-medium leading-[0.8] tracking-[-0.05em] text-[15vw] sm:text-[13vw] md:text-[11vw] lg:text-[10vw] xl:text-[9vw]"
+                  style={{ color: "#E1E0CC", fontFamily: "var(--font-display)" }}
+                  data-speed="1.1"
+                >
+                  FactWise
+                </h1>
+              </ScrollReveal>
             </div>
 
             <div className="col-span-12 flex flex-col gap-6 pb-4 lg:col-span-4 lg:pb-4">
-
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-sm text-[#E1E0CC]/80 sm:text-base md:text-lg max-w-[380px]"
-                style={{ lineHeight: 1.4, fontFamily: "var(--font-inter)" }}
-              >
-                Go beyond simple sourcing. FactWise unifies your entire procurement ecosystem into one intelligent, 100% visible workflow.
-              </motion.p>
-
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="flex items-center gap-4"
-              >
-                <button
-                  className="group inline-flex items-center gap-2 self-start rounded-full bg-[#E1E0CC] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition-all hover:gap-4 sm:text-base shadow-lg shadow-black/20"
+              <ScrollReveal type="split-words" delay={0.5} stagger={0.01}>
+                <p
+                  className="text-sm text-[#E1E0CC]/80 sm:text-base md:text-lg max-w-[380px]"
+                  style={{ lineHeight: 1.4, fontFamily: "var(--font-inter)" }}
+                  data-speed="0.9"
                 >
-                  Join Us
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110">
-                    <ArrowRight className="h-5 w-5" style={{ color: "#E1E0CC" }} />
-                  </span>
-                </button>
-              </motion.div>
+                  Procurement is just the beginning. FactWise connects every workflow — from customer quotes and vendor RFQs to POs, payments, and beyond — in one platform built for manufacturers.
+                </p>
+              </ScrollReveal>
+
+
+              <ScrollReveal delay={0.8} y={20}>
+                <div className="flex items-center gap-4">
+                  <Magnetic>
+                    <button
+                      className="group inline-flex items-center gap-2 self-start rounded-full bg-[#E1E0CC] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition-all hover:gap-4 sm:text-base shadow-lg shadow-black/20"
+                    >
+                      Join Us
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110">
+                        <ArrowRight className="h-5 w-5" style={{ color: "#E1E0CC" }} />
+                      </span>
+                    </button>
+                  </Magnetic>
+                </div>
+              </ScrollReveal>
 
             </div>
           </div>
         </div>
       </div>
+
 
       {/* Inline style for noise if needed, but using inline style bg-image above */}
       <style jsx>{`

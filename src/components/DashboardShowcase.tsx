@@ -32,7 +32,7 @@ function Shell({
         borderRadius: 18,
         display: 'flex',
         overflow: 'hidden',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontFamily: 'var(--font-inter), sans-serif',
         boxShadow: '0 48px 96px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)',
       }}
     >

@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Careers — FactWise</title>
+<meta name="description" content="Join FactWise. We're building the leading people-first procurement platform for global enterprises, powered by agentic AI and an exceptional team." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+<style>
+/* ================= DESIGN TOKENS ================= */
+:root{
+  --bg:        #FFFFFF;
+  --bg-soft:   #F4F6FB;
+  --ink:       #0A0E1A;       /* near-black, slightly blue */
+  --ink-2:     #2A3142;
+  --muted:     #6B7385;
+  --line:      #E4E8F0;
+  --blue:      #1E48E6;       /* primary electric blue */
+  --blue-soft: #4F6EF0;
+  --blue-deep: #0E2DB8;
+  --blue-50:   #EEF2FF;
+  --black:     #050810;
+  --radius:    16px;
+  --radius-lg: 28px;
+  --shadow-sm: 0 1px 2px rgba(10,14,26,.04), 0 2px 8px rgba(10,14,26,.04);
+  --shadow-md: 0 8px 24px -8px rgba(10,14,26,.10), 0 4px 12px -4px rgba(10,14,26,.06);
+  --shadow-lg: 0 30px 60px -20px rgba(10,14,26,.18), 0 18px 36px -18px rgba(30,72,230,.18);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  font-feature-settings:"ss01","cv11";
+  letter-spacing:-0.005em;
+}
+body{font-size:16px;line-height:1.55}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.serif{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
+::selection{background:var(--blue);color:#fff}
+
+/* progress bar */
+.progress{position:fixed;top:0;left:0;height:2px;background:var(--blue);z-index:300;width:0%}
+
+/* ================= NAV ================= */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .35s, border-color .35s, padding .35s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--line);
+  padding:12px 32px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-0.02em;font-size:18px}
+.brand .dot{width:14px;height:14px;border-radius:50%;background:var(--ink);position:relative}
+.brand .dot::after{content:"";position:absolute;inset:3px;background:var(--blue);border-radius:50%}
+.nav-links{display:flex;align-items:center;gap:4px;font-size:14px}
+.nav-links a{padding:8px 14px;border-radius:999px;color:var(--ink-2);transition:background .2s, color .2s}
+.nav-links a:hover{background:var(--bg-soft);color:var(--ink)}
+.nav-links a.active{color:var(--blue);font-weight:500}
+.nav-cta{
+  padding:10px 18px;border-radius:999px;background:var(--ink);color:#fff;
+  font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:8px;
+  transition:background .3s, transform .3s;
+}
+.nav-cta:hover{background:var(--blue);transform:translateY(-1px)}
+.nav-cta svg{width:14px;height:14px;transition:transform .3s}
+.nav-cta:hover svg{transform:translate(2px,-2px)}
+@media(max-width:780px){.nav-links{display:none}}
+
+/* ================= HERO ================= */
+.hero{
+  position:relative;min-height:100vh;padding:160px 32px 100px;
+  display:flex;flex-direction:column;justify-content:center;overflow:hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 80% 20%, rgba(30,72,230,.10), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 10% 90%, rgba(30,72,230,.06), transparent 60%),
+    var(--bg);
+}
+.hero-grid-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(10,14,26,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10,14,26,.04) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%);
+}
+.hero-inner{max-width:1240px;margin:0 auto;width:100%;position:relative}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-2);
+  padding:8px 14px 8px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.7);
+  backdrop-filter:blur(4px);
+  width:fit-content;
+}
+.eyebrow .pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--blue);
+  box-shadow:0 0 0 0 rgba(30,72,230,.45);animation:pulse 1.8s infinite;
+}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(30,72,230,.45)}70%{box-shadow:0 0 0 14px rgba(30,72,230,0)}100%{box-shadow:0 0 0 0 rgba(30,72,230,0)}}
+
+.hero-title{
+  margin-top:32px;
+  font-weight:600;
+  font-size:clamp(56px, 10vw, 156px);
+  line-height:.93;letter-spacing:-0.055em;
+  color:var(--ink);
+  max-width:1100px;
+}
+.hero-title .line{display:block;overflow:hidden;padding-bottom:.06em}
+.hero-title .char{display:inline-block;transform:translateY(110%);will-change:transform}
+.hero-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--blue)}
+
+.hero-meta{
+  margin-top:56px;display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:end;
+}
+.hero-lede{font-size:clamp(17px,1.4vw,20px);color:var(--ink-2);max-width:560px;line-height:1.5}
+.hero-stats{display:flex;gap:48px;justify-content:flex-end;flex-wrap:wrap}
+.stat{text-align:right}
+.stat .num{font-size:42px;font-weight:600;letter-spacing:-0.03em;color:var(--ink)}
+.stat .num em{color:var(--blue);font-style:normal}
+.stat .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+@media(max-width:780px){
+  .hero{padding-top:140px}
+  .hero-meta{grid-template-columns:1fr;gap:36px}
+  .hero-stats{justify-content:flex-start;gap:32px}
+}
+
+.hero-cta-row{
+  margin-top:48px;display:flex;gap:12px;flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 24px;border-radius:999px;
+  font-size:14px;font-weight:500;letter-spacing:.005em;
+  transition:transform .3s, background .3s, color .3s, border-color .3s;
+}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-deep);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+.btn svg{width:14px;height:14px;transition:transform .3s}
+.btn:hover svg{transform:translate(2px,-2px)}
+
+/* floating decorative shapes */
+.hero-shape{position:absolute;pointer-events:none;opacity:.85}
+.hero-shape svg{width:100%;height:100%}
+.shape-a{top:14%;right:6%;width:140px;height:140px;color:var(--blue)}
+.shape-b{top:60%;right:18%;width:90px;height:90px;color:var(--ink)}
+.shape-c{bottom:8%;left:6%;width:110px;height:110px;color:var(--blue)}
+
+/* ================= MARQUEE ================= */
+.marquee{
+  padding:24px 0;overflow:hidden;
+  background:var(--ink);color:#fff;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+}
+.marquee-track{display:flex;gap:48px;white-space:nowrap;will-change:transform;align-items:center}
+.marquee-item{font-size:14px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;display:inline-flex;align-items:center;gap:48px}
+.marquee-item em{color:var(--blue-soft);font-style:italic;font-family:'Instrument Serif',serif;font-size:18px;letter-spacing:0;text-transform:none}
+.marquee-dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+
+/* ================= CULTURE ================= */
+.culture{padding:140px 32px;position:relative}
+.culture-inner{max-width:1240px;margin:0 auto}
+.section-label{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+}
+.section-label .ln{width:24px;height:1px;background:var(--ink-2)}
+
+.culture-head{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:80px}
+.culture-head h2{
+  font-size:clamp(40px,5.5vw,72px);font-weight:500;letter-spacing:-0.04em;line-height:1.02;
+  margin-top:18px;
+}
+.culture-head h2 em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--blue);font-weight:400}
+.culture-head p{color:var(--ink-2);font-size:17px;max-width:480px;margin-left:auto}
+@media(max-width:880px){.culture-head{grid-template-columns:1fr;gap:32px}.culture-head p{margin-left:0}}
+
+.culture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:880px){.culture-grid{grid-template-columns:1fr}}
+
+.culture-card{
+  background:var(--bg-soft);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:40px 32px 32px;min-height:340px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:background .5s, border-color .3s, transform .5s cubic-bezier(.2,.7,.3,1);
+  position:relative;overflow:hidden;
+}
+.culture-card:hover{transform:translateY(-6px);background:#fff;border-color:transparent;box-shadow:var(--shadow-lg)}
+.culture-card::after{
+  content:"";position:absolute;inset:0;border-radius:var(--radius-lg);
+  background:linear-gradient(180deg, transparent 70%, rgba(30,72,230,.06) 100%);
+  opacity:0;transition:opacity .5s;pointer-events:none;
+}
+.culture-card:hover::after{opacity:1}
+
+.culture-num{
+  font-size:13px;font-weight:600;color:var(--blue);letter-spacing:.12em;
+}
+.culture-card h3{
+  margin-top:20px;font-size:30px;font-weight:600;letter-spacing:-0.025em;line-height:1.1;
+}
+.culture-card p{margin-top:14px;color:var(--ink-2);font-size:15px;line-height:1.55;max-width:340px}
+.culture-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:var(--bg);border:1px solid var(--line);
+  display:grid;place-items:center;margin-top:auto;color:var(--ink);
+  transition:background .4s, color .4s, transform .5s cubic-bezier(.2,.7,.3,1);
+}
+.culture-card:hover .culture-icon{background:var(--blue);color:#fff;transform:rotate(-6deg)}
+.culture-icon svg{width:22px;height:22px;stroke-width:1.6}
+
+/* ================= OPENINGS ================= */
+.openings{padding:140px 32px;background:var(--bg-soft);position:relative}
+.openings-inner{max-width:1240px;margin:0 auto}
+.openings-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:60px;flex-wrap:wrap}
+.openings-head h2{font-size:clamp(40px,5.5vw,72px);font-weight:500;letter-spacing:-0.04em;line-height:1;max-width:680px;margin-top:18px}
+.openings-head h2 em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--blue);font-weight:400}
+
+/* filter chips */
+.openings-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px}
+.chip{
+  padding:9px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);
+  font-size:13px;color:var(--ink-2);transition:background .25s, color .25s, border-color .25s;
+  cursor:pointer;
+}
+.chip:hover{border-color:var(--ink-2)}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .count{margin-left:6px;font-size:11px;opacity:.7;font-weight:500}
+
+/* job list */
+.jobs{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.job{
+  position:relative;
+  display:grid;grid-template-columns: 1fr auto auto auto;gap:28px;align-items:center;
+  padding:28px 8px;border-bottom:1px solid var(--line);
+  cursor:pointer;
+  transition:padding-left .4s cubic-bezier(.2,.7,.3,1);
+}
+.job::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--blue);transform:scaleY(0);transform-origin:bottom;
+  transition:transform .4s cubic-bezier(.2,.7,.3,1);
+}
+.job:hover::before{transform:scaleY(1);transform-origin:top}
+.job:hover{padding-left:24px}
+.job-title{font-size:clamp(22px,2.6vw,32px);font-weight:500;letter-spacing:-0.025em;color:var(--ink);line-height:1.1}
+.job-desc{font-size:13px;color:var(--muted);margin-top:6px;max-width:520px;line-height:1.5}
+.job-team{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2);font-weight:500}
+.job-loc{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.job-loc svg{width:14px;height:14px}
+.job-arrow{
+  width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+  display:grid;place-items:center;background:#fff;
+  transition:background .3s, color .3s, border-color .3s, transform .3s;
+}
+.job:hover .job-arrow{background:var(--blue);color:#fff;border-color:var(--blue);transform:rotate(-45deg)}
+.job-arrow svg{width:16px;height:16px;transition:transform .3s}
+
+@media(max-width:880px){
+  .job{grid-template-columns:1fr auto;gap:12px}
+  .job-team, .job-loc{display:none}
+}
+
+/* "didn't see your role" footer */
+.openings-foot{
+  margin-top:48px;padding:36px;border-radius:var(--radius-lg);
+  background:var(--ink);color:#fff;
+  display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+}
+.openings-foot h3{font-size:24px;font-weight:500;letter-spacing:-0.02em;max-width:560px;line-height:1.3}
+.openings-foot p{color:rgba(255,255,255,.65);font-size:14px;margin-top:8px}
+.openings-foot em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--blue-soft)}
+.openings-foot a.btn{background:#fff;color:var(--ink)}
+.openings-foot a.btn:hover{background:var(--blue);color:#fff}
+
+/* ================= TESTIMONIAL ================= */
+.testimonials{padding:140px 32px;background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.testimonials::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 20%, rgba(30,72,230,.18), transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 80%, rgba(30,72,230,.12), transparent 60%);
+}
+.testimonials-inner{max-width:1240px;margin:0 auto;position:relative;z-index:1}
+.testimonials-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;margin-bottom:60px}
+.testimonials-head h2{font-size:clamp(36px,5vw,64px);font-weight:500;letter-spacing:-0.04em;line-height:1;max-width:640px;margin-top:18px}
+.testimonials-head h2 em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--blue-soft);font-weight:400}
+.testimonials-head .section-label{color:rgba(255,255,255,.6)}
+.testimonials-head .section-label .ln{background:rgba(255,255,255,.4)}
+
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:1000px){.t-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.t-grid{grid-template-columns:1fr}}
+
+.t-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:var(--radius-lg);
+  padding:32px 28px 28px;
+  transition:background .4s, border-color .4s, transform .4s;
+  display:flex;flex-direction:column;justify-content:space-between;min-height:340px;
+}
+.t-card:hover{background:rgba(255,255,255,.07);border-color:rgba(30,72,230,.4);transform:translateY(-4px)}
+.t-quote-mark{font-family:'Instrument Serif',serif;font-size:64px;line-height:.6;color:var(--blue-soft)}
+.t-quote{margin-top:14px;font-size:17px;line-height:1.5;color:rgba(255,255,255,.92);font-weight:400}
+.t-author{display:flex;align-items:center;gap:14px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}
+.t-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg, var(--blue), var(--blue-soft));
+  display:grid;place-items:center;color:#fff;font-weight:600;font-size:15px;letter-spacing:-0.02em;
+}
+.t-name{font-size:14px;font-weight:500}
+.t-role{font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+
+/* ================= BENEFITS ================= */
+.benefits{padding:140px 32px;background:#fff}
+.benefits-inner{max-width:1240px;margin:0 auto}
+.benefits-head{margin-bottom:56px;max-width:780px}
+.benefits-head h2{font-size:clamp(36px,5vw,64px);font-weight:500;letter-spacing:-0.04em;line-height:1.02;margin-top:18px}
+.benefits-head h2 em{font-family:'Instrument Serif',serif;font-style:italic;color:var(--blue);font-weight:400}
+
+.benefit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+@media(max-width:1000px){.benefit-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.benefit-grid{grid-template-columns:1fr}}
+
+.benefit{
+  background:#fff;padding:32px 28px 36px;display:flex;flex-direction:column;gap:14px;min-height:220px;
+  transition:background .3s;
+}
+.benefit:hover{background:var(--blue-50)}
+.benefit-icon{
+  width:42px;height:42px;border-radius:10px;background:var(--blue-50);
+  display:grid;place-items:center;color:var(--blue);
+}
+.benefit-icon svg{width:20px;height:20px;stroke-width:1.6}
+.benefit h4{font-size:17px;font-weight:600;letter-spacing:-0.01em;line-height:1.25;margin-top:6px}
+.benefit p{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ================= CTA ================= */
+.cta{padding:120px 32px}
+.cta-inner{
+  max-width:1240px;margin:0 auto;border-radius:var(--radius-lg);
+  background:linear-gradient(135deg, var(--blue-deep), var(--blue));
+  color:#fff;padding:96px 64px;position:relative;overflow:hidden;
+  text-align:center;
+}
+@media(max-width:680px){.cta-inner{padding:60px 32px}}
+.cta-glow{
+  position:absolute;width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,.18), transparent 65%);
+  top:-200px;left:50%;transform:translateX(-50%);pointer-events:none;will-change:transform;
+}
+.cta-inner h2{
+  font-size:clamp(40px,6.5vw,88px);font-weight:500;letter-spacing:-0.045em;line-height:1;
+  max-width:1000px;margin:0 auto;position:relative;
+}
+.cta-inner h2 em{font-family:'Instrument Serif',serif;font-style:italic;color:#fff;opacity:.95;font-weight:400}
+.cta-inner p{margin-top:24px;color:rgba(255,255,255,.85);font-size:17px;max-width:560px;margin-left:auto;margin-right:auto;position:relative}
+.cta-buttons{margin-top:40px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;position:relative}
+.cta-buttons .btn-primary{background:#fff;color:var(--blue-deep)}
+.cta-buttons .btn-primary:hover{background:var(--ink);color:#fff}
+.cta-buttons .btn-ghost{color:#fff;border-color:rgba(255,255,255,.4)}
+.cta-buttons .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+
+/* ================= FOOTER ================= */
+footer{padding:60px 32px 40px;border-top:1px solid var(--line);background:#fff}
+.foot{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;color:var(--muted);font-size:13px}
+.foot a:hover{color:var(--ink)}
+.foot-links{display:flex;gap:24px;flex-wrap:wrap}
+
+/* preload */
+.preload .hero-title .char{transform:translateY(110%)}
+</style>
+</head>
+<body class="preload">
+
+<div class="progress" id="progress"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a class="brand" href="#"><span class="dot"></span> FactWise</a>
+  <div class="nav-links">
+    <a href="#">Product</a>
+    <a href="#" class="active">Careers</a>
+    <a href="#">About</a>
+    <a href="#">Blog</a>
+    <a href="#">Documentation</a>
+  </div>
+  <a class="nav-cta" href="#openings">
+    See open roles
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+
+  <!-- floating shapes -->
+  <div class="hero-shape shape-a" data-float>
+    <svg viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="49" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="32" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="14" fill="currentColor"/>
+    </svg>
+  </div>
+  <div class="hero-shape shape-b" data-float>
+    <svg viewBox="0 0 100 100" fill="none">
+      <rect x="12" y="12" width="76" height="76" rx="18" stroke="currentColor" stroke-width="1.5" transform="rotate(20 50 50)"/>
+    </svg>
+  </div>
+  <div class="hero-shape shape-c" data-float>
+    <svg viewBox="0 0 100 100" fill="none">
+      <path d="M50 6 L94 80 L6 80 Z" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M50 28 L74 70 L26 70 Z" fill="currentColor" opacity=".12"/>
+    </svg>
+  </div>
+
+  <div class="hero-inner">
+    <span class="eyebrow"><span class="pulse"></span> Careers at FactWise</span>
+
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line"><span class="word">Build&nbsp;what's</span></span>
+      <span class="line"><span class="word"><em>never</em>&nbsp;been&nbsp;built.</span></span>
+    </h1>
+
+    <div class="hero-meta">
+      <p class="hero-lede" data-reveal>
+        We're building the leading people-first procurement platform for global enterprises — powered by agentic AI, thoughtful design, and a team that believes the best work happens when ownership meets craft.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">6<em>+</em></div><div class="lbl">Open teams</div></div>
+        <div class="stat"><div class="num">42<em>+</em></div><div class="lbl">Countries served</div></div>
+        <div class="stat"><div class="num">100<em>%</em></div><div class="lbl">People first</div></div>
+      </div>
+    </div>
+
+    <div class="hero-cta-row" data-reveal>
+      <a href="#openings" class="btn btn-primary">
+        Browse open roles
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#culture" class="btn btn-ghost">Our culture</a>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<section class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="marquee-item">High trust <span class="marquee-dot"></span> Low ego <span class="marquee-dot"></span> <em>Big ambition</em></span>
+    <span class="marquee-item">Remote-first <span class="marquee-dot"></span> Async by default <span class="marquee-dot"></span> <em>Built to ship</em></span>
+    <span class="marquee-item">Customer-obsessed <span class="marquee-dot"></span> Craft-first <span class="marquee-dot"></span> <em>Never settle</em></span>
+    <span class="marquee-item">Build with autonomy <span class="marquee-dot"></span> Decide quickly <span class="marquee-dot"></span> <em>Win together</em></span>
+  </div>
+</section>
+
+<!-- CULTURE -->
+<section class="culture" id="culture">
+  <div class="culture-inner">
+    <div class="culture-head">
+      <div>
+        <span class="section-label"><span class="ln"></span> Our Culture</span>
+        <h2>Collaborate. Create. <em>Grow.</em></h2>
+      </div>
+      <p>Three words, written on the wall — and applied in every code review, every hire, every customer call. They're how we decide who fits and how we work.</p>
+    </div>
+
+    <div class="culture-grid">
+      <div class="culture-card" data-culture>
+        <div>
+          <div class="culture-num">01 — Collaborate</div>
+          <h3>Every voice in the room.</h3>
+          <p>Collaboration is the default at FactWise. Regardless of seniority, every team member is expected to voice their perspective, push back, and shape the work.</p>
+        </div>
+        <div class="culture-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="3.5"/><circle cx="16" cy="8" r="3.5"/>
+            <path d="M2 21c.8-3.3 3.2-5 6-5s5.2 1.7 6 5"/>
+            <path d="M14 16c2.8 0 5.2 1.7 6 5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="culture-card" data-culture>
+        <div>
+          <div class="culture-num">02 — Create</div>
+          <h3>Elegant solutions to hard problems.</h3>
+          <p>We value the passion, dedication, and adaptability that lets us craft elegant, beautiful solutions for some of the most complex challenges in enterprise procurement.</p>
+        </div>
+        <div class="culture-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2l2.39 4.84L20 7.7l-4 3.9.95 5.52L12 14.77 7.05 17.12 8 11.6 4 7.7l5.61-.86z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="culture-card" data-culture>
+        <div>
+          <div class="culture-num">03 — Grow</div>
+          <h3>On your terms, at your pace.</h3>
+          <p>We believe in striving for excellence, holding each other accountable, being transparent — and having fun while doing it. Every team member grows their own way.</p>
+        </div>
+        <div class="culture-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l6-6 4 4 8-8"/>
+            <path d="M14 7h7v7"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPENINGS -->
+<section class="openings" id="openings">
+  <div class="openings-inner">
+    <div class="openings-head">
+      <div>
+        <span class="section-label"><span class="ln"></span> Open Roles</span>
+        <h2>Find <em>your</em> place at FactWise.</h2>
+      </div>
+    </div>
+
+    <div class="openings-filters">
+      <button class="chip active" data-filter="all">All <span class="count">6</span></button>
+      <button class="chip" data-filter="engineering">Engineering <span class="count">1</span></button>
+      <button class="chip" data-filter="design">Design <span class="count">1</span></button>
+      <button class="chip" data-filter="product">Product <span class="count">1</span></button>
+      <button class="chip" data-filter="business">Business <span class="count">2</span></button>
+      <button class="chip" data-filter="people">People <span class="count">1</span></button>
+    </div>
+
+    <div class="jobs">
+      <a class="job" data-job data-team="design">
+        <div>
+          <div class="job-title">UI / UX Design</div>
+          <div class="job-desc">Driven by a passion to create a product that simplifies our customers' lives and makes it a great experience while doing so.</div>
+        </div>
+        <span class="job-team">Design</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Remote / Mumbai
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="job" data-job data-team="people">
+        <div>
+          <div class="job-title">People &amp; Culture</div>
+          <div class="job-desc">Build a great team and enable each person to impact culture — facilitating growth, recruiting talent, and translating ethos into practice.</div>
+        </div>
+        <span class="job-team">People</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Mumbai
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="job" data-job data-team="engineering">
+        <div>
+          <div class="job-title">Software Development</div>
+          <div class="job-desc">Problem solvers, thinkers, creators. We convert concept to reality with a passion for software, distributed systems, and good API design.</div>
+        </div>
+        <span class="job-team">Engineering</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Remote / Mumbai
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="job" data-job data-team="business">
+        <div>
+          <div class="job-title">Business Analyst</div>
+          <div class="job-desc">Power the day-to-day at FactWise. Use your love for data to solve problems and strategize across critical areas of the business.</div>
+        </div>
+        <span class="job-team">Business</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Mumbai
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="job" data-job data-team="product">
+        <div>
+          <div class="job-title">Product Management</div>
+          <div class="job-desc">Interface rhythmically between developers, designers, and data scientists — adapting and iterating to translate client objectives into a powerful product.</div>
+        </div>
+        <span class="job-team">Product</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Remote / Mumbai
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <a class="job" data-job data-team="business">
+        <div>
+          <div class="job-title">Marketing</div>
+          <div class="job-desc">Bring the FactWise platform to all B2B businesses — build product awareness, analyse market trends, and creatively strategize on expanding the user base.</div>
+        </div>
+        <span class="job-team">Business</span>
+        <span class="job-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Remote
+        </span>
+        <span class="job-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+
+    <div class="openings-foot">
+      <div>
+        <h3>Don't see your <em>perfect role?</em></h3>
+        <p>Write to us anyway — we'd love to explore if there's a fit.</p>
+      </div>
+      <a href="mailto:recruiting@factwise.io" class="btn btn-primary">
+        recruiting@factwise.io
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="testimonials-head">
+      <div>
+        <span class="section-label"><span class="ln"></span> From the Team</span>
+        <h2>What people <em>actually say</em> about working here.</h2>
+      </div>
+    </div>
+
+    <div class="t-grid">
+      <article class="t-card">
+        <div>
+          <div class="t-quote-mark">"</div>
+          <p class="t-quote">It's great to be working directly with seniors and have the space to play around and find ways to make the product better. More importantly, people care about you and not just the work you do — and having all of that is the best feeling.</p>
+        </div>
+        <div class="t-author">
+          <div class="t-avatar">SH</div>
+          <div>
+            <div class="t-name">Sahil</div>
+            <div class="t-role">Software Developer — Backend</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="t-card">
+        <div>
+          <div class="t-quote-mark">"</div>
+          <p class="t-quote">The autonomy is real. I've owned end-to-end features from spec to ship in my first quarter, with the kind of mentorship and feedback that genuinely accelerates how you think — not just what you build.</p>
+        </div>
+        <div class="t-author">
+          <div class="t-avatar">PR</div>
+          <div>
+            <div class="t-name">Priya</div>
+            <div class="t-role">Product Manager</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="t-card">
+        <div>
+          <div class="t-quote-mark">"</div>
+          <p class="t-quote">It's the kind of place where design is taken seriously and shipped quickly. We argue, we sketch, we prototype on a real codebase — and customers feel it. That feedback loop is what keeps me here.</p>
+        </div>
+        <div class="t-author">
+          <div class="t-avatar">AK</div>
+          <div>
+            <div class="t-name">Aakash</div>
+            <div class="t-role">Senior Product Designer</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="benefits-inner">
+    <div class="benefits-head">
+      <span class="section-label"><span class="ln"></span> What We Offer</span>
+      <h2>The basics, <em>done well.</em></h2>
+    </div>
+
+    <div class="benefit-grid">
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+        <h4>Remote-first, async by default</h4>
+        <p>Work where you do your best work. Quarterly off-sites bring the team together IRL.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg></div>
+        <h4>Top-of-market pay + equity</h4>
+        <p>Competitive cash compensation and meaningful equity — everyone is an owner.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h4>Comprehensive health cover</h4>
+        <p>Full medical, dental, and mental health coverage for you and your family.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h4>Generous, real PTO</h4>
+        <p>Unlimited time off, with a four-week minimum so you actually take it.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <h4>$1,500 learning stipend</h4>
+        <p>Books, courses, conferences — your call. Use it to get sharper at what you love.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg></div>
+        <h4>Top-tier hardware</h4>
+        <p>MacBook Pro of your choice, 4K monitor, and a home-office stipend on day one.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 7v6a8 8 0 0 0 16 0V7l-8-5z"/></svg></div>
+        <h4>Parental leave that respects you</h4>
+        <p>16 weeks fully paid for all parents, with flexible phased return.</p>
+      </div>
+      <div class="benefit" data-benefit>
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.39 7.36H22l-6.18 4.49L18.21 22 12 17.27 5.79 22l2.39-8.15L2 9.36h7.61z"/></svg></div>
+        <h4>Quarterly company retreats</h4>
+        <p>Build relationships in person. Hike, ship, eat, repeat — somewhere new each time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-inner">
+    <div class="cta-glow" id="ctaGlow"></div>
+    <h2 id="ctaTitle">
+      Come build the <em>future of procurement.</em>
+    </h2>
+    <p>If even one of the open roles caught your eye, that's a great signal. Apply — we read every application personally.</p>
+    <div class="cta-buttons">
+      <a href="#openings" class="btn btn-primary">See open roles <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+      <a href="mailto:recruiting@factwise.io" class="btn btn-ghost">Email the team</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot">
+    <div>© 2025 FactWise. Source-to-Pay, reimagined.</div>
+    <div class="foot-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms &amp; Conditions</a>
+      <a href="#">LinkedIn</a>
+      <a href="mailto:support@factwise.io">support@factwise.io</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============== SPLIT HERO TITLE INTO CHARS ============== */
+function splitChars(el){
+  el.querySelectorAll('.word').forEach(word=>{
+    const isItalic = word.querySelector('em');
+    const target = isItalic ? word.querySelector('em') : word;
+    // Only split direct text into chars; if word contains <em>, split surrounding text too
+    const html = word.innerHTML;
+    word.innerHTML = '';
+    let buffer = '';
+    let inTag = false;
+    let isInsideEm = false;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    tmp.childNodes.forEach(node=>{
+      if(node.nodeType === 3){
+        [...node.textContent].forEach(ch=>{
+          const s = document.createElement('span');
+          s.className='char';
+          s.textContent = ch === ' ' ? '\u00A0' : ch;
+          word.appendChild(s);
+        });
+      } else if(node.nodeType === 1){
+        const wrap = document.createElement(node.tagName.toLowerCase());
+        wrap.style.display = 'inline-block';
+        [...node.textContent].forEach(ch=>{
+          const s = document.createElement('span');
+          s.className='char';
+          s.textContent = ch === ' ' ? '\u00A0' : ch;
+          wrap.appendChild(s);
+        });
+        word.appendChild(wrap);
+      }
+    });
+  });
+}
+splitChars(document.getElementById('heroTitle'));
+
+/* ============== HERO ENTRANCE ============== */
+document.body.classList.remove('preload');
+
+if (REDUCED) {
+  gsap.set('.hero-title .char',{y:0});
+  gsap.from('.eyebrow, .hero-title, [data-reveal], .hero-shape',
+    {opacity:0, duration:.6, stagger:.05});
+} else {
+  const tl = gsap.timeline({defaults:{ease:'power4.out'}});
+  tl.from('.eyebrow', {y:24, opacity:0, duration:.8, delay:.1})
+    .to('.hero-title .char', {
+      y: 0, duration: 1.2, stagger:{amount:.6}, ease:'expo.out'
+    }, '-=.4')
+    .from('[data-reveal]', {y:20, opacity:0, duration:.9, stagger:.1}, '-=.7')
+    .from('.hero-stats .stat', {y:20, opacity:0, duration:.7, stagger:.08}, '-=.7')
+    .from('.hero-shape', {scale:.4, opacity:0, duration:1.1, stagger:.08, ease:'expo.out'}, '-=1.0');
+}
+
+/* ============== FLOATING SHAPES (lazy idle drift) ============== */
+if (!REDUCED) {
+  gsap.utils.toArray('[data-float]').forEach((el, i) => {
+    gsap.to(el, {
+      y: '+=20', x: i%2===0 ? '+=12' : '-=12',
+      duration: 4 + Math.random()*2,
+      yoyo:true, repeat:-1, ease:'sine.inOut',
+      delay: i * .3
+    });
+  });
+}
+
+/* ============== SCROLL REVEALS ============== */
+gsap.from('.culture-head > div > *, .culture-head > p', {
+  y: 30, opacity:0, duration:.9, ease:'power3.out', stagger:.12,
+  scrollTrigger:{ trigger:'.culture-head', start:'top 80%', once:true }
+});
+gsap.from('[data-culture]', {
+  y: 60, opacity:0, duration:1, ease:'power4.out', stagger:.12,
+  scrollTrigger:{ trigger:'.culture-grid', start:'top 80%', once:true }
+});
+
+gsap.from('.openings-head > div > *, .openings-filters', {
+  y: 30, opacity:0, duration:.9, ease:'power3.out', stagger:.1,
+  scrollTrigger:{ trigger:'.openings-head', start:'top 80%', once:true }
+});
+gsap.from('[data-job]', {
+  y: 40, opacity:0, duration:.7, ease:'power3.out', stagger:.08,
+  scrollTrigger:{ trigger:'.jobs', start:'top 80%', once:true }
+});
+gsap.from('.openings-foot', {
+  y: 30, opacity:0, duration:.9, ease:'power3.out',
+  scrollTrigger:{ trigger:'.openings-foot', start:'top 88%', once:true }
+});
+
+gsap.from('.testimonials-head > div > *', {
+  y: 30, opacity:0, duration:.9, ease:'power3.out', stagger:.12,
+  scrollTrigger:{ trigger:'.testimonials-head', start:'top 80%', once:true }
+});
+gsap.from('.t-card', {
+  y: 60, opacity:0, duration:1, ease:'power4.out', stagger:.12,
+  scrollTrigger:{ trigger:'.t-grid', start:'top 80%', once:true }
+});
+
+gsap.from('.benefits-head > *', {
+  y: 30, opacity:0, duration:.9, ease:'power3.out', stagger:.12,
+  scrollTrigger:{ trigger:'.benefits-head', start:'top 80%', once:true }
+});
+gsap.from('[data-benefit]', {
+  y: 30, opacity:0, duration:.7, ease:'power3.out', stagger:.06,
+  scrollTrigger:{ trigger:'.benefit-grid', start:'top 80%', once:true }
+});
+
+gsap.from('.cta-inner > *', {
+  y: 40, opacity:0, duration:1, ease:'power4.out', stagger:.12,
+  scrollTrigger:{ trigger:'.cta', start:'top 80%', once:true }
+});
+
+/* Subtle CTA glow drift on scroll */
+if (!REDUCED) {
+  gsap.to('#ctaGlow', { y: 80,
+    scrollTrigger:{ trigger:'.cta', start:'top bottom', end:'bottom top', scrub:0.6 }});
+}
+
+/* ============== MARQUEE ============== */
+(function(){
+  const track = document.getElementById('marqueeTrack');
+  track.innerHTML = track.innerHTML + track.innerHTML;
+  const distance = track.scrollWidth / 2;
+  gsap.to(track, { x: -distance, duration: 32, repeat: -1, ease:'none' });
+})();
+
+/* ============== NAV + PROGRESS ============== */
+const nav = document.getElementById('nav');
+const progress = document.getElementById('progress');
+ScrollTrigger.create({
+  start: 'top -10', end: 99999,
+  onUpdate: self => {
+    nav.classList.toggle('scrolled', self.scroll() > 20);
+    const max = ScrollTrigger.maxScroll(window);
+    progress.style.width = ((self.scroll() / max) * 100) + '%';
+  }
+});
+
+/* ============== JOB FILTER ============== */
+const chips = document.querySelectorAll('.chip');
+const jobs = document.querySelectorAll('[data-job]');
+chips.forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    chips.forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    const filter = chip.dataset.filter;
+    jobs.forEach(job=>{
+      const show = filter === 'all' || job.dataset.team === filter;
+      gsap.to(job, {
+        autoAlpha: show ? 1 : 0,
+        height: show ? 'auto' : 0,
+        paddingTop: show ? 28 : 0,
+        paddingBottom: show ? 28 : 0,
+        duration: .35, ease:'power2.out',
+        onStart: ()=>{ if(show) job.style.display = 'grid'; },
+        onComplete: ()=>{ if(!show) job.style.display = 'none'; }
+      });
+    });
+  });
+});
+
+document.fonts && document.fonts.ready.then(()=> ScrollTrigger.refresh());
+</script>
+</body>
+</html>

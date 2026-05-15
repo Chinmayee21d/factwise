@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="370" height="130" viewBox="0 0 370 130" aria-label="HR Ops" role="img">
+  <rect width="370" height="130" fill="#ffffff"/>
+  <text y="105" x="8" font-size="112" font-family="'Cormorant Garamond', 'Garamond', 'Georgia', serif" font-weight="700" font-style="italic">
+    <tspan fill="#C6A85E">HR</tspan><tspan fill="#6B7A8D" font-weight="300" dx="-6">OPS</tspan>
+  </text>
+</svg>

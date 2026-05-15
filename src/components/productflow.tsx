@@ -1,52 +1,16 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import ScrollReveal from './ui/ScrollReveal'
 
-const HTML = `<div id="product-hub-animation" style="background:#ffffff;color:#1A1D2E;font-family:'Inter',sans-serif;padding:100px 0 80px;overflow:hidden;scroll-margin-top:100px">
-  <div style="max-width:1280px;margin:0 auto;padding:0 24px">
-    <div style="text-align:center;margin-bottom:60px;display:flex;flex-direction:column;align-items:center;gap:16px">
-      <div class="section-badge" style="margin-bottom:0;font-weight:500;letter-spacing:0.05em">AI-Powered Workflows</div>
-      <h2 style="font-size:clamp(32px,5vw,54px);font-weight:700;margin:0;line-height:1.15;letter-spacing:-0.02em;color:#1A1D2E;font-family:var(--font-display), sans-serif">
-        One Platform. <span style="color:#4A6FFF">Every Workflow.</span>
-      </h2>
-      <p style="color:#7B82A8;max-width:720px;font-size:18px;line-height:1.6;font-weight:500;margin:0;font-family:var(--font-inter), sans-serif">
-        Experience high-fidelity automation across every procurement journey. From the first request to the final payment, FactWise handles the complexity.
-      </p>
-    </div>
-    <div style="display:flex;gap:12px;margin-bottom:48px;flex-wrap:wrap;justify-content:center">
-      <button class="ftab active" data-flow="p2q">Quote to Order</button>
-      <button class="ftab" data-flow="r2po">Requisition to PO</button>
-      <button class="ftab" data-flow="i2p">Invoice to Pay</button>
-    </div>
-    <div id="phub-root" style="min-height:540px;background:transparent;overflow:hidden"></div>
-  </div>
-  <style>
-    .ftab {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
-      padding: 10px 24px;
-      border-radius: 99px;
-      cursor: pointer;
-      font-weight: 300;
-      font-size: 13px;
-      font-family:'Inter',sans-serif;
-      transition: all 0.3s ease;
-    }
-    .ftab:hover {
-      border-color: #cbd5e1;
-      color: #475569;
-    }
-    .ftab.active {
-      border-color: #4A6FFF;
-      color: #ffffff;
-      background: #4A6FFF;
-      box-shadow: 0 4px 12px rgba(74, 111, 255, 0.25);
-    }
-    @keyframes bulletAppear{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
-  </style>
-</div>`
+export default function ProductHubAnimation() {
+  const rootRef = useRef<HTMLDivElement>(null)
 
-const SCRIPT = `(function(){
+  useEffect(() => {
+    let script: HTMLScriptElement | null = null
+    let disposed = false
+
+    const SCRIPT = `(function(){
 'use strict';
 var __rid=(window.__phubRid||0)+1;window.__phubRid=__rid;
 var ROOT=document.getElementById('phub-root');
@@ -58,8 +22,8 @@ var PROMPTS={
   i2p:'Match this supplier invoice to the PO and release payment'
 };
 
-var CHAT_TOTAL=8500;
-var CP={BLOB_END:1000,EXPAND_END:1900,TYPE_END:4300,PAUSE_END:4900,ENTER_END:5200,SEND_END:6200,PROCESS_END:8000,FADE_END:8500};
+var CHAT_TOTAL=6600;
+var CP={BLOB_END:0,EXPAND_END:0,TYPE_END:2400,PAUSE_END:3000,ENTER_END:3300,SEND_END:4300,PROCESS_END:6100,FADE_END:6600};
 
 var AUTO_FLOWS=['p2q','r2po','i2p'];
 var autoIdx=0;
@@ -77,7 +41,7 @@ function arrowUp(color){
 }
 
 function userBubble(prompt){
-  return '<div style="max-width:340px;background:#E6EEFF;border-radius:18px 18px 4px 18px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.08)">'+
+  return '<div style="max-width:340px;background:#ffffff;border-radius:18px 18px 4px 18px;padding:16px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.08)">'+
     '<p style="margin:0;color:#1A1D2E;font-size:14px;line-height:1.65;font-weight:400;font-family:var(--font-inter), sans-serif">'+escHtml(prompt)+'</p>'+
   '</div>';
 }
@@ -106,43 +70,10 @@ function aiTypingRow(procMs,flowColor,opacity){
 
 function renderChat(ms,flowKey,flowColor){
   var PROMPT=PROMPTS[flowKey]||'';
-  var BG='#ffffff';
+  var BG='transparent';
   var BAR_BG='#ffffff';
   var BAR_BORDER='rgba(0,0,0,0.12)';
 
-  /* 1 – Blob */
-  if(ms<CP.BLOB_END){
-    var pulse=(1+0.05*Math.sin(ms/280)).toFixed(4);
-    var gOp=(0.3+0.15*Math.sin(ms/400)).toFixed(4);
-    return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
-      '<div style="position:relative;transform:scale('+pulse+')">'+
-        '<div style="position:absolute;inset:-16px;border-radius:50%;background:'+flowColor+';opacity:'+gOp+';filter:blur(20px)"></div>'+
-        '<div style="position:relative;width:72px;height:72px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.08)">'+sparkle(22)+'</div>'+
-      '</div>'+
-    '</div>';
-  }
-
-  /* 2 – Expand blob → input bar */
-  if(ms<CP.EXPAND_END){
-    var p=ease((ms-CP.BLOB_END)/(CP.EXPAND_END-CP.BLOB_END));
-    var w=Math.round(72+(500-72)*p);
-    var h=Math.round(72+(60-72)*p);
-    var br=Math.round(36+(30-36)*p);
-    var cOp=clamp((p-0.55)/0.45,0,1).toFixed(3);
-    var gOp2=(0.2*(1-p)).toFixed(3);
-    return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
-      '<div style="position:relative">'+
-        '<div style="position:absolute;inset:-20px;border-radius:50px;background:'+flowColor+';opacity:'+gOp2+';filter:blur(24px)"></div>'+
-        '<div style="position:relative;width:'+w+'px;height:'+h+'px;border-radius:'+br+'px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
-          sparkle(20)+
-          '<span style="flex:1;color:rgba(0,0,0,0.25);font-size:15px;opacity:'+cOp+';white-space:nowrap">What can I help with?</span>'+
-          '<div style="width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:'+cOp+'">'+arrowUp('rgba(0,0,0,0.4)')+'</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
-  }
-
-  /* 3 – Typewriter */
   if(ms<CP.TYPE_END){
     var typingMs=ms-CP.EXPAND_END;
     var charCount=Math.min(PROMPT.length,Math.floor((typingMs/(CP.TYPE_END-CP.EXPAND_END))*PROMPT.length));
@@ -151,7 +82,7 @@ function renderChat(ms,flowKey,flowColor){
       ?'<span style="display:inline-block;width:2px;height:16px;background:rgba(0,0,0,0.8);vertical-align:middle;margin-left:2px;border-radius:1px"></span>':'';
     var done=(charCount>=PROMPT.length);
     var btnBg=done?flowColor:'rgba(0,0,0,0.06)';
-    return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
+    return '<div style="width:100%;height:100%;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
         '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(txt)+cur+'</span>'+
@@ -160,11 +91,10 @@ function renderChat(ms,flowKey,flowColor){
     '</div>';
   }
 
-  /* 3b – Pause: full prompt visible, cursor blinks, user reads before sending */
   if(ms<CP.PAUSE_END){
     var pauseCur=Math.floor(ms/500)%2===0
       ?'<span style="display:inline-block;width:2px;height:16px;background:rgba(0,0,0,0.8);vertical-align:middle;margin-left:2px;border-radius:1px"></span>':'';
-    return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
+    return '<div style="width:100%;height:100%;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
         '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(PROMPT)+pauseCur+'</span>'+
@@ -173,18 +103,15 @@ function renderChat(ms,flowKey,flowColor){
     '</div>';
   }
 
-  /* 3c – Enter press: send button depresses then springs back */
   if(ms<CP.ENTER_END){
     var ep=(ms-CP.PAUSE_END)/(CP.ENTER_END-CP.PAUSE_END);
-    /* scale: 1.0 → 0.78 → 1.08 → 1.0 */
     var btnSc;
     if(ep<0.35){btnSc=1-ep/0.35*0.22;}
     else if(ep<0.7){btnSc=0.78+(ep-0.35)/0.35*0.3;}
     else{btnSc=1.08-(ep-0.7)/0.3*0.08;}
     btnSc=btnSc.toFixed(4);
-    /* bar border briefly glows brighter on press */
     var borderGlow='rgba(0,0,0,'+(0.08+clamp((0.35-ep)/0.35,0,1)*0.18).toFixed(3)+')';
-    return '<div style="height:500px;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
+    return '<div style="width:100%;height:100%;background:'+BG+';display:flex;align-items:center;justify-content:center">'+
       '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+borderGlow+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08)">'+
         sparkle(20)+
         '<span style="flex:1;color:rgba(0,0,0,0.7);font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;font-family:var(--font-inter), sans-serif">'+escHtml(PROMPT)+'</span>'+
@@ -193,7 +120,6 @@ function renderChat(ms,flowKey,flowColor){
     '</div>';
   }
 
-  /* 4 – Send: bar fades, bubble slides into position (right-aligned) */
   if(ms<CP.SEND_END){
     var p2=ease((ms-CP.TYPE_END)/(CP.SEND_END-CP.TYPE_END));
     var barOp=clamp(1-p2*2.2,0,1).toFixed(3);
@@ -201,8 +127,7 @@ function renderChat(ms,flowKey,flowColor){
     var bubP=clamp((p2-0.25)/0.75,0,1);
     var bubOp=ease(bubP).toFixed(3);
     var bubY=Math.round((1-ease(bubP))*28);
-    return '<div style="height:500px;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px;position:relative">'+
-      /* bar fading out — absolute center */
+    return '<div style="width:100%;height:100%;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px;position:relative">'+
       '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">'+
         '<div style="width:500px;height:60px;border-radius:30px;background:'+BAR_BG+';border:1px solid '+BAR_BORDER+';display:flex;align-items:center;padding:0 8px 0 14px;gap:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.08);opacity:'+barOp+';transform:scale('+barSc+')">'+
           sparkle(20)+
@@ -210,44 +135,39 @@ function renderChat(ms,flowKey,flowColor){
           '<div style="width:40px;height:40px;border-radius:50%;background:'+flowColor+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'+arrowUp('#fff')+'</div>'+
         '</div>'+
       '</div>'+
-      /* user bubble appearing right */
       '<div style="display:flex;justify-content:flex-end;opacity:'+bubOp+';transform:translateY('+bubY+'px)">'+
         userBubble(PROMPT)+
       '</div>'+
-      /* placeholder for AI row — invisible but holds space */
       '<div style="height:64px;opacity:0"></div>'+
     '</div>';
   }
 
-  /* 5 – Processing: user bubble (right) + AI typing indicator (left) */
   if(ms<CP.PROCESS_END){
     var procMs=ms-CP.SEND_END;
     var introP=clamp(procMs/400,0,1);
     var aiOp=ease(introP);
-    return '<div style="height:500px;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px">'+
+    return '<div style="width:100%;height:100%;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px">'+
       '<div style="display:flex;justify-content:flex-end">'+userBubble(PROMPT)+'</div>'+
       aiTypingRow(procMs,flowColor,aiOp)+
     '</div>';
   }
 
-  /* 6 – Fade: whole chat scene fades out */
   var p3=ease((ms-CP.PROCESS_END)/(CP.FADE_END-CP.PROCESS_END));
   var sceneOp=clamp(1-p3,0,1).toFixed(3);
   var procMsFade=ms-CP.SEND_END;
-  return '<div style="height:500px;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px;opacity:'+sceneOp+'">'+
+  return '<div style="width:100%;height:100%;background:'+BG+';display:flex;flex-direction:column;justify-content:center;padding:0 64px;gap:20px;opacity:'+sceneOp+'">'+
     '<div style="display:flex;justify-content:flex-end">'+userBubble(PROMPT)+'</div>'+
     aiTypingRow(procMsFade,flowColor,1)+
   '</div>';
 }
 
-/* ── Flow data ── */
 var C={p2q:'#3666ff',r2po:'#4b8bff',i2p:'#3666ff'};
 var FLOWS={
   p2q:{title:'Quote to Order',color:C.p2q,
-    desc:'From project scoping to final quote — streamline your entire quoting lifecycle with structured RFQs and intelligent bid evaluation.',
-    nodes:['Project','RfQ Creation + Approvals','Negotiations','Bid Analysis & Shortlisting','Quote Calculator'],
-    bullets:['Centralize project scope and requirements','Auto-generate RFQs with approval workflows','AI-assisted negotiation tracking','Compare bids side-by-side with smart shortlisting','Calculate best-fit quotes with built-in tools'],
-    icons:['proj','rfq','neg','bid','calc']},
+    desc:'From initial project scoping to final PO — streamline your entire sourcing lifecycle with data-driven RFQs and automated contracts.',
+    nodes:['Project','RfQ Creation','Contracts','Negotiations','Bid Analysis','PO Creation'],
+    bullets:['Centralize project scope and requirements','Auto-generate RFQs with approval workflows','Contract Pricing & automated terms','AI-assisted negotiation tracking','Compare bids side-by-side with smart shortlisting','One-click PO generation post-approval'],
+    icons:['proj','rfq','contract','neg','bid','po']},
   r2po:{title:'Requisition to PO',color:C.r2po,
     desc:'From internal request to purchase order — choose the right approval path based on your procurement policies and order value.',
     nodes:['Requisition','RfQ Creation + Approvals','Negotiations','Bid Analysis & Shortlisting','PO Creation'],
@@ -263,15 +183,18 @@ var FLOWS={
 var curFlow='p2q';
 var TABS=document.querySelectorAll('.ftab');
 TABS.forEach(function(t){t.onclick=function(){
-  var idx=AUTO_FLOWS.indexOf(t.dataset.flow);
+  var flow=t.dataset.flow;
+  if(!flow)return;
+  var idx=AUTO_FLOWS.indexOf(flow);
   if(idx>=0)autoIdx=idx;
-  curFlow=t.dataset.flow;
+  curFlow=flow;
   render.t0=null;flowBuilt=false;lastBulletCount=-1;lastCycleNum=-1;
   TABS.forEach(function(b){b.className='ftab'+(b.dataset.flow===curFlow?' active':'');});
 }});
 
 var ICO={
   proj:function(c){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>'},
+  contract:function(c){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M16 13l-5 5-3-3"/></svg>'},
   rfq:function(c){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'},
   neg:function(c){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2"><path d="M17 6H3M21 12H3M15 18H3"/></svg>'},
   bid:function(c){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>'},
@@ -290,7 +213,7 @@ function tkLg(){return '<svg width="10" height="10" viewBox="0 0 12 10" fill="no
 
 function chip(name,iconKey,done,dimmed,color){
   var ic=ICO[iconKey](done?'#18B87A':color);
-  return '<div style="background:#ffffff;border-radius:12px;border:1.5px solid '+(done?'rgba(24,184,122,0.3)':'rgba(0,0,0,0.06)')+';padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;min-height:120px;box-sizing:border-box;opacity:'+(dimmed?0.65:1)+'">'+
+  return '<div style="background:#ffffff;border-radius:12px;border:1.5px solid '+(done?'rgba(24,184,122,0.3)':'rgba(0,0,0,0.06)')+';padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;min-height:120px;box-sizing:border-box;opacity:1">'+
     '<div style="width:32px;height:32px;border-radius:8px;flex-shrink:0;background:'+(done?'rgba(24,184,122,0.12)':'rgba(0,0,0,0.04)')+';display:flex;align-items:center;justify-content:center">'+ic+'</div>'+
     '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:'+(done?'#18B87A':'#1A1D2E')+'">'+name+'</div><div style="font-size:9px;color:#808080;margin-top:2px">'+(done?'Complete':'Pending')+'</div></div>'+
   '</div>';
@@ -313,17 +236,20 @@ function cardOpen(name,iconKey,color,bulletText){
 
 function buildInfoCard(flow,visibleCount){
   var bulletsHtml='';
-  var count=Math.min(visibleCount||0,flow.bullets.length);
-  for(var b=0;b<count;b++){
-    var isNewest=b===count-1;
-    var animStyle=isNewest?'animation:bulletAppear 0.5s cubic-bezier(0.16,1,0.3,1) both;':'';
+  var total=flow.bullets.length;
+  for(var b=0;b<total;b++){
+    var isDone=b<visibleCount;
+    var checkBg=isDone?'#18B87A':'#E2E8F0';
+    var textOp=isDone?'1':'0.4';
+    var border=b<total-1?'border-bottom:1px solid rgba(0,0,0,0.06);':'';
+    
     bulletsHtml+=
-      '<div style="display:flex;align-items:center;gap:14px;padding:12px 0;'+(b<count-1?'border-bottom:1px solid rgba(0,0,0,0.06);':'')+animStyle+'">'+
-        '<div style="width:24px;height:24px;border-radius:50%;background:#18B87A;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+tkLg()+'</div>'+
-        '<span style="font-size:14px;font-weight:400;color:rgba(0,0,0,0.7);line-height:1.4">'+flow.bullets[b]+'</span>'+
+      '<div style="display:flex;align-items:center;gap:14px;padding:12px 0;'+border+'transition:all 0.3s ease">'+
+        '<div style="width:24px;height:24px;border-radius:50%;background:'+checkBg+';flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.3s ease">'+tkLg()+'</div>'+
+        '<span style="font-size:14px;font-weight:400;color:rgba(0,0,0,0.7);line-height:1.4;opacity:'+textOp+';transition:opacity 0.3s ease">'+flow.bullets[b]+'</span>'+
       '</div>';
   }
-  return '<div>'+
+  return '<div style="background:#ffffff;border-radius:24px;padding:32px;box-shadow:0 12px 48px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.05)">'+
     '<div style="margin-bottom:14px"><span style="text-transform:uppercase;letter-spacing:2.5px;font-size:10px;font-weight:700;color:'+flow.color+'"></span></div>'+
     '<h3 style="font-size:28px;font-weight:600;color:#1A1D2E;margin:0 0 12px 0;line-height:1.15;letter-spacing:-0.02em;font-family:var(--font-display), sans-serif">'+flow.title+'</h3>'+
     '<p style="font-size:14px;color:rgba(0,0,0,0.5);line-height:1.7;margin:0 0 24px 0">'+flow.desc+'</p>'+
@@ -360,12 +286,31 @@ function paintDot(canvas,wrap,nodeEls,from,to,ms,dur,color){
   ctx.beginPath();ctx.arc(cx,cy,1.8,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,'+(op*0.9)+')';ctx.fill();
 }
 
-/* 3-second pause at end before auto-advance */
 function buildTL(){
   var f=FLOWS[curFlow];var phases=[];var acc=0;
-  for(var i=0;i<f.nodes.length;i++){
-    phases.push({type:'node',idx:i,start:acc,end:acc+2000});acc+=2000;
-    if(i<f.nodes.length-1){phases.push({type:'dot',from:i,to:i+1,start:acc,end:acc+500});acc+=500;}
+  if(curFlow==='p2q'){
+    phases.push({type:'node',idx:0,doneIndices:[0],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:0,to:1,doneIndices:[0],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:1,bullet:'Publishing digital RFQ to vendors',doneIndices:[0],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:1,to:2,doneIndices:[0],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:2,bullet:'Finalizing contract pricing terms',doneIndices:[0,2],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:2,to:1,doneIndices:[0,2],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:1,bullet:'Merging contract terms into RFQ',doneIndices:[0,1,2],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:1,to:3,doneIndices:[0,1,2],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:3,doneIndices:[0,1,2,3],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:3,to:4,doneIndices:[0,1,2,3],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:4,doneIndices:[0,1,2,3,4],start:acc,end:acc+1600});acc+=1600;
+    phases.push({type:'dot',from:4,to:5,doneIndices:[0,1,2,3,4],start:acc,end:acc+400});acc+=400;
+    phases.push({type:'node',idx:5,doneIndices:[0,1,2,3,4,5],start:acc,end:acc+1600});acc+=1600;
+  } else {
+    for(var i=0;i<f.nodes.length;i++){
+      var di=[];for(var j=0;j<=i;j++)di.push(j);
+      phases.push({type:'node',idx:i,doneIndices:di,start:acc,end:acc+2000});acc+=2000;
+      if(i<f.nodes.length-1){
+        var di2=[];for(var k=0;k<=i;k++)di2.push(k);
+        phases.push({type:'dot',from:i,to:i+1,doneIndices:di2,start:acc,end:acc+500});acc+=500;
+      }
+    }
   }
   phases.push({type:'pause',start:acc,end:acc+3000});acc+=3000;
   return{phases:phases,total:acc};
@@ -379,11 +324,12 @@ function ensureFlowDOM(){
   if(flowBuilt&&lastFlowKey===curFlow)return;
   lastFlowKey=curFlow;flowBuilt=true;lastBulletCount=-1;
   ROOT.innerHTML=
-    '<div style="background:#ffffff;padding:20px 0">'+
-      '<div style="display:flex;gap:40px;align-items:center;height:500px">'+
-        '<div id="phub-left" style="flex:1;min-width:0;position:relative">'+
+    '<div style="background:transparent;padding:20px 0">'+
+      '<div style="display:flex;gap:40px;align-items:center;height:600px">'+
+        '<div id="phub-left" style="flex:1;min-width:0;position:relative;display:flex;align-items:center;justify-content:center">'+
           '<canvas id="phub-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:40"></canvas>'+
-          '<div id="phub-nodes" style="display:flex;align-items:center;gap:10px;position:relative;z-index:5"></div>'+
+          '<div id="phub-nodes" style="display:flex;align-items:center;gap:10px;position:relative;z-index:5;width:100%"></div>'+
+          '<div id="phub-chat" style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center"></div>'+
         '</div>'+
         '<div id="phub-info" style="width:360px;flex-shrink:0;align-self:flex-start"></div>'+
       '</div>'+
@@ -407,24 +353,35 @@ function render(now){
   var cycleNum=Math.floor(elapsed/totalCycle);
   var cycle=elapsed%totalCycle;
 
-  /* Auto-advance when a new cycle starts */
   if(cycleNum!==lastCycleNum){
     if(lastCycleNum>=0){advanceFlow();}
     lastCycleNum=cycleNum;
-    /* Re-read flow after advance */
     flow=FLOWS[curFlow];
     tl=buildTL();
   }
 
-  /* Chat intro */
+  ensureFlowDOM();
+  var nodesWrap = document.getElementById('phub-nodes');
+  var infoWrap = document.getElementById('phub-info');
+  var chatWrap = document.getElementById('phub-chat');
+
   if(cycle<CHAT_TOTAL){
-    flowBuilt=false;
-    ROOT.innerHTML=renderChat(cycle,curFlow,flow.color);
+    if(nodesWrap) nodesWrap.style.display='none';
+    if(chatWrap) {
+      chatWrap.style.display='flex';
+      chatWrap.innerHTML=renderChat(cycle,curFlow,flow.color);
+    }
+    if(infoWrap && lastBulletCount !== 0) {
+       lastBulletCount = 0;
+       infoWrap.innerHTML = buildInfoCard(flow, 0);
+    }
     requestAnimationFrame(render);
     return;
   }
 
-  /* Flow */
+  if(chatWrap) chatWrap.style.display='none';
+  if(nodesWrap) nodesWrap.style.display='flex';
+
   var flowCycle=cycle-CHAT_TOTAL;
   var phase=tl.phases[0];
   for(var pi=0;pi<tl.phases.length;pi++){
@@ -432,21 +389,28 @@ function render(now){
   }
   var phaseMs=flowCycle-phase.start;
 
-  ensureFlowDOM();
-
-  var nodesWrap=document.getElementById('phub-nodes');
-  var infoWrap=document.getElementById('phub-info');
   if(!nodesWrap||!infoWrap){requestAnimationFrame(render);return;}
 
   var nodesHtml='';
   for(var ni=0;ni<flow.nodes.length;ni++){
     var isActive=phase.type==='node'&&phase.idx===ni;
-    var isDone=(phase.type==='node'&&ni<phase.idx)||(phase.type==='dot'&&ni<=phase.from)||(phase.type==='pause');
+    var isDone=(phase.doneIndices||[]).indexOf(ni)>=0;
     var dimmed=!isActive&&!isDone;
-    nodesHtml+='<div id="pn-'+ni+'" style="flex:1 1 0%;min-width:0;display:flex;flex-direction:column">';
-    if(isActive){nodesHtml+=cardOpen(flow.nodes[ni],flow.icons[ni],flow.color,flow.bullets[ni]);}
-    else{nodesHtml+=chip(flow.nodes[ni],flow.icons[ni],isDone,dimmed,flow.color);}
-    nodesHtml+='</div>';
+    var nodeName=flow.nodes[ni];
+    var isFloating=nodeName==='Contracts';
+    
+    if(isFloating){
+      var nodeWidth=isActive?'220px':'148px';
+      nodesHtml+='<div id="pn-'+ni+'" style="position:absolute;left:50%;top:-160px;width:'+nodeWidth+';transform:translateX(-50%);z-index:60;transition:all 0.5s cubic-bezier(0.4, 0, 0.2, 1)">';
+      if(isActive){nodesHtml+=cardOpen(nodeName,flow.icons[ni],flow.color,phase.bullet||flow.bullets[ni]);}
+      else{nodesHtml+=chip(nodeName,flow.icons[ni],isDone,dimmed,flow.color);}
+      nodesHtml+='</div>';
+    } else {
+      nodesHtml+='<div id="pn-'+ni+'" style="flex:1 1 0%;min-width:0;display:flex;flex-direction:column;z-index:5">';
+      if(isActive){nodesHtml+=cardOpen(nodeName,flow.icons[ni],flow.color,phase.bullet||flow.bullets[ni]);}
+      else{nodesHtml+=chip(nodeName,flow.icons[ni],isDone,dimmed,flow.color);}
+      nodesHtml+='</div>';
+    }
   }
   nodesWrap.innerHTML=nodesHtml;
 
@@ -477,15 +441,16 @@ function render(now){
   requestAnimationFrame(render);
 }
 
-var obs=new IntersectionObserver(function(e){if(e[0]&&e[0].isIntersecting){obs.disconnect();requestAnimationFrame(render);}},{threshold:0.1});
+var obs=new IntersectionObserver(function(entries, observer){
+  if(entries[0]&&entries[0].isIntersecting){
+    observer.disconnect();
+    requestAnimationFrame(render);
+  }
+},{threshold:0.1});
 obs.observe(ROOT);
 setTimeout(function(){if(window.__phubRid===__rid)requestAnimationFrame(render);},500);
 })();`
 
-export default function ProductHubAnimation() {
-  useEffect(() => {
-    let script: HTMLScriptElement | null = null
-    let disposed = false
     const init = () => {
       if (disposed) return
       const root = document.getElementById('phub-root')
@@ -498,5 +463,83 @@ export default function ProductHubAnimation() {
     init()
     return () => { disposed = true; if (script && script.parentNode) script.parentNode.removeChild(script) }
   }, [])
-  return <div dangerouslySetInnerHTML={{ __html: HTML }} />
+
+  return (
+    <div id="product-hub-animation" className="responsive-section-padding" style={{ position: 'relative', scrollMarginTop: '100px' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '24px', backgroundImage: "url('/TexturedGradient.png')", backgroundSize: 'cover', backgroundPosition: 'center', padding: '80px 0' }}>
+        <div style={{ position: 'absolute', right: '-100px', bottom: '-100px', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(54, 102, 255, 0.15) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }}></div>
+        <div className="noise" style={{ position: 'absolute', inset: 0, opacity: 0.12, pointerEvents: 'none', mixBlendMode: 'overlay' }}></div>
+        
+        <div style={{ position: 'relative', zIndex: 10, maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <ScrollReveal delay={0.1}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 16px', borderRadius: '99px', background: '#eff6ff', border: '1px solid #dbeafe', color: '#3666ff', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px' }}>
+                AI-Powered Workflows
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal type="kinetic">
+              <h2 style={{ fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 700, margin: '0 0 24px 0', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#1A1D2E' }}>
+                One Platform. <span style={{ color: '#3666ff' }}>Every Workflow.</span>
+              </h2>
+            </ScrollReveal>
+
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              style={{ color: '#64748b', maxWidth: '720px', fontSize: '18px', lineHeight: 1.6, fontWeight: 500, margin: 0 }}
+            >
+              Experience high-fidelity automation across every procurement journey. From the first request to the final payment, FactWise handles the complexity.
+            </motion.p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '48px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button className="ftab active" data-flow="p2q">Quote to Order</button>
+            <button className="ftab" data-flow="r2po">Requisition to PO</button>
+            <button className="ftab" data-flow="i2p">Invoice to Pay</button>
+          </div>
+          
+          <div id="phub-root" ref={rootRef} style={{ minHeight: '600px', background: 'transparent', overflow: 'hidden' }}></div>
+        </div>
+      </div>
+      <style>{`
+        .responsive-section-padding {
+          padding: 48px 16px;
+        }
+        @media (min-width: 768px) {
+          .responsive-section-padding {
+            padding: 48px 40px;
+          }
+        }
+        .ftab {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          color: #64748b;
+          padding: 10px 24px;
+          border-radius: 99px;
+          cursor: pointer;
+          font-weight: 300;
+          font-size: 13px;
+          font-family: 'Inter', sans-serif;
+          transition: all 0.3s ease;
+        }
+        .ftab:hover {
+          border-color: #cbd5e1;
+          color: #475569;
+        }
+        .ftab.active {
+          border-color: #4A6FFF;
+          color: #ffffff;
+          background: #4A6FFF;
+          box-shadow: 0 4px 12px rgba(74, 111, 255, 0.25);
+        }
+        @keyframes bulletAppear {
+          0% { opacity: 0; transform: translateY(12px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  )
 }

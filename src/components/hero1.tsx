@@ -385,7 +385,7 @@ export default function Hero1() {
   return (
     <>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&display=swap');
+
 
         .slider-wrapper {
             position: relative;
@@ -413,7 +413,7 @@ export default function Hero1() {
         .slide-number, .slide-total {
             position: absolute;
             color: white;
-            font-family: 'Cormorant Garamond', serif;
+            font-family: var(--font-inter), sans-serif;
             font-size: 24px;
             font-weight: 300;
             letter-spacing: 0.2em;
@@ -440,7 +440,7 @@ export default function Hero1() {
             padding: 0 15%;
         }
         .slide-title {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: var(--font-inter), sans-serif;
             font-size: clamp(3rem, 10vw, 8rem);
             font-weight: 300;
             line-height: 0.9;

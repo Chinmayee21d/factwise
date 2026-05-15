@@ -1,0 +1,29 @@
+{
+  "name": "hrops",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  },
+  "scripts": {
+    "clean": "powershell -NoProfile -Command \"if (Test-Path .next) { Remove-Item -Recurse -Force .next }\"",
+    "rebuild": "npm run clean && npm run build",
+    "redev": "npm run clean && npm run dev",
+    "dev": "next dev -p 3031",
+    "build": "next build",
+    "start": "next start -p 3031",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "marked": "^12.0.2",
+    "next": "^14.2.35",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  }
+}

@@ -14,7 +14,7 @@ if (typeof window !== 'undefined') {
 /* ── Mini mockup components ──────────────────── */
 
 const BrowserFrame = ({ url, children, className = '' }: { url: string; children: React.ReactNode; className?: string }) => (
-  <div className={className} style={{ background: '#0a0a0c', borderRadius: 12, border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden', fontFamily: 'Inter, sans-serif', position: 'relative' }}>
+  <div className={className} style={{ background: '#0a0a0c', borderRadius: 12, border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden', fontFamily: 'var(--font-inter), sans-serif', position: 'relative' }}>
     <div style={{ padding: '10px 16px', background: '#111116', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', gap: 16 }}>
       <div style={{ display: 'flex', gap: 6 }}>
         <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', opacity: 0.8 }} />

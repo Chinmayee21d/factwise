@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, Clock, TrendingUp, Zap, BarChart3, ShieldCheck } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import ScrollReveal from "./ui/ScrollReveal";
 
 interface Metric {
   label: string;
@@ -97,64 +98,45 @@ export default function ModernCaseStudies() {
     : CASE_STUDIES.filter(s => s.category === activeTab);
 
   return (
-    <section className="py-24 md:py-32 overflow-hidden relative" id="case-studies">
-      {/* Background Image & Decor */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none opacity-40"
-        style={{ backgroundImage: 'url("/TexturedGradient.png")' }}
-      />
-      <div className="absolute inset-0 bg-white/60 pointer-events-none" />
+    <section className="relative w-full py-20 overflow-hidden scroll-mt-20" id="case-studies">
+      {/* Background */}
+      <div className="absolute inset-0 bg-white" />
       <div className="absolute inset-0 dot-grid opacity-[0.03] pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/[0.03] blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/[0.03] blur-[120px] rounded-full pointer-events-none" />
+      <div 
+        className="absolute top-0 left-1/4 w-96 h-96 pointer-events-none opacity-40" 
+        style={{ background: 'radial-gradient(circle, rgba(54, 102, 255, 0.1) 0%, transparent 70%)' }}
+      />
+      <div 
+        className="absolute bottom-0 right-1/4 w-96 h-96 pointer-events-none opacity-40" 
+        style={{ background: 'radial-gradient(circle, rgba(73, 204, 249, 0.1) 0%, transparent 70%)' }}
+      />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="mb-16">
-          <div className="max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 mb-6"
-            >
-              <Zap className="w-3 h-3 text-blue-600 fill-blue-600" />
-              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-600" style={{ fontFamily: 'var(--font-inter)' }}>
-                Customer Success
-              </span>
-            </motion.div>
-            
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              <span className="text-slate-900">Proven Impact.</span><br />
-              <span className="text-blue-600">Across Industries.</span>
-            </motion.h2>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed max-w-xl"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              Discover how industry leaders leverage FactWise to automate complex workflows and drive measurable growth.
-            </motion.p>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+            <Zap className="w-3 h-3 text-blue-600 fill-blue-600" />
+            <span>Customer Success</span>
           </div>
-        </div>
+          <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
+            Proven Impact. <span className="text-[#3666ff]">Across Industries.</span>
+          </h2>
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+            Discover how industry leaders leverage FactWise to automate complex workflows and drive measurable growth.
+          </p>
+        </motion.div>
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
           {/* Filters */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-wrap gap-2"
           >
@@ -163,7 +145,7 @@ export default function ModernCaseStudies() {
                 key={cat}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false }}
                 transition={{ duration: 0.3, delay: 0.5 + (i * 0.05) }}
                 onClick={() => setActiveTab(cat)}
                 className={cn(
@@ -182,7 +164,7 @@ export default function ModernCaseStudies() {
           <motion.button
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 0.5, delay: 0.3 }}
             className="group flex items-center gap-3 p-1.5 pr-5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 transition-all duration-500 hover:bg-white hover:border-blue-300 hover:shadow-[0_15px_30px_-10px_rgba(37,99,235,0.1)] active:scale-95 whitespace-nowrap"
           >
@@ -196,35 +178,32 @@ export default function ModernCaseStudies() {
         </div>
  
         {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[400px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[380px]">
           <AnimatePresence mode="popLayout">
             {filteredStudies.map((study, index) => {
               const isOnly = filteredStudies.length === 1;
-              const isLarge = index === 0 && filteredStudies.length > 1;
-              const isTall = index === 1 && filteredStudies.length > 1;
+              const isLarge = (index % 4 === 0 || index % 4 === 3) && filteredStudies.length > 1;
+              const isVertical = (index % 4 === 1 || index % 4 === 2) && filteredStudies.length > 1;
  
               return (
                 <motion.div
                   key={study.id}
-                  layout
-                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.2 } }}
                   whileHover={{ 
-                    y: -8,
-                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.08)",
+                    y: -5,
+                    boxShadow: "0 20px 40px -12px rgba(0, 0, 0, 0.06)",
                   }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  viewport={{ once: false, margin: "0px" }}
                   transition={{
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 20,
-                    mass: 1,
-                    delay: index * 0.05,
+                    duration: 0.4,
+                    ease: [0.23, 1, 0.32, 1],
+                    delay: index * 0.04,
                   }}
                   className={cn(
-                    "group relative bg-white rounded-3xl overflow-hidden border border-slate-100 flex flex-col will-change-transform transform-gpu",
-                    isOnly ? "md:col-span-3" : isLarge ? "md:col-span-2" : isTall ? "md:row-span-2" : "md:col-span-1"
+                    "group relative bg-white rounded-[32px] overflow-hidden border border-slate-200/60 flex flex-col will-change-transform transform-gpu shadow-sm hover:shadow-xl transition-shadow",
+                    isOnly ? "md:col-span-3" : isLarge ? "md:col-span-2" : "md:col-span-1"
                   )}
                 >
                   <div className={cn(
@@ -234,7 +213,7 @@ export default function ModernCaseStudies() {
                     {/* Image Area */}
                     <div className={cn(
                       "relative overflow-hidden shrink-0",
-                      (isLarge || isOnly) ? "h-64 md:h-full md:w-1/2" : isTall ? "h-64" : "h-40"
+                      (isLarge || isOnly) ? "h-64 md:h-full md:w-1/2" : "h-32"
                     )}>
                       <img
                         src={study.visual as string}
@@ -252,87 +231,50 @@ export default function ModernCaseStudies() {
                     {/* Content Area */}
                     <div className={cn(
                       "flex-1 flex flex-col min-h-0 bg-white",
-                      (isLarge || isOnly) ? "p-8 md:p-10" : "p-6 md:p-7"
+                      (isLarge || isOnly) ? "p-6 md:p-8" : "p-4 md:p-5"
                     )}>
                       {/* Top Info */}
-                      <div className="mb-6">
+                      <div className="mb-4">
                         <div className="flex items-center gap-4 mb-6">
-                          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-semibold text-[10px] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:border-blue-100 group-hover:bg-blue-50/30">
+                          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-bold text-[11px] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:border-blue-100 group-hover:bg-blue-50/30">
                             {study.logo}
                           </div>
                           <div>
-                            <h4 className="text-slate-900 font-semibold text-[13px] leading-none mb-1.5">{study.company}</h4>
-                            <p className="text-slate-400 text-[9px] font-medium uppercase tracking-[0.1em]">{study.industry}</p>
+                            <h4 className="text-slate-900 font-semibold text-[11px] leading-none mb-1">{study.company}</h4>
+                            <p className="text-slate-400 text-[8px] font-medium uppercase tracking-[0.1em]">{study.industry}</p>
                           </div>
                         </div>
                         <h3 className={cn(
-                          "font-semibold text-slate-900 leading-[1.4] transition-colors duration-300 group-hover:text-blue-600",
-                          (isLarge || isOnly) ? "text-xl md:text-2xl" : isTall ? "text-[20px]" : "text-[16px] line-clamp-2 md:line-clamp-3"
-                        )} style={{ fontFamily: 'var(--font-display)' }}>
+                          "font-bold text-slate-900 leading-[1.3] transition-colors duration-300 group-hover:text-blue-600",
+                          (isLarge || isOnly) ? "text-xl md:text-2xl" : "text-[15px] line-clamp-2"
+                        )} style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
                           {study.title}
                         </h3>
                       </div>
                       
                       {/* Metrics & Footer */}
-                      <div className="mt-auto pt-6 border-t border-slate-100">
-                        {(!isLarge && !isOnly && !isTall) ? (
-                          // Compact Cards: No metrics, just the button
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-slate-400 text-[10px] font-medium">
-                              <Clock className="w-3.5 h-3.5" />
-                              {study.readTime}
+                      <div className="mt-auto pt-4 border-t border-slate-50">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                          {study.metrics.slice(0, (isLarge || isOnly) ? 3 : 2).map((m, mIdx) => (
+                            <div key={mIdx} className="flex flex-col">
+                              <div className="text-[#3666ff] font-extrabold text-[14px] lg:text-[16px] tracking-tight">{m.value}</div>
+                              <div className="text-slate-400 text-[8px] uppercase tracking-wider font-bold">{m.label}</div>
                             </div>
-                            <div className="group/btn flex items-center gap-2 text-blue-600 font-semibold text-[11px] uppercase tracking-wider cursor-pointer">
-                              <span>Full Story</span>
-                              <div className="w-6 h-6 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center transition-all duration-300 group-hover/btn:bg-blue-600 group-hover/btn:border-blue-600">
-                                <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:text-white" />
-                              </div>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-slate-400 text-[9px] font-medium">
+                            <Clock className="w-3 h-3" />
+                            {study.readTime}
+                          </div>
+                          <div className="group/btn flex items-center gap-1.5 text-blue-600 font-bold text-[9px] uppercase tracking-wider cursor-pointer">
+                            <span>Full Story</span>
+                            <div className="w-5 h-5 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center transition-all duration-300 group-hover/btn:bg-blue-600 group-hover/btn:border-blue-600">
+                              <ArrowRight className="w-2.5 h-2.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:text-white" />
                             </div>
                           </div>
-                        ) : (
-                          // Feature & Tall Cards: Show metrics and footer
-                          <>
-                            <div className={cn(
-                              "grid gap-6 mb-6",
-                              (isLarge || isOnly) ? "grid-cols-3" : "grid-cols-1"
-                            )}>
-                              {study.metrics.map((m, mIdx) => (
-                                <div key={mIdx} className={cn("space-y-1.5", isTall && "p-4 rounded-2xl bg-blue-50/30 border border-blue-100/50 flex items-center justify-between")}>
-                                  {isTall ? (
-                                    <>
-                                      <div className="text-slate-500 text-[9px] font-medium uppercase tracking-[0.1em]">{m.label}</div>
-                                      <div className="flex items-center gap-2">
-                                        <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
-                                        <div className="text-[17px] font-semibold text-slate-900 tracking-tight">{m.value}</div>
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <TrendingUp className="w-3.5 h-3.5 text-blue-600 opacity-80" />
-                                        <div className="text-base md:text-[17px] font-semibold text-slate-900 tracking-tight">{m.value}</div>
-                                      </div>
-                                      <div className="text-slate-400 text-[8px] font-medium uppercase tracking-[0.1em] leading-none">{m.label}</div>
-                                    </>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
- 
-                            <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                              <div className="flex items-center gap-2 text-slate-400 text-[10px] font-medium">
-                                <Clock className="w-3.5 h-3.5" />
-                                {study.readTime}
-                              </div>
-                              <div className="group/btn flex items-center gap-2 text-blue-600 font-semibold text-[11px] uppercase tracking-wider cursor-pointer">
-                                <span>Full Story</span>
-                                <div className="w-6 h-6 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center transition-all duration-300 group-hover/btn:bg-blue-600 group-hover/btn:border-blue-600">
-                                  <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:text-white" />
-                                </div>
-                              </div>
-                            </div>
-                          </>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>

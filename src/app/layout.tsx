@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { DM_Sans, Sora } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ScrollProgressIndicator } from "@/components/ui/ScrollProgressIndicator";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const sora = Sora({
+import { Instrument_Serif } from "next/font/google";
+
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["300", "400", "600", "700"],
+  variable: "--font-instrument",
+  weight: ["400"],
+  style: ["italic", "normal"],
   display: "swap",
 });
 
@@ -22,18 +25,25 @@ export const metadata: Metadata = {
   description: "The next-generation source-to-pay platform. Unifying your entire supply chain in one intelligent ecosystem.",
 };
 
+import SmoothScroll from "@/components/ui/SmoothScroll";
+import { Header } from "@/components/ui/header-2";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${sora.variable}`}>
-      <body className={dmSans.className} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className={inter.className} suppressHydrationWarning>
         <div className="noise-bg" />
         <ScrollProgressIndicator />
-        {children}
+        <Header />
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
 }
+

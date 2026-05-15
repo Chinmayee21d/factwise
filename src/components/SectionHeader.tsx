@@ -17,41 +17,34 @@ export default function SectionHeader({
   description,
   accentColor = '#3666ff',
   align = 'left',
-  marginBottom = 64,
+  marginBottom = 24,
 }: SectionHeaderProps) {
   const isCenter = align === 'center';
 
   return (
-    <div style={{
-      marginBottom: marginBottom,
-      textAlign: isCenter ? 'center' : 'left',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: isCenter ? 'center' : 'flex-start'
-    }}>
+    <div className={cn(
+      "flex flex-col w-full",
+      isCenter ? "items-center text-center" : "items-start text-left",
+      marginBottom === 24 ? "mb-6" : ""
+    )}
+    style={marginBottom !== 24 ? { marginBottom } : {}}
+    >
       {/* Label/Eyebrow Badge */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="section-badge"
+        className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
       >
         {label}
       </motion.div>
 
-
       {/* Title */}
       <motion.h2
-        style={{
-          fontFamily: 'var(--font-display), sans-serif',
-          fontSize: 'clamp(32px, 5vw, 54px)',
-          fontWeight: 700,
-          letterSpacing: '-0.02em',
-          color: '#1A1D2E',
-          lineHeight: 1.15,
-          margin: '0 0 16px 0',
-          maxWidth: 800,
-        }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1] max-w-4xl"
       >
         {title}
       </motion.h2>
@@ -59,19 +52,19 @@ export default function SectionHeader({
       {/* Description */}
       {description && (
         <motion.p
-          style={{
-            fontFamily: 'var(--font-inter), sans-serif',
-            fontSize: '18px',
-            fontWeight: 500,
-            color: '#7B82A8',
-            maxWidth: 720,
-            lineHeight: 1.6,
-            margin: 0
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-base md:text-lg text-slate-500 max-w-2xl font-medium leading-relaxed"
         >
           {description}
         </motion.p>
       )}
     </div>
   );
+}
+
+// Helper to handle class merging if cn utility is not available in this file scope
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
 }

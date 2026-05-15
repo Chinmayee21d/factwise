@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MessageSquare, Trophy, CheckCircle2, RefreshCcw } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { GLOBAL_LAYOUT } from './LayoutConfig';
+import ScrollReveal from './ui/ScrollReveal';
+
 
 /* ─── Card 1: Severe Value Loss (Price Erosion Graph) ─── */
 const SevereValueLossAnimation = () => {
@@ -344,22 +346,22 @@ const ZeroVisibilityAnimation = () => {
 const PROBLEMS = [
   {
     Animation: SevereValueLossAnimation,
-    title: "Severe Value Loss",
-    description: "Inaccurate estimates, cost overruns between quote and PO, and payment errors cause massive bottom-line erosion across the S2P lifecycle.",
+    title: "Overpaying. Every single order.",
+    description: "Without historical price intelligence, every order is a missed saving. FactWise tracks every quote, PO, and contract — so you always know what's fair and where to push back.",
     accent: "#ef4444",
     label: "Financial Gap"
   },
   {
     Animation: InefficiencyAnimation,
-    title: "Operational Inefficiency",
-    description: "Manual email-Excel workflows and fragmented legacy tools create slow, repetitive cycles that drain productivity and delay sourcing events.",
+    title: "Drowning in manual work.",
+    description: "Emails, follow-ups, spreadsheets — manual workflows burn out your best people. FactWise automates every workflow across your entire operations — from vendor onboarding and customer quotes to requisitions, approvals, and payments.",
     accent: "#f59e0b",
     label: "Productivity Gap"
   },
   {
     Animation: ZeroVisibilityAnimation,
-    title: "Zero Visibility",
-    description: "Zero transparency and high error rates across siloed data make it impossible to audit spend or identify strategic savings opportunities.",
+    title: "Flying blind.",
+    description: "No idea who approved what, where costs spiked, or which vendor is underdelivering. FactWise gives your entire team a live view of spend, approvals, and performance — all in one place.",
     accent: "#06b6d4",
     label: "Visibility Gap"
   }
@@ -373,182 +375,163 @@ export default function ProblemSection() {
   }, []);
 
   if (!mounted) return (
-    <section id="problem" style={{ width: '100%', background: '#FFFFFF', paddingTop: '80px', paddingBottom: '80px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ ...GLOBAL_LAYOUT.containerStyle, paddingLeft: '80px', paddingRight: '80px', opacity: 0 }} />
+    <section id="problem" className="relative py-12 px-4 md:px-10" style={{ scrollMarginTop: '100px' }}>
+      <div className="relative overflow-hidden rounded-[24px] py-24" style={{ backgroundColor: '#ebf1fa' }}>
+        <div className="absolute inset-0 noise" />
+        <div style={{ ...GLOBAL_LAYOUT.containerStyle, paddingLeft: '80px', paddingRight: '80px', opacity: 0 }} />
+      </div>
     </section>
   );
 
   return (
     <section
       id="problem"
-      style={{
-        width: '100%',
-        background: '#FFFFFF',
-        paddingTop: '96px',
-        paddingBottom: '96px',
-        position: 'relative',
-        overflow: 'hidden',
-        scrollMarginTop: '100px'
-      }}
+      className="relative py-12 px-4 md:px-10"
+      style={{ scrollMarginTop: '100px' }}
     >
-      {/* Subtle background bloom */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '900px',
-        height: '600px',
-        background: 'radial-gradient(ellipse, rgba(74,111,255,0.04) 0%, transparent 70%)',
-        filter: 'blur(80px)',
-        pointerEvents: 'none',
-      }} />
+      <div 
+        className="relative overflow-hidden rounded-[24px] py-24"
+        style={{ backgroundColor: '#ebf1fa' }}
+      >
+        {/* Blue Glow on Right - Optimized */}
+        <div 
+          className="absolute -right-32 -bottom-32 w-[800px] h-[800px] rounded-full pointer-events-none opacity-50"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(54, 102, 255, 0.25) 0%, rgba(54, 102, 255, 0.1) 30%, transparent 70%)',
+            willChange: 'opacity'
+          }} 
+        />
 
-      <div style={{ ...GLOBAL_LAYOUT.containerStyle, paddingLeft: '80px', paddingRight: '80px' }}>
+        <div className="absolute inset-0 noise" />
 
-        {/* Heading */}
-        <div style={{ textAlign: 'left', marginBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '16px', maxWidth: '1000px' }}>
-          <div className="section-badge" style={{ marginBottom: 0, fontWeight: 500, letterSpacing: '0.05em' }}>The Problem</div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            style={{
-              fontFamily: 'var(--font-display), sans-serif',
-              fontSize: 'clamp(32px, 5vw, 54px)',
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              color: '#1A1D2E',
-              margin: 0,
-              lineHeight: 1.15
-            }}
-          >
-            The Gaps Are Costing You <span style={{ color: '#4A6FFF' }}>More Than You Know</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            style={{
-              fontFamily: 'var(--font-inter), sans-serif',
-              fontSize: '18px',
-              fontWeight: 500,
-              color: '#7B82A8',
-              margin: 0,
-              lineHeight: 1.6,
-              maxWidth: '720px'
-            }}
-          >
-            From value leakage to operational drag to zero oversight — the cracks in your process are bigger than they look.
-          </motion.p>
-        </div>
+        {/* Content */}
+        <div className="relative z-10" style={{ ...GLOBAL_LAYOUT.containerStyle, paddingLeft: '24px', paddingRight: '24px' }}>
 
-        {/* Problems Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '24px'
-        }}>
-          {PROBLEMS.map((prob, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative w-full h-[400px] bg-white border border-[#E2E5F0] rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
-            >
-              {/* Visual Area (Full height initially, half height on hover) */}
-              <div className="relative w-full h-full transition-all duration-500 group-hover:h-1/2 bg-white flex items-center justify-center">
-                {/* Initial Title Overlay (Bottom, Grey) */}
-                <div className="absolute bottom-8 left-8 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-4">
+          <div className="mx-auto max-w-3xl text-center flex flex-col items-center mb-16">
+            <ScrollReveal delay={0.2}>
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
+                The Problem
+              </div>
+            </ScrollReveal>
+            
+            <ScrollReveal type="split-chars" stagger={0.02}>
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
+                Your procurement is draining <span className="text-[#3666ff]">money, time, and control.</span>
+              </h2>
+            </ScrollReveal>
+
+            <ScrollReveal type="split-words" delay={0.3} stagger={0.01}>
+              <p className="text-base md:text-lg text-slate-500 max-w-2xl font-medium">
+                Hidden overspend, manual bottlenecks, and zero visibility — three problems quietly draining your business every day.
+              </p>
+            </ScrollReveal>
+          </div>
+
+
+          {/* Problems Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px'
+          }}>
+            {PROBLEMS.map((prob, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false }}
+                transition={{ delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="group relative w-full h-[400px] bg-white border border-[#E2E5F0] rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+              >
+                {/* Visual Area (Full height initially, half height on hover) */}
+                <div className="relative w-full h-full transition-all duration-500 group-hover:h-1/2 bg-white flex items-center justify-center">
+                  {/* Initial Title Overlay (Bottom, Grey) */}
+                  <div className="absolute bottom-8 left-8 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-4">
+                    <h3 style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '18px',
+                      fontWeight: 700,
+                      letterSpacing: '-0.01em',
+                      color: '#7B82A8',
+                      margin: 0,
+                      lineHeight: 1.2,
+                    }}>
+                      {prob.title}
+                    </h3>
+                  </div>
+                  <prob.Animation />
+                </div>
+
+                {/* Content Area (Hidden below initially, slides up on hover) */}
+                <div className="absolute left-0 w-full h-1/2 px-8 transition-all duration-500 flex flex-col justify-center bg-white/95 backdrop-blur-sm opacity-0 group-hover:opacity-100 top-full group-hover:top-1/2">
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '14px'
+                  }}>
+                    <div style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: prob.accent,
+                      boxShadow: `0 0 8px ${prob.accent}`,
+                    }} />
+                    <span style={{
+                      fontFamily: 'var(--font-inter)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: prob.accent,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.12em',
+                    }}>
+                      {prob.label}
+                    </span>
+                  </div>
                   <h3 style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '18px',
+                    fontSize: '22px',
                     fontWeight: 700,
-                    letterSpacing: '-0.01em',
-                    color: '#7B82A8',
-                    margin: 0,
+                    letterSpacing: '-0.02em',
+                    color: '#1A1D2E',
+                    marginBottom: '10px',
                     lineHeight: 1.2,
                   }}>
                     {prob.title}
                   </h3>
-                </div>
-                <prob.Animation />
-              </div>
-
-              {/* Content Area (Hidden below initially, slides up on hover) */}
-              <div className="absolute left-0 w-full h-1/2 px-8 transition-all duration-500 flex flex-col justify-center bg-white/95 backdrop-blur-sm opacity-0 group-hover:opacity-100 top-full group-hover:top-1/2">
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '14px'
-                }}>
-                  <div style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: prob.accent,
-                    boxShadow: `0 0 8px ${prob.accent}`,
-                  }} />
-                  <span style={{
+                  <p style={{
                     fontFamily: 'var(--font-inter)',
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    color: prob.accent,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    color: '#7B82A8',
+                    lineHeight: 1.6,
                   }}>
-                    {prob.label}
-                  </span>
+                    {prob.description}
+                  </p>
+                  <button
+                    className="absolute bottom-6 right-6 border border-gray-200 hover:-rotate-45 transition-all duration-500 rounded-full flex items-center justify-center size-8 text-[#4A6FFF] hover:bg-[#4A6FFF] hover:text-white"
+                  >
+                    <ArrowRight size={14} />
+                  </button>
                 </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
-                  color: '#1A1D2E',
-                  marginBottom: '10px',
-                  lineHeight: 1.2,
-                }}>
-                  {prob.title}
-                </h3>
-                <p style={{
-                  fontFamily: 'var(--font-inter)',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  color: '#7B82A8',
-                  lineHeight: 1.6,
-                }}>
-                  {prob.description}
-                </p>
-                <button
-                  className="absolute bottom-6 right-6 border border-gray-200 hover:-rotate-45 transition-all duration-500 rounded-full flex items-center justify-center size-8 text-[#4A6FFF] hover:bg-[#4A6FFF] hover:text-white"
-                >
-                  <ArrowRight size={14} />
-                </button>
-              </div>
 
-              {/* Textured blue gradient corner */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                width: '250px',
-                height: '250px',
-                background: `radial-gradient(circle at top right, rgba(74, 111, 255, 0.15), transparent 70%), url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")`,
-                backgroundBlendMode: 'multiply',
-                pointerEvents: 'none',
-                maskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
-                WebkitMaskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
-              }} />
-            </motion.div>
-          ))}
+                {/* Textured blue gradient corner */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: '250px',
+                  height: '250px',
+                  background: `radial-gradient(circle at top right, rgba(74, 111, 255, 0.15), transparent 70%), url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E")`,
+                  backgroundBlendMode: 'multiply',
+                  pointerEvents: 'none',
+                  maskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
+                  WebkitMaskImage: 'radial-gradient(circle at top right, black, transparent 60%)',
+                }} />
+              </motion.div>
+            ))}
+          </div>
         </div>
-
       </div>
     </section>
   );

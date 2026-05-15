@@ -565,7 +565,7 @@ export default function ScrollFeatureSection() {
 
           <h2
             style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: 'var(--font-inter), sans-serif',
               fontSize: 'clamp(32px,4vw,52px)',
               fontWeight: 300,
               letterSpacing: '-0.025em',

@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ChevronDown, ChevronUp, Star, Quote } from 'lucide-react';
+import ScrollReveal from './ui/ScrollReveal';
 
 const testimonials = [
     {
@@ -10,16 +11,20 @@ const testimonials = [
         name: "Kapil Maini",
         role: "Chief Procurement Officer",
         company: "Syrma SGS",
-        content: "Factwise has significantly improved procurement digitalization and automated quotation processes, enabling faster workflows, enhanced transparency, and data-driven decision-making. We like the platform's efficiency, seamless integration, and actionable insights. The solutions team is always listening to the voice of the customer and adapting the solution to serve their needs.",
-        color: "bg-blue-100 text-blue-700"
+        content: "Factwise has significantly improved procurement digitalization and automated quotation processes, enabling faster workflows, enhanced transparency, and data-driven decision-making. We like the platform's efficiency, seamless integration, and actionable insights.",
+        color: "bg-blue-100 text-blue-700",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&auto=format&fit=crop",
+        logo: "/image.png"
     },
     {
         id: 'fortune-50-vp',
         name: "VP of Procurement",
         role: "Fortune 50 Company",
         company: "Global Enterprise",
-        content: "The Factwise app is a great consolidation of features that provides the ability to send RFx's, assess pricing, allocation, PO & AP processing, etc. all in one app. It's an extremely efficient way to manage the materials buying process all under one application.",
-        color: "bg-purple-100 text-purple-700"
+        content: "The Factwise app is a great consolidation of features that provides the ability to send RFx's, assess pricing, allocation, PO & AP processing, etc. all in one app. It's an extremely efficient way to manage the materials buying process.",
+        color: "bg-purple-100 text-purple-700",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=250&auto=format&fit=crop",
+        logo: null
     },
     {
         id: 'spark-minda',
@@ -27,55 +32,69 @@ const testimonials = [
         role: "Vice President",
         company: "Spark Minda",
         content: "Factwise streamlines sourcing processes by automating non-value-adding activities, boosting efficiency and productivity. Their customizable GUI and dashboards empower users with tailored insights for smarter decision-making.",
-        color: "bg-green-100 text-green-700"
+        color: "bg-green-100 text-green-700",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=250&auto=format&fit=crop",
+        logo: "/sparkminda.png"
     },
     {
         id: 'driplex',
         name: "Vivek Mehta",
         role: "CEO",
         company: "Driplex",
-        content: "Our manufacturing company uses the traditional standard ERP system. With Factwise integrating with our ERP, our purchasing has become informed, organized, and effortless. The intuitive and sleek UI was a standout feature. Factwise has been a game-changing addition for us.",
-        color: "bg-orange-100 text-orange-700"
+        content: "Our manufacturing company uses the traditional standard ERP system. With Factwise integrating with our ERP, our purchasing has become informed, organized, and effortless. The intuitive and sleek UI was a standout feature.",
+        color: "bg-orange-100 text-orange-700",
+        avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=250&auto=format&fit=crop",
+        logo: "/driplex.png"
     },
     {
         id: 'gem-corp',
         name: "Kinjal Shah",
         role: "CEO",
         company: "Gem Corp",
-        content: "FactWise excels in analytics — their AI innovation transforms analysis into a user-friendly experience. Breaking free from old formats, we've minimized Excel dependency, witnessing a data-driven revolution that elevates our operations and business decisions. The proactive, attentive team ensures seamless implementation — a standout feature in this limitless solution.",
-        color: "bg-pink-100 text-pink-700"
+        content: "FactWise excels in analytics — their AI innovation transforms analysis into a user-friendly experience. Breaking free from old formats, we've minimized Excel dependency, witnessing a data-driven revolution.",
+        color: "bg-pink-100 text-pink-700",
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=250&auto=format&fit=crop",
+        logo: "/GemCorpochem.png"
     },
     {
         id: 'prasol',
         name: "Pankil Dharia",
         role: "Co-owner",
         company: "Prasol",
-        content: "FactWise has enabled us to make data-driven decisions in procurement. This has increased the efficiency and compliance in the team and more importantly led to cost savings which is extremely important in our industry. Their standout analytics throughout the platform and the ability to easily customize the requirements based on our needs are absolutely nothing that we have seen before.",
-        color: "bg-cyan-100 text-cyan-700"
+        content: "FactWise has enabled us to make data-driven decisions in procurement. This has increased the efficiency and compliance in the team and more importantly led to cost savings which is extremely important.",
+        color: "bg-cyan-100 text-cyan-700",
+        avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=250&auto=format&fit=crop",
+        logo: "/image copy.png"
     },
     {
         id: 'bpt',
         name: "Avaneesh Krishna",
-        role: "Enterprise IT Strategies",
-        company: "BPT",
-        content: "FactWise streamlined our quoting process, replacing manual tasks with efficient vendor and client interactions. Customizable and adaptable, it tailored to our complex workflow perfectly. Analytics stole the spotlight, offering diverse views for nuanced decision-making. FactWise harnessed transactional data, creating potent historical analytics for enhanced client value. Beyond tools, their attentive team unlocked the product's potential, ensuring personalized support.",
-        color: "bg-yellow-100 text-yellow-700"
+        role: "Enterprise IT Strategies, BPT",
+        company: "Bridgepointe",
+        content: "FactWise streamlined our quoting process, replacing manual tasks with efficient vendor and client interactions. Customizable and adaptable, it tailored to our complex workflow perfectly.",
+        color: "bg-yellow-100 text-yellow-700",
+        avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?q=80&w=250&auto=format&fit=crop",
+        logo: "/Bridgepointe.png"
     },
     {
         id: 'fortune-50-sr-dir',
         name: "Sr. Director of Procurement",
         role: "Fortune 50 Company",
         company: "Global Enterprise",
-        content: "FactWise has done a great job at understanding the users. The thoughtfulness in the way it is created is impressive. Even the smallest details have been thought of to make sure the user experience is excellent. Our user adoption and attention to detail are the primary reasons for FactWise's success at our company.",
-        color: "bg-teal-100 text-teal-700"
+        content: "FactWise has done a great job at understanding the users. The thoughtfulness in the way it is created is impressive. Even the smallest details have been thought of to make sure the user experience is excellent.",
+        color: "bg-teal-100 text-teal-700",
+        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop",
+        logo: null
     },
     {
         id: 'amkette',
         name: "Varun Bapna",
         role: "Co-owner",
         company: "Amkette",
-        content: "Amkette sought an automated solution for their complex sourcing operation, focusing on procurement and vendor analytics. Initially designed for manufacturing, Factwise adapted swiftly, engaging Amkette's vendors. The platform's ongoing customization, including a built-in chat system, eased China communication challenges.",
-        color: "bg-indigo-100 text-indigo-700"
+        content: "Amkette sought an automated solution for their complex sourcing operation, focusing on procurement and vendor analytics. Initially designed for manufacturing, Factwise adapted swiftly.",
+        color: "bg-indigo-100 text-indigo-700",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=250&auto=format&fit=crop",
+        logo: "/Amkette.png"
     }
 ];
 
@@ -84,99 +103,106 @@ export default function Testimonials() {
     const sectionRef = useRef<HTMLElement>(null);
 
     const toggleShowMore = () => {
-        if (!showMore) {
-            // When opening, change state then scroll
-            setShowMore(true);
-            setTimeout(() => {
-                sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        } else {
-            // When closing, scroll then change state
-            sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            setTimeout(() => {
-                setShowMore(false);
-            }, 500); // Wait for scroll to complete
-        }
+        setShowMore(!showMore);
     };
 
     return (
         <section
             ref={sectionRef}
-            className="w-full py-12 md:py-20 relative scroll-mt-20"
+            className="relative py-12 px-4 md:px-10"
             id="testimonials"
+            style={{ scrollMarginTop: '100px' }}
         >
-            {/* Rounded Background Container */}
-            <div
-                className="absolute inset-0 mx-2 md:mx-10 bg-no-repeat bg-cover bg-center rounded-[2rem] md:rounded-[2rem] overflow-hidden"
-                style={{
-                    backgroundImage: "url('TexturedGradient.png')",
-                    backgroundAttachment: 'fixed'
-                }}
-            />
-            <div className="relative z-10 mx-auto max-w-7xl px-6">
-                <div style={{ textAlign: 'center', marginBottom: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                    <div className="section-badge" style={{ marginBottom: 0, fontWeight: 500, letterSpacing: '0.05em' }}>Testimonials</div>
-                    <h2
-                        style={{
-                            fontFamily: 'var(--font-display), sans-serif',
-                            fontSize: 'clamp(32px, 5vw, 54px)',
-                            fontWeight: 700,
-                            letterSpacing: '-0.02em',
-                            color: '#1A1D2E',
-                            margin: 0,
-                            lineHeight: 1.15
-                        }}
+            <div className="relative overflow-hidden rounded-[24px] py-24" style={{ backgroundImage: "url('/TexturedGradient.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                {/* Blue Glow on Right - Optimized */}
+                <div 
+                  className="absolute -right-32 -bottom-32 w-[800px] h-[800px] rounded-full pointer-events-none opacity-50"
+                  style={{ 
+                    background: 'radial-gradient(circle, rgba(54, 102, 255, 0.2) 0%, rgba(54, 102, 255, 0.1) 40%, transparent 80%)',
+                  }} 
+                />
+                <div className="absolute inset-0 noise opacity-20 pointer-events-none mix-blend-overlay" />
+
+                <div className="relative z-10 mx-auto max-w-7xl px-6">
+                <div className="mx-auto max-w-3xl text-center mb-12">
+                    <ScrollReveal delay={0.1}>
+                        <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#4A6FFF] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+                            Testimonials
+                        </div>
+                    </ScrollReveal>
+
+                    <ScrollReveal type="split-chars" stagger={0.02}>
+                        <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
+                            Trusted by the <span className="text-[#3666ff]">Best in the Business.</span>
+                        </h2>
+                    </ScrollReveal>
+
+                    <motion.p 
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium"
                     >
-                        Hear from the <span style={{ color: '#4A6FFF' }}>leaders</span> and operators
-                    </h2>
-                    <p
-                        style={{
-                            fontFamily: 'var(--font-inter), sans-serif',
-                            fontSize: '18px',
-                            fontWeight: 500,
-                            color: '#7B82A8',
-                            margin: 0,
-                            lineHeight: 1.6,
-                            maxWidth: '720px'
-                        }}
-                    >
-                        Discover how FactWise is transforming workflows for enterprises worldwide, driving efficiency and strategic growth.
-                    </p>
+                        Join hundreds of high-performing procurement teams already using FactWise to automate and scale.
+                    </motion.p>
                 </div>
 
-                <div className="relative">
-                    <AnimatePresence mode="wait">
-                        {!showMore ? (
-                            <motion.div
-                                key="bento"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.5, ease: "easeInOut" }}
-                                className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-rows-2"
-                            >
-                                {/* Bento Layout - Initial 4 Cards */}
-                                {testimonials.slice(0, 4).map((t, i) => (
-                                    <Card
-                                        key={t.id}
-                                        className={`${i === 0 ? "md:col-span-2 md:row-span-2 p-2 md:p-4" :
-                                            i === 1 ? "md:col-span-2 p-2" :
-                                                "md:col-span-1 p-2"
-                                            } border-slate-100 bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_rgba(74,111,255,0.25)] hover:border-[#4A6FFF]/30 transition-all duration-500 hover:-translate-y-1 group relative overflow-hidden rounded-xl`}
-                                    >
-                                        <CardContent className={`h-full flex flex-col justify-between gap-8 pt-6 relative z-10`}>
-                                            <div className="space-y-4 relative z-10">
-                                                <p
-                                                    className={`${i === 0 ? "text-lg md:text-3xl" : i === 1 ? "text-base md:text-xl" : "text-sm md:text-base"} font-medium leading-tight tracking-tight`}
-                                                    style={{ fontFamily: 'var(--font-inter)', color: '#1A1D2E' }}
-                                                >
-                                                    "{t.content}"
-                                                </p>
+                <div className="flex flex-col gap-4">
+                    {/* Persistent Bento Grid - Initial 6 Cards */}
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 items-stretch p-2 md:p-4 overflow-visible">
+                        {testimonials.slice(0, 6).map((t, i) => {
+                            const isLarge = i === 0 || i === 5;
+                            
+                            return (
+                                <Card
+                                    key={t.id}
+                                    className={`${isLarge ? "md:col-span-2" : "md:col-span-1"} h-full border-slate-100 bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_rgba(74,111,255,0.25)] hover:border-[#4A6FFF]/30 transition-all duration-500 hover:-translate-y-1 group relative overflow-visible rounded-xl flex flex-col`}
+                                >
+                                    <CardContent className="flex flex-col gap-3 p-4 pt-5 relative z-10 flex-grow">
+                                        {/* Top Section: Quote (Left) & Logo (Right) */}
+                                        <div className="flex items-start justify-between mb-1">
+                                            <div className="text-[#3666ff] transition-colors duration-500">
+                                                <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor">
+                                                    <path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H320c-35.3 0-64-28.7-64-64V216z"/>
+                                                </svg>
                                             </div>
-                                            <div className="flex items-center gap-4 mt-auto">
-                                                <Avatar className={`${i === 0 ? "size-14" : "size-10"} border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50`}>
-                                                    <AvatarFallback className={`${t.color} font-bold`}>
-                                                        <span className={i === 0 ? "text-base" : "text-sm"}>{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
+                                            {t.logo && (
+                                                <div className="h-10 w-32 flex items-center justify-end logo-container ml-auto">
+                                                    <img 
+                                                        src={t.logo} 
+                                                        alt={`${t.company} logo`} 
+                                                        className="max-h-full max-w-full object-contain opacity-90 group-hover:opacity-100 transition-all duration-500"
+                                                        onError={(e) => {
+                                                            const target = e.target as HTMLImageElement;
+                                                            target.style.display = 'none';
+                                                            const parent = target.parentElement;
+                                                            if (parent) {
+                                                                const fallback = document.createElement('span');
+                                                                fallback.className = 'text-[12px] font-black tracking-tighter text-[#1A1D2E] opacity-50';
+                                                                fallback.innerText = t.company;
+                                                                parent.appendChild(fallback);
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1 relative z-10 flex-grow">
+                                            <p
+                                                className={`${isLarge ? "text-base md:text-lg" : "text-xs md:text-sm"} font-medium leading-relaxed tracking-tight text-[#1A1D2E]`}
+                                                style={{ fontFamily: 'var(--font-inter)' }}
+                                            >
+                                                “{t.content}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center mt-auto pt-3 border-t border-slate-50 relative z-10">
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className={`${isLarge ? "size-12" : "size-10"} rounded-xl border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50`}>
+                                                    {t.avatar && <AvatarImage src={t.avatar} className="object-cover rounded-xl" />}
+                                                    <AvatarFallback className={`${t.color} font-bold rounded-xl`}>
+                                                        <span className={isLarge ? "text-sm" : "text-xs"}>{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div>
@@ -187,71 +213,107 @@ export default function Testimonials() {
                                                         {t.name}
                                                     </cite>
                                                     <span
-                                                        className="block text-xs font-medium"
-                                                        style={{ fontFamily: 'var(--font-inter)', color: '#7B82A8' }}
+                                                        className="block text-[10px] uppercase tracking-wider font-semibold text-[#7B82A8]"
+                                                        style={{ fontFamily: 'var(--font-inter)' }}
                                                     >
                                                         {t.role}{t.company ? `, ${t.company}` : ''}
                                                     </span>
                                                 </div>
                                             </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="masonry"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.5 }}
-                                className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
-                            >
-                                {testimonials.map((t) => (
-                                    <motion.div
-                                        key={t.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.5, delay: (testimonials.indexOf(t) % 3) * 0.1 }}
-                                        className="mb-4 break-inside-avoid"
-                                    >
-                                        <Card className="border-slate-100/50 bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_25px_60px_-15px_rgba(74,111,255,0.25)] hover:border-[#4A6FFF]/30 transition-all duration-500 hover:-translate-y-2 group relative overflow-hidden rounded-xl">
-                                            <CardContent className="p-6 space-y-4 relative z-10">
-                                                <div className="flex items-center gap-4 relative z-10">
-                                                    <Avatar className="size-10 border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50">
-                                                        <AvatarFallback className={`${t.color} font-bold`}>
-                                                            <span className="text-sm">{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div>
-                                                        <h4
-                                                            className="text-sm font-bold text-[#1A1D2E] group-hover:text-[#4A6FFF] transition-colors leading-none mb-1"
-                                                            style={{ fontFamily: 'var(--font-display)' }}
-                                                        >
-                                                            {t.name}
-                                                        </h4>
-                                                        <p
-                                                            className="text-xs font-medium"
-                                                            style={{ fontFamily: 'var(--font-inter)', color: '#7B82A8' }}
-                                                        >
-                                                            {t.role}{t.company ? ` @ ${t.company}` : ''}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <p
-                                                    className="text-base leading-relaxed font-medium"
-                                                    style={{ fontFamily: 'var(--font-inter)', color: '#1A1D2E' }}
-                                                >
-                                                    "{t.content}"
-                                                </p>
-                                            </CardContent>
-                                        </Card>
-                                    </motion.div>
-                                ))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+
+                        {/* Additional Cards - Reveal Below */}
+                        <AnimatePresence>
+                            {showMore && (
+                                <>
+                                    {testimonials.slice(6).map((t, i) => {
+                                        const isLarge = i === 1; // Global index 7
+                                        
+                                        return (
+                                            <motion.div
+                                                key={t.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 20 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                className={`${isLarge ? "md:col-span-2" : "md:col-span-1"} overflow-visible`}
+                                            >
+                                                <Card className="h-full border-slate-200 bg-white shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_50px_rgba(74,111,255,0.25)] hover:border-[#4A6FFF]/30 transition-all duration-500 hover:-translate-y-1 group relative overflow-visible rounded-xl flex flex-col">
+                                                    <CardContent className="flex flex-col gap-3 p-4 pt-5 relative z-10 flex-grow">
+                                                        {/* Top Section: Quote (Left) & Logo (Right) */}
+                                                        <div className="flex items-start justify-between mb-1">
+                                                            <div className="text-[#3666ff] transition-colors duration-500">
+                                                                <svg width="24" height="24" viewBox="0 0 448 512" fill="currentColor">
+                                                                    <path d="M0 216C0 149.7 53.7 96 120 96h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V216zm256 0c0-66.3 53.7-120 120-120h8c17.7 0 32 14.3 32 32s-14.3 32-32 32h-8c-30.9 0-56 25.1-56 56v8h64c35.3 0 64 28.7 64 64v64c0 35.3-28.7 64-64 64H320c-35.3 0-64-28.7-64-64V216z"/>
+                                                                </svg>
+                                                            </div>
+                                                            {t.logo && (
+                                                                <div className="h-10 w-32 flex items-center justify-end logo-container ml-auto">
+                                                                    <img 
+                                                                        src={t.logo} 
+                                                                        alt={`${t.company} logo`} 
+                                                                        className="max-h-full max-w-full object-contain opacity-90 group-hover:opacity-100 transition-all duration-500"
+                                                                        onError={(e) => {
+                                                                            const target = e.target as HTMLImageElement;
+                                                                            target.style.display = 'none';
+                                                                            const parent = target.parentElement;
+                                                                            if (parent) {
+                                                                                const fallback = document.createElement('span');
+                                                                                fallback.className = 'text-[12px] font-black tracking-tighter text-[#1A1D2E] opacity-50';
+                                                                                fallback.innerText = t.company;
+                                                                                parent.appendChild(fallback);
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="space-y-2 relative z-10 flex-grow">
+                                                            <p
+                                                                className={`${isLarge ? "text-base md:text-lg" : "text-xs md:text-sm"} font-medium leading-relaxed tracking-tight text-[#1A1D2E]`}
+                                                                style={{ fontFamily: 'var(--font-inter)' }}
+                                                            >
+                                                                “{t.content}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center mt-auto pt-4 border-t border-slate-50 relative z-10">
+                                                            <div className="flex items-center gap-3">
+                                                                <Avatar className={`${isLarge ? "size-12" : "size-10"} rounded-xl border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50`}>
+                                                                    {t.avatar && <AvatarImage src={t.avatar} className="object-cover rounded-xl" />}
+                                                                    <AvatarFallback className={`${t.color} font-bold rounded-xl`}>
+                                                                        <span className={isLarge ? "text-sm" : "text-xs"}>{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <div>
+                                                                    <cite
+                                                                        className="text-sm font-bold not-italic text-[#1A1D2E] group-hover:text-[#4A6FFF] transition-colors block leading-none mb-1"
+                                                                        style={{ fontFamily: 'var(--font-display)' }}
+                                                                    >
+                                                                        {t.name}
+                                                                    </cite>
+                                                                    <span
+                                                                        className="block text-[10px] uppercase tracking-wider font-semibold text-[#7B82A8]"
+                                                                        style={{ fontFamily: 'var(--font-inter)' }}
+                                                                    >
+                                                                        {t.role}{t.company ? `, ${t.company}` : ''}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
 
                 <div className="mt-12 flex justify-center">
@@ -275,6 +337,7 @@ export default function Testimonials() {
                             )}
                         </div>
                     </button>
+                </div>
                 </div>
             </div>
         </section>

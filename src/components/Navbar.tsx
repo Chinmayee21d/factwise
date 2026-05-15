@@ -37,9 +37,9 @@ const productLinks: LinkItem[] = [
 ];
 
 const companyLinks: LinkItem[] = [
-  { title: 'About FactWise', href: '#', icon: Users, description: 'Our story, mission, and team' },
+  { title: 'About FactWise', href: '/about', icon: Users, description: 'Our story, mission, and team' },
   { title: 'Customer Stories', href: '#', icon: Star, description: 'See how leading teams save with FactWise' },
-  { title: 'Careers', href: '#', icon: Briefcase, description: "We're hiring globally — come join us" },
+  { title: 'Careers', href: '/careers', icon: Briefcase, description: "We're hiring globally — come join us" },
 ];
 
 const companyLinks2: LinkItem[] = [
@@ -50,14 +50,28 @@ const companyLinks2: LinkItem[] = [
 ];
 
 /* ── Scroll hook ─────────────────────────────────── */
-function useScrolled(threshold = 10) {
+function useScrolled(threshold = 20) {
   const [scrolled, setScrolled] = React.useState(false);
-  const onScroll = React.useCallback(() => setScrolled(window.scrollY > threshold), [threshold]);
+  
   React.useEffect(() => {
-    onScroll();
+    let ticking = false;
+    
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > threshold);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // Initial check
+    
     return () => window.removeEventListener('scroll', onScroll);
-  }, [onScroll]);
+  }, [threshold]);
+  
   return scrolled;
 }
 
@@ -128,8 +142,8 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'sticky top-0 z-50 w-full border-b border-transparent transition-[background,border-color] duration-300',
-          scrolled && 'border-black/[0.08] bg-[#ffffff]/80 backdrop-blur-xl',
+          'sticky top-0 z-50 w-full border-b border-transparent transition-[background-color,border-color] duration-300 will-change-[background-color,border-color]',
+          scrolled && 'border-black/[0.08] bg-white/80 backdrop-blur-xl',
         )}
       >
         <nav className="mx-auto flex h-14 w-full max-w-screen-xl items-center justify-between px-6 md:px-10">

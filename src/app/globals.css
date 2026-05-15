@@ -28,6 +28,8 @@
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
     --radius: 0.5rem;
+    --brand: 226 100% 61%;
+    --brand-foreground: 226 100% 10%;
   }
 
   .dark {
@@ -50,6 +52,8 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --brand: 226 100% 61%;
+    --brand-foreground: 0 0% 98%;
   }
 }
 
@@ -61,11 +65,11 @@
     box-sizing: border-box;
   }
 
-  body {
-      background-color: hsl(var(--background));
-      color: hsl(var(--foreground));
-      font-family: var(--font-sans), sans-serif;
-    }
+  html, body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans), sans-serif;
+  }
 
   /* Grain noise overlay like Pipe */
   body::before {
@@ -285,16 +289,14 @@
 .orb-blue {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(54, 102, 255, 0.14) 0%, transparent 70%);
-  filter: blur(40px);
+  background: radial-gradient(circle, rgba(54, 102, 255, 0.2) 0%, rgba(54, 102, 255, 0.1) 40%, transparent 80%);
   pointer-events: none;
 }
 
 .orb-indigo {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(73, 204, 249, 0.10) 0%, transparent 70%);
-  filter: blur(40px);
+  background: radial-gradient(circle, rgba(73, 204, 249, 0.2) 0%, rgba(73, 204, 249, 0.1) 40%, transparent 80%);
   pointer-events: none;
 }
 
@@ -303,7 +305,7 @@
   background: #f0f4f8;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-inter), monospace;
   font-size: 12px;
   line-height: 1.7;
   color: #363636;
@@ -423,6 +425,7 @@
   text-transform: uppercase;
   border: 1px solid transparent;
 }
+
 /* ── Icon-Slide Button Effect ───────────── */
 .slide-button {
   --clr: #3666ff;
@@ -487,6 +490,10 @@
   perspective: 1200px;
 }
 
+.perspective-1200 {
+  perspective: 1200px;
+}
+
 .preserve-3d {
   transform-style: preserve-3d;
 }
@@ -509,19 +516,29 @@
 }
 
 @keyframes marquee-fw {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-33.33%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-33.33%);
+  }
 }
 
 @keyframes marquee-fw-reverse {
-  0% { transform: translateX(-33.33%); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(-33.33%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 :root {
-  --font-mono: "PPSupplyMono", monospace;
-  --font-sans: "PP Neue Montreal", sans-serif;
-  --font-display: "Cormorant Garamond", serif;
+  --font-mono: var(--font-inter), monospace;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-inter), sans-serif;
   --color-bg: #0a0a0a;
   --color-text: #ffffff;
   --color-text-muted: rgba(255, 255, 255, 0.7);
@@ -545,3 +562,63 @@
   --spacing-sm: var(----spacing-sm);
   --spacing-md: var(----spacing-md);
 }
+
+/* ── Sophisticated Hero Gradient ── */
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 85% 85%,
+      rgba(77, 124, 255, 0.30) 0%,
+      rgba(122, 158, 255, 0.20) 18%,
+      rgba(167, 192, 255, 0.12) 35%,
+      rgba(212, 226, 255, 0.08) 52%,
+      transparent 72%),
+    radial-gradient(circle at 70% 60%,
+      rgba(77, 124, 255, 0.12) 0%,
+      transparent 55%),
+    radial-gradient(circle at top left,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(239, 246, 255, 0.75) 35%,
+      transparent 60%),
+    linear-gradient(135deg,
+      #eff6ff 0%,
+      #eef4ff 45%,
+      #edf3ff 100%);
+
+  filter: saturate(115%);
+}
+
+.hero-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    radial-gradient(circle at 90% 85%,
+      rgba(77, 124, 255, 0.2),
+      transparent 50%);
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 85%, rgba(77, 124, 255, 0.15) 0%, rgba(77, 124, 255, 0.05) 50%, transparent 90%);
+    opacity: 0.9;
+    mix-blend-mode: soft-light;
+  }
+
+  .font-serif {
+    font-family: var(--font-instrument), serif;
+  }

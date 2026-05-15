@@ -1,0 +1,24 @@
+'use client'
+
+import { useEffect } from 'react'
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  useEffect(() => {
+    console.error(error)
+  }, [error])
+
+  return (
+    <main style={{ padding: '32px', fontFamily: 'Geist, sans-serif' }}>
+      <h2>Something went wrong</h2>
+      <button onClick={reset} style={{ marginTop: '12px' }}>
+        Try again
+      </button>
+    </main>
+  )
+}

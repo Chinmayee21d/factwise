@@ -111,7 +111,7 @@ const PillarHeader = ({ pillar, index, total, scrollYProgress }: PillarProps) =>
       {/* Giant stat number — mood-board accent */}
       <div
         style={{
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'var(--font-inter), sans-serif',
           fontSize: 'clamp(64px,10vw,108px)',
           fontWeight: 100,
           letterSpacing: '-0.04em',
@@ -127,7 +127,7 @@ const PillarHeader = ({ pillar, index, total, scrollYProgress }: PillarProps) =>
 
       <h2
         style={{
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'var(--font-inter), sans-serif',
           fontSize: 'clamp(22px,3vw,36px)',
           fontWeight: 300,
           letterSpacing: '-0.02em',

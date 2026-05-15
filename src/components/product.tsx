@@ -19,7 +19,7 @@ const HTML = `<div id="product-hub-animation" style="background:#0a0a0c;color:#f
     <div id="phub-root" style="min-height:200px"></div>
   </div>
   <style>
-    .ftab{background:transparent;border:1px solid rgba(255,255,255,0.1);color:#888;padding:12px 28px;border-radius:14px;cursor:pointer;font-weight:700;font-size:14px;font-family:'Geist',sans-serif;transition:all 0.4s}
+    .ftab{background:transparent;border:1px solid rgba(255,255,255,0.1);color:#888;padding:12px 28px;border-radius:14px;cursor:pointer;font-weight:700;font-size:14px;font-family:'Inter',sans-serif;transition:all 0.4s}
     .ftab.active{border-color:#7c5cfc;color:#fff;background:rgba(124,92,252,0.08);box-shadow:0 4px 20px rgba(124,92,252,0.2)}
     @keyframes hubPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,92,252,0.3)}50%{box-shadow:0 0 0 6px rgba(124,92,252,0)}}
     @keyframes bulletAppear{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}

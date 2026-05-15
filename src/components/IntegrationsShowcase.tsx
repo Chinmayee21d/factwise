@@ -1,444 +1,246 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, animate } from 'framer-motion';
-import { RefreshCcw, Lock, Zap, ArrowRight, Link as LinkIcon } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import SectionHeader from './SectionHeader';
-import { GLOBAL_LAYOUT } from './LayoutConfig';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
-/* ── Constants ──────────────────────────────────── */
-const CX = 360;       // Center
-const CY = 360;       // Center
-const RADIUS = 280;   // spoke length
-const NODE = 92;      // node size
-const HALF = NODE / 2;
-
-/* ── Data ───────────────────────────────────────── */
-const integrations = [
-  { 
-    id: 1, name: 'SAP', color: '#0FAAFF', category: 'ERP', angle: -90,
-    content: 'Unified enterprise resource planning with real-time financial tracking and inventory management.',
-    status: 'active', energy: 96, relatedIds: [4, 7]
-  },
-  { 
-    id: 2, name: 'Oracle', color: '#F80000', category: 'ERP', angle: -45,
-    content: 'Cloud-based business applications providing deep insights into global procurement and spend.',
-    status: 'active', energy: 88, relatedIds: [5, 8]
-  },
-  { 
-    id: 3, name: 'Dynamics', color: '#0078D4', category: 'ERP', angle: 0,
-    content: 'Microsoft-integrated business logic for seamless cross-departmental data synchronization.',
-    status: 'active', energy: 92, relatedIds: [1, 2]
-  },
-  { 
-    id: 4, name: 'Workday', color: '#005CB9', category: 'Finance', angle: 45,
-    content: 'Connect procurement spend with human capital and financial planning. Optimize headcount and resource allocation.',
-    status: 'active', energy: 75, relatedIds: [2, 7]
-  },
-  { 
-    id: 5, name: 'NetSuite', color: '#3288C1', category: 'Cloud', angle: 90,
-    content: 'Comprehensive cloud ERP for mid-market businesses seeking total visibility into their supply chain.',
-    status: 'active', energy: 94, relatedIds: [4, 6]
-  },
-  { 
-    id: 6, name: 'Coupa', color: '#E87722', category: 'Sourcing', angle: 135,
-    content: 'Business spend management platform focused on operational efficiency and sustainable sourcing.',
-    status: 'active', energy: 82, relatedIds: [7, 8]
-  },
-  { 
-    id: 7, name: 'Ariba', color: '#0070C0', category: 'Sourcing', angle: 180,
-    content: 'Strategic sourcing and network integration for high-volume enterprise procurement workflows.',
-    status: 'active', energy: 90, relatedIds: [1, 4]
-  },
-  { 
-    id: 8, name: 'Infor', color: '#7B2D8B', category: 'ERP', angle: -135,
-    content: 'Industry-specific business applications designed for complex manufacturing and distribution.',
-    status: 'active', energy: 85, relatedIds: [2, 3]
-  },
-];
-
-const highlights = [
-  { icon: <RefreshCcw size={20} />, label: 'Real-time sync', desc: 'Bidirectional data flow with your ERP — zero manual entry.' },
-  { icon: <Lock size={20} />, label: 'Encrypted transfers', desc: 'End-to-end TLS-secured data propagation across every system.' },
-  { icon: <Zap size={20} />, label: 'Sub-second latency', desc: 'Changes reflect instantly across POs, invoices, and receipts.' },
-];
 
 export default function IntegrationsShowcase() {
-  const [activeNodeId, setActiveNodeId] = useState<number | null>(null);
-  const [activeHighlightIndex, setActiveHighlightIndex] = useState<number | null>(null);
-  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   
-  // Rotation Motion Values
-  const rotation = useMotionValue(0);
-  const smoothRotation = useSpring(rotation, { stiffness: 45, damping: 20, mass: 1 });
-  
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start']
+  });
 
-  const orb1Y    = useTransform(scrollYProgress, [0, 1], [120,  -120]);
-  const orb2Y    = useTransform(scrollYProgress, [0, 1], [80,   -80]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [30,   -30]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
-  // Benefit-to-Integration Mapping
-  const highlightMappings = [
-    [1, 2, 3], // Real-time sync -> ERPs (SAP, Oracle, Dynamics)
-    [4, 5],    // Encrypted transfers -> Finance/Cloud (Workday, NetSuite)
-    [6, 7, 8], // Sub-second latency -> Sourcing/ERP (Coupa, Ariba, Infor)
+  // Staggered node entrance
+  useEffect(() => {
+    const nodes = sectionRef.current?.querySelectorAll(".anim-node");
+    nodes?.forEach((n, i) => {
+      const el = n as HTMLElement;
+      el.style.opacity = "0";
+      el.style.transform = "translateY(12px)";
+      el.style.transition = `opacity 0.6s ${i * 0.06}s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s ${i * 0.06}s cubic-bezier(0.22, 1, 0.36, 1)`;
+      
+      requestAnimationFrame(() => {
+        el.style.opacity = "1";
+        el.style.transform = "translateY(0)";
+      });
+    });
+  }, []);
+
+  const PATHS = [
+    { d: "M 192,64  H 736",               dur: 3.8, begin: 0,    begin2: 1.9 },
+    { d: "M 334,64  V 150",               dur: 1.0, begin: 0.3 },
+    { d: "M 730,64  V 150",               dur: 1.0, begin: 0.7 },
+    { d: "M 334,186 V 270 H 468",         dur: 2.0, begin: 0.5 },
+    { d: "M 730,186 V 270 H 594",         dur: 2.0, begin: 0.9 },
+    { d: "M 392,270 H 468",               dur: 1.4, begin: 0.6 },
+    { d: "M 594,270 H 670",               dur: 1.1, begin: 0.2 },
+    { d: "M 832,270 H 876",               dur: 0.8, begin: 1.4 },
+    { d: "M 530,308 V 352",               dur: 1.0, begin: 0.8 },
+    { d: "M 530,388 V 418 H 444 V 438",   dur: 1.3, begin: 0.4 },
+    { d: "M 530,388 V 438",               dur: 1.0, begin: 0.8 },
+    { d: "M 530,388 V 418 H 616 V 438",   dur: 1.3, begin: 1.1 },
   ];
 
-  // Auto-rotation controller
-  useEffect(() => {
-    let controls;
-    if (autoRotate) {
-      controls = animate(rotation, rotation.get() + 360, {
-        duration: 90,
-        repeat: Infinity,
-        ease: "linear"
-      });
-    }
-    return () => controls?.stop();
-  }, [autoRotate, rotation]);
-
-  const handleNodeClick = (id: number, angle: number) => {
-    setActiveHighlightIndex(null); // Clear benefit filter on node click
-    if (activeNodeId === id) {
-      setActiveNodeId(null);
-      setAutoRotate(true);
-    } else {
-      setActiveNodeId(id);
-      setAutoRotate(false);
-      rotation.set(rotation.get() % 360); 
-      const target = -90 - angle;
-      animate(rotation, target, { 
-        type: "spring", 
-        stiffness: 50, 
-        damping: 18 
-      });
-    }
-  };
-
-  const handleHighlightClick = (index: number) => {
-    if (activeHighlightIndex === index) {
-      setActiveHighlightIndex(null);
-    } else {
-      setActiveHighlightIndex(index);
-      setActiveNodeId(null); // Close any open cards
-    }
-  };
-
-  const handleBackgroundClick = () => {
-    setActiveNodeId(null);
-    setActiveHighlightIndex(null);
-    setAutoRotate(true);
+  // Pill node helper
+  const Pill = ({ x, y, w, h = 36, label, rx = 9, large = false }: { x: number, y: number, w: number, h?: number, label: string, rx?: number, large?: boolean }) => {
+    const fill = large ? "#4F46E5" : "#4338CA";
+    const textColor = "white";
+    const fontSize = large ? 17 : 13;
+    const fontWeight = large ? "700" : "500";
+    return (
+      <g className="anim-node" style={{ cursor: "default" }}>
+        {large && (
+          <>
+            <rect x={x - 18} y={y - h / 2 - 20} width={w + 36} height={h + 40} rx={22}
+              fill="#4338CA" opacity={0.08} />
+            <rect x={x - 10} y={y - h / 2 - 12} width={w + 20} height={h + 24} rx={18}
+              fill="#4338CA" opacity={0.1} />
+          </>
+        )}
+        <rect
+          x={x} y={y - h / 2} width={w} height={h} rx={rx}
+          fill={fill}
+          style={{ transition: "filter 0.2s ease" }}
+          onMouseEnter={e => (e.currentTarget.style.filter = "brightness(1.18) saturate(1.1)")}
+          onMouseLeave={e => (e.currentTarget.style.filter = "none")}
+        />
+        {large && (
+          <rect x={x + 1} y={y - h / 2 + 1} width={w - 2} height={h * 0.38} rx={rx}
+            fill="rgba(255,255,255,0.08)" pointerEvents="none" />
+        )}
+        <text
+          x={x + w / 2} y={y}
+          dominantBaseline="central" textAnchor="middle"
+          fill={textColor} fontSize={fontSize}
+          fontFamily="Inter, sans-serif" fontWeight={fontWeight}
+          letterSpacing="-0.015em"
+        >
+          {label}
+        </text>
+      </g>
+    );
   };
 
   return (
-    <section
-      ref={sectionRef}
-      onClick={handleBackgroundClick}
-      className="relative w-full overflow-hidden bg-white z-10"
-      style={{ padding: '120px 0 128px' }}
+    <section 
+      ref={containerRef}
+      className="relative w-full py-24 bg-white overflow-hidden"
     >
-      {/* Bokeh orbs */}
-      <motion.div style={{ y: orb1Y }} className="absolute top-0 -left-[6%] w-[760px] h-[760px] rounded-full bg-[radial-gradient(circle,rgba(54,102,255,0.1)0%,transparent70%)] blur-[90px] pointer-events-none" />
-      <motion.div style={{ y: orb2Y }} className="absolute -bottom-[8%] -right-[4%] w-[660px] h-[660px] rounded-full bg-[radial-gradient(circle,rgba(0,184,132,0.12)0%,transparent70%)] blur-[90px] pointer-events-none" />
+      {/* Background Glows & Noise */}
+      <div 
+        className="absolute -right-32 -bottom-32 w-[800px] h-[800px] rounded-full pointer-events-none opacity-40"
+        style={{ 
+          background: 'radial-gradient(circle, rgba(54, 102, 255, 0.2) 0%, rgba(54, 102, 255, 0.05) 30%, transparent 70%)',
+          willChange: 'opacity'
+        }} 
+      />
+      <div 
+        className="absolute -left-32 -top-32 w-[600px] h-[600px] rounded-full pointer-events-none opacity-30"
+        style={{ 
+          background: 'radial-gradient(circle, rgba(54, 102, 255, 0.15) 0%, transparent 70%)',
+        }} 
+      />
+      <div className="absolute inset-0 noise opacity-20 pointer-events-none" />
 
-      <motion.div style={{ y: contentY }} className="max-w-[1440px] mx-auto px-10 relative z-10 flex flex-col items-center">
-        
-        {/* Centered Header */}
-        <div className="w-full max-w-3xl mb-12 text-center">
+      <motion.div 
+        style={{ y: contentY }}
+        className="max-w-[1440px] mx-auto px-6 lg:px-10 relative z-10"
+      >
+        <div className="mb-24">
           <SectionHeader 
-            label="Seamless Integration"
-            title="Integrate with every system in your stack."
-            description="Track goods from source to delivery to payment on a single platform. Connect with leading ERP and accounting systems worldwide."
-            accentColor="#3666ff"
+            label="Integrations"
+            title={
+              <>
+                Connect to existing systems. <span className="text-[#3666ff]">Orchestrate workflows across multiple agents.</span>
+              </>
+            }
+            description="FactWise bridges every data source and every tool — one protocol, zero rewiring. Orchestrate workflows across multiple agents, build custom pipelines, and connect to third parties using APIs, partner apps or pre-built integrations."
             align="center"
           />
         </div>
-        
-        {/* Row Layout: Cards on Left, Hub on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center w-full">
-          
-          {/* Left Column: Stacked Cards (5/12 cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-6 w-full max-w-md mx-auto lg:mx-0 lg:translate-x-16">
-            {highlights.map((h, i) => {
-              const isActive = activeHighlightIndex === i;
-              return (
-                <motion.div
-                  key={h.label}
-                  onClick={(e) => { e.stopPropagation(); handleHighlightClick(i); }}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ x: 10, scale: 1.01 }}
-                  className={`group relative flex items-start gap-6 p-7 rounded-[32px] cursor-pointer transition-all duration-500 border overflow-hidden
-                    ${isActive 
-                      ? 'bg-white border-[#3666ff]/40 shadow-[0_20px_50px_-15px_rgba(54,102,255,0.15)] ring-1 ring-[#3666ff]/10' 
-                      : 'bg-[#F8FAFF]/50 border-gray-100 shadow-sm hover:shadow-xl hover:bg-white hover:border-[#3666ff]/20'
-                    }
-                  `}
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,rgba(54,102,255,0.08),transparent_70%)] transition-opacity duration-500 
-                    ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
-                  `} />
 
-                  <div className={`relative z-10 text-[#3666ff] w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-500 
-                    ${isActive ? 'bg-[#3666ff] text-white scale-110 shadow-lg' : 'bg-white text-[#3666ff] shadow-sm border border-gray-100 group-hover:scale-110 group-hover:rotate-3 group-hover:border-[#3666ff]/30'}
-                  `}>
-                    {h.icon}
-                  </div>
-                  <div className="relative z-10 flex flex-col pt-1">
-                    <span className={`text-[16px] font-bold mb-2 transition-colors duration-300 ${isActive ? 'text-[#3666ff]' : 'text-[#1A1D2E]'}`}>{h.label}</span>
-                    <span className="text-[13px] text-[#7B82A8] leading-relaxed font-medium">{h.desc}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+        <div
+          ref={sectionRef}
+          className="relative w-full"
+        >
+          {/* Dot grid */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none opacity-[0.4]"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(99,102,241,0.22) 1.5px, transparent 1.5px)",
+              backgroundSize: "26px 26px",
+            }}
+          />
 
-          {/* Right Column: Orbital Hub (7/12 cols) */}
-          <div className="lg:col-span-7 relative w-full flex justify-center items-center min-h-[540px]">
-            <div className="scale-[0.65] lg:scale-[0.75] xl:scale-[0.85] origin-center relative w-[720px] h-[720px]">
-              
-              {/* Central hub - STATIC */}
-              <motion.div 
-                animate={{ 
-                  opacity: activeNodeId ? 0.05 : (activeHighlightIndex !== null ? 0.4 : 1),
-                  filter: activeNodeId ? 'blur(8px)' : 'blur(0px)',
-                  scale: activeNodeId ? 0.9 : 1
-                }}
-                transition={{ duration: 0.5 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center w-[154px] h-[154px] rounded-full bg-white border border-[#3666ff]/20 shadow-[0_0_60px_rgba(54,102,255,0.08),0_20px_40px_rgba(0,0,0,0.04)]"
-              >
-                <div className="flex items-baseline">
-                  <span className="text-[20px] font-bold text-[#1A1D2E] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Fact</span>
-                  <span className="text-[20px] font-light text-[#1A1D2E] tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>Wise</span>
-                </div>
-                <div className="mt-2 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-100/50">
-                  <span className="text-[8px] text-[#3666ff] uppercase tracking-[0.25em] font-black">Hub</span>
-                </div>
-              </motion.div>
+          <div className="relative z-10">
+            <svg
+              viewBox="0 0 945 530"
+              className="w-full max-w-[945px] mx-auto overflow-visible block"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* ── Dashed connection paths ── */}
+              <g fill="none" stroke="#818CF8" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.72">
+                <path d="M 192,64  H 736" />
+                <path d="M 334,64  V 150" />
+                <path d="M 730,64  V 150" />
+                <path d="M 334,186 V 270 H 468" />
+                <path d="M 730,186 V 270 H 594" />
+                <path d="M 132,270 H 234" />
+                <path d="M 392,270 H 468" />
+                <path d="M 594,270 H 670" />
+                <path d="M 832,270 H 876" />
+                <path d="M 530,308 V 352" />
+                <path d="M 530,388 V 418 H 444 V 438" />
+                <path d="M 530,388 V 438" />
+                <path d="M 530,388 V 418 H 616 V 438" />
+              </g>
 
-                {/* ROTATING CONTAINER */}
-                <motion.div 
-                  style={{ rotate: smoothRotation }} 
-                  className="absolute inset-0 w-full h-full flex items-center justify-center z-40"
-                >
-                  {/* SVG Lines & Flow */}
-                  <svg viewBox="0 0 720 720" className="absolute inset-0 w-full h-full overflow-visible pointer-events-none">
-                    <defs>
-                      <marker id="arrow-out" markerWidth="8" markerHeight="8" refX="15" refY="4" orient="auto">
-                        <path d="M0,0 L8,4 L0,8" fill="#3666ff" fillOpacity="0.8" />
-                      </marker>
-                      <marker id="arrow-in" markerWidth="8" markerHeight="8" refX="-7" refY="4" orient="auto">
-                        <path d="M8,0 L0,4 L8,8" fill="#3666ff" fillOpacity="0.4" />
-                      </marker>
-                      <filter id="packet-glow">
-                        <feGaussianBlur stdDeviation="1.5" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                      </filter>
-                    </defs>
+              {/* ── Junction dots ── */}
+              <circle cx="334" cy="64"  r="4" fill="#6366F1" />
+              <circle cx="730" cy="64"  r="4" fill="#6366F1" />
+              <circle cx="530" cy="388" r="4" fill="#6366F1" />
 
-                    {integrations.map((intg, i) => {
-                      const rad = (intg.angle * Math.PI) / 180;
-                      const activeRadius = activeNodeId ? 280 : 232;
-                      
-                      const isBenefitRelated = activeHighlightIndex !== null && highlightMappings[activeHighlightIndex].includes(intg.id);
-                      const isDimmed = (activeHighlightIndex !== null && !isBenefitRelated) || (activeNodeId !== null && activeNodeId !== intg.id);
+              {/* ── Animated traveling dots ── */}
+              {PATHS.map(({ d, dur, begin, begin2 }, i) => (
+                <g key={i}>
+                  <circle r="3.5" fill="#6366F1" opacity="0">
+                    <animateMotion path={d} dur={`${dur}s`} repeatCount="indefinite" begin={`${begin}s`} />
+                    <animate attributeName="opacity" values="0;1;1;0"
+                      keyTimes="0;0.07;0.93;1" dur={`${dur}s`}
+                      repeatCount="indefinite" begin={`${begin}s`} />
+                  </circle>
+                  {begin2 !== undefined && (
+                    <circle r="3.5" fill="#6366F1" opacity="0">
+                      <animateMotion path={d} dur={`${dur}s`} repeatCount="indefinite" begin={`${begin2}s`} />
+                      <animate attributeName="opacity" values="0;1;1;0"
+                        keyTimes="0;0.07;0.93;1" dur={`${dur}s`}
+                        repeatCount="indefinite" begin={`${begin2}s`} />
+                    </circle>
+                  )}
+                </g>
+              ))}
 
-                      const targetX = CX + activeRadius * Math.cos(rad);
-                      const targetY = CY + activeRadius * Math.sin(rad);
+              {/* ── App icon grid (far left) ── */}
+              <rect x="5" y="217" width="123" height="110" rx="14"
+                fill="none" stroke="#818CF8" strokeWidth="1" strokeDasharray="5 4" opacity="0.4" />
+              {[
+                { x: 12, y: 222, bg: "#312E81", label: "X",  tc: "#a5b4fc", fs: 20 },
+                { x: 68, y: 222, bg: "#065F46", label: "↑",  tc: "#6EE7B7", fs: 22 },
+                { x: 12, y: 278, bg: "#991B1B", label: "RC", tc: "#FCA5A5", fs: 13, fw: "700" },
+                { x: 68, y: 278, bg: "#5B21B6", label: "▶",  tc: "#DDD6FE", fs: 18 },
+              ].map(({ x, y, bg, label, tc, fs, fw = "400" }, i) => (
+                <g key={i} className="anim-node" style={{ cursor: "default" }}>
+                  <rect x={x} y={y} width={48} height={48} rx={10} fill={bg} />
+                  <text x={x + 24} y={y + 24} dominantBaseline="central" textAnchor="middle"
+                    fill={tc} fontSize={fs} fontFamily="Inter, sans-serif" fontWeight={fw}>
+                    {label}
+                  </text>
+                </g>
+              ))}
 
-                      return (
-                        <g key={intg.id}>
-                          {/* 1. Background Spoke Line */}
-                          <motion.line 
-                            initial={false}
-                            animate={{ 
-                              x2: targetX,
-                              y2: targetY,
-                              opacity: isDimmed ? 0.05 : 0.1
-                            }}
-                            x1={CX} y1={CY} 
-                            stroke="#3666ff" strokeWidth="1"
-                          />
-                          
-                          {/* 2. OUTGOING STREAMING ARROWS (Hub -> Node) */}
-                          {!isDimmed && (
-                            <motion.line 
-                              initial={false}
-                              animate={{ 
-                                x2: targetX,
-                                y2: targetY,
-                                opacity: isBenefitRelated ? 0.8 : 0.4,
-                                strokeDashoffset: [0, -40] 
-                              }}
-                              x1={CX} y1={CY} 
-                              stroke="#3666ff" 
-                              strokeWidth="2.5" 
-                              strokeDasharray="4 12" 
-                              markerEnd="url(#arrow-out)"
-                              transition={{ 
-                                strokeDashoffset: { duration: 1.5, repeat: Infinity, ease: "linear" },
-                                x2: { type: "spring", damping: 25, stiffness: 120 },
-                                y2: { type: "spring", damping: 25, stiffness: 120 }
-                              }} 
-                            />
-                          )}
+              {/* ── TOP ROW (cy=64) ── */}
+              <Pill x={158} y={64} w={68}  label="ERP" />
+              <Pill x={248} y={64} w={72}  label="CRM" />
+              <Pill x={338} y={64} w={128} label="Subscriptions" />
+              <Pill x={490} y={64} w={130} label="Legacy billing" />
+              <Pill x={648} y={64} w={152} label="Booking system" />
 
-                          {/* 3. INCOMING STREAMING ARROWS (Node -> Hub) */}
-                          {!isDimmed && (
-                            <motion.line 
-                              initial={false}
-                              animate={{ 
-                                x2: targetX,
-                                y2: targetY,
-                                opacity: isBenefitRelated ? 0.6 : 0.2,
-                                strokeDashoffset: [0, 40] 
-                              }}
-                              x1={CX} y1={CY} 
-                              stroke="#3666ff" 
-                              strokeWidth="1.5" 
-                              strokeDasharray="3 15" 
-                              markerStart="url(#arrow-in)"
-                              transition={{ 
-                                strokeDashoffset: { duration: 2, repeat: Infinity, ease: "linear" },
-                                x2: { type: "spring", damping: 25, stiffness: 120 },
-                                y2: { type: "spring", damping: 25, stiffness: 120 }
-                              }} 
-                            />
-                          )}
-                        </g>
-                      );
-                    })}
-                  </svg>
+              {/* ── MIDDLE ROW (cy=168) ── */}
+              <Pill x={296}  y={168} w={76}  label="SDK" />
+              <Pill x={636}  y={168} w={188} label="Event Destinations" />
 
-                {/* Nodes */}
-                {integrations.map((intg) => {
-                  const rad = (intg.angle * Math.PI) / 180;
-                  const isExpanded = activeNodeId === intg.id;
-                  const activeRadius = activeNodeId ? 280 : 232; // Dynamic Radius
-                  
-                  const isBenefitRelated = activeHighlightIndex !== null && highlightMappings[activeHighlightIndex].includes(intg.id);
-                  const isDimmed = (activeHighlightIndex !== null && !isBenefitRelated) || (activeNodeId !== null && !isExpanded);
+              {/* ── MAIN ROW (cy=270) ── */}
+              <Pill x={234}  y={270} w={158} label="App Marketplace ↗" />
 
-                  return (
-                    <motion.div
-                      key={intg.id}
-                      onClick={(e) => { e.stopPropagation(); handleNodeClick(intg.id, intg.angle); }}
-                      initial={false}
-                      animate={{ 
-                        left: CX + activeRadius * Math.cos(rad) - HALF,
-                        top: CY + activeRadius * Math.sin(rad) - HALF,
-                        opacity: isDimmed ? 0.8 : 1,
-                        scale: isBenefitRelated ? [1, 1.05, 1] : (isExpanded ? 1.05 : 1),
-                        boxShadow: isBenefitRelated ? '0 0 30px rgba(54,102,255,0.3)' : (isExpanded ? '0 15px 30px rgba(0,0,0,0.08)' : '0 1px 2px rgba(0,0,0,0.05)')
-                      }}
-                      transition={{ 
-                        left: { type: "spring", damping: 25, stiffness: 120 },
-                        top: { type: "spring", damping: 25, stiffness: 120 },
-                        scale: isBenefitRelated ? { duration: 2, repeat: Infinity } : { duration: 0.3 }
-                      }}
-                      style={{ 
-                        rotate: useTransform(smoothRotation, (v) => -v),
-                        borderColor: isExpanded || isBenefitRelated ? intg.color : 'rgba(0,0,0,0.05)'
-                      }}
-                      className={`absolute w-[92px] h-[92px] rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-colors
-                        ${isExpanded ? 'bg-white border-2 z-50 shadow-xl' : 'bg-white border z-20 hover:border-[#3666ff]/30 hover:shadow-lg'}
-                        ${isBenefitRelated ? 'border-2' : ''}
-                      `}
-                    >
-                      <motion.div 
-                        animate={{ 
-                          scale: isBenefitRelated ? [1, 1.4, 1] : [1, 1.2, 1], 
-                          opacity: isBenefitRelated ? [0.8, 1, 0.8] : [0.7, 1, 0.7] 
-                        }} 
-                        transition={{ duration: isBenefitRelated ? 1.5 : 2.5, repeat: Infinity }} 
-                        style={{ background: intg.color }} 
-                        className="w-2.5 h-2.5 rounded-full mb-2.5" 
-                      />
-                      <span className="text-[13px] font-semibold text-black tracking-tight">{intg.name}</span>
-                      <span className="text-[9px] text-gray-400 mt-0.5 uppercase tracking-wider font-medium">{intg.category}</span>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
+              {/* CENTER HUB — FactWise */}
+              <Pill x={468} y={270} w={124} h={52} label="FactWise" rx={14} large />
 
-              {/* Central Expanded Card Overlay - More Compact for better reach */}
-              <AnimatePresence>
-                {activeNodeId && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
-                    animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
-                    exit={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
-                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className="absolute top-1/2 left-1/2 z-[100] pointer-events-auto"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {(() => {
-                      const intg = integrations.find(i => i.id === activeNodeId);
-                      if (!intg) return null;
-                      return (
-                        <Card className="w-[280px] bg-white/98 backdrop-blur-2xl border-gray-200/60 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] rounded-[32px] overflow-hidden">
-                          <CardHeader className="pb-2 pt-6 px-6">
-                            <div className="flex justify-between items-center mb-3">
-                              <Badge style={{ background: `${intg.color}10`, color: intg.color }} className="px-2 py-0.5 text-[9px] font-bold rounded-full uppercase border-none">{intg.status}</Badge>
-                              <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest">Core</span>
-                            </div>
-                            <CardTitle className="text-lg font-bold text-gray-900">{intg.name}</CardTitle>
-                          </CardHeader>
-                          <CardContent className="px-6 pb-8">
-                            <p className="text-[12px] text-gray-600 leading-relaxed opacity-90 mb-6">{intg.content}</p>
-                            
-                            <div className="space-y-5">
-                              <div className="pt-5 border-t border-gray-100">
-                                <div className="flex justify-between items-center text-[9px] mb-2 font-bold text-gray-400 uppercase tracking-widest">
-                                  <span className="flex items-center"><Zap size={10} className="mr-2" style={{ color: intg.color }} />Strength</span>
-                                  <span style={{ color: intg.color }} className="font-mono text-xs">{intg.energy}%</span>
-                                </div>
-                                <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-                                  <motion.div initial={{ width: 0 }} animate={{ width: `${intg.energy}%` }} transition={{ duration: 1.2, ease: "circOut" }} className="h-full" style={{ background: intg.color }} />
-                                </div>
-                              </div>
+              <Pill x={670}  y={270} w={162} label="Data Pipeline" />
 
-                              <div className="pt-5 border-t border-gray-100">
-                                <div className="flex items-center mb-3">
-                                  <LinkIcon size={10} className="text-gray-400 mr-2" />
-                                  <h4 className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Related</h4>
-                                </div>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {intg.relatedIds.slice(0, 2).map((relId) => {
-                                    const related = integrations.find(ri => ri.id === relId);
-                                    return (
-                                      <Button 
-                                        key={relId} 
-                                        variant="outline" 
-                                        size="sm" 
-                                        onClick={() => {
-                                          const relatedAngle = related?.angle ?? 0;
-                                          handleNodeClick(relId, relatedAngle);
-                                        }}
-                                        className="h-7 px-3 text-[10px] font-semibold rounded-full border-gray-100 bg-gray-50/50 hover:bg-white transition-all flex items-center shadow-sm"
-                                      >
-                                        {related?.name} <ArrowRight size={8} className="ml-1.5 opacity-40" />
-                                      </Button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })()}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+              {/* Snowflake-style icon */}
+              <g className="anim-node">
+                <rect x={876} y={248} width={60} height={44} rx={11}
+                  fill="#EFF6FF" stroke="#BFDBFE" strokeWidth={1.5} />
+                <line x1={906} y1={256} x2={906} y2={284} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
+                <line x1={894} y1={263} x2={918} y2={277} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
+                <line x1={918} y1={263} x2={894} y2={277} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
+                <circle cx={906} cy={270} r={3.5} fill="#60A5FA" />
+              </g>
+
+              {/* ── ORCHESTRATION (cy=370) ── */}
+              <Pill x={468} y={370} w={124} label="Orchestration" />
+
+              {/* ── PSP × 3 (cy=456) ── */}
+              <Pill x={410} y={456} w={68} label="PSP" />
+              <Pill x={496} y={456} w={68} label="PSP" />
+              <Pill x={582} y={456} w={68} label="PSP" />
+            </svg>
           </div>
         </div>
       </motion.div>

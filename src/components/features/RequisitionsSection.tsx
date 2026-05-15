@@ -29,7 +29,7 @@ const RequisitionMockup = () => {
           border: '1px solid rgba(255,255,255,0.08)',
           overflow: 'hidden',
           boxShadow: '0 50px 140px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.05)',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'var(--font-inter), sans-serif',
           transformStyle: 'preserve-3d',
         }}
       >

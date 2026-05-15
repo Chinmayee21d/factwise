@@ -123,7 +123,7 @@ export default function ProductIntro({ onComplete }: { onComplete: () => void })
           {stage >= 1 && (
             <div style={{
               flex: 1, minWidth: 0, fontSize: '15px', fontWeight: 500,
-              fontFamily: "'Geist', sans-serif",
+              fontFamily: 'var(--font-inter), sans-serif',
               color: typedText ? '#fff' : '#666',
               opacity: stage >= 1 ? 1 : 0,
               transition: 'opacity 0.4s ease 0.3s',
@@ -182,14 +182,14 @@ export default function ProductIntro({ onComplete }: { onComplete: () => void })
             fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 800,
             color: '#fff', margin: '0 0 16px 0',
             lineHeight: 1.1, letterSpacing: '-0.03em',
-            fontFamily: "'Geist', sans-serif",
+            fontFamily: 'var(--font-inter), sans-serif',
           }}>
             Quote to Order
           </h2>
           <p style={{
             color: '#888', fontSize: '17px', lineHeight: 1.6,
             maxWidth: '500px', margin: '0 auto',
-            fontFamily: "'Geist', sans-serif",
+            fontFamily: 'var(--font-inter), sans-serif',
           }}>
             Streamline your entire quoting lifecycle with structured RFQs and intelligent bid evaluation.
           </p>

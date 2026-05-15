@@ -16,6 +16,8 @@ import {
   Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils"; 
+import { motion } from "framer-motion";
+import ScrollReveal from "./ui/ScrollReveal";
 
 export interface CardItem {
   id: string | number;
@@ -182,23 +184,47 @@ const industryItems: CardItem[] = [
 
 export function ExpandingIndustrySection() {
   return (
-    <section className="w-full py-24 bg-white overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col items-center text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4">
+    <section id="vertical-solutions" className="relative py-12 px-4 md:px-10">
+      <div className="relative overflow-hidden rounded-[24px] py-24" style={{ backgroundImage: "url('/TexturedGradient.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        {/* Blue Glow on Right - Optimized */}
+        <div 
+          className="absolute -right-32 -bottom-32 w-[800px] h-[800px] rounded-full pointer-events-none opacity-50"
+          style={{ 
+            background: 'radial-gradient(circle, rgba(54, 102, 255, 0.2) 0%, rgba(54, 102, 255, 0.1) 40%, transparent 80%)',
+          }} 
+        />
+        <div className="absolute inset-0 noise opacity-20 pointer-events-none mix-blend-overlay" />
+
+
+
+
+
+
+
+      {/* Content */}
+      <div className="mx-auto max-w-7xl px-6 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#4A6FFF] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
             <Globe className="size-3" />
             <span>Vertical Solutions</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-[#1A1D2E] mb-6 tracking-tight">
-            Tailored for your <span className="text-blue-600">Industry</span>
+          <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
+            Tailored for your <span className="text-[#3666ff]">Industry</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl leading-relaxed font-medium">
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium">
             FactWise provides specialized features designed to meet the unique challenges of your specific market sector.
           </p>
-        </div>
+        </motion.div>
         
         <ExpandingCards items={industryItems} />
       </div>
-    </section>
+    </div>
+  </section>
   );
 }

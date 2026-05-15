@@ -117,7 +117,7 @@ function StatCard({ stat, index }: { stat: typeof stats[0], index: number }) {
             lineHeight: 1,
             marginBottom: 24,
             color: stat.color,
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: 'var(--font-inter), sans-serif',
             opacity: 0.9,
           }}
         >
