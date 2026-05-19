@@ -296,6 +296,8 @@ const ZeroVisibilityAnimation = () => {
           return (
             <motion.circle
               key={i} r="0.8" fill="#1A1D2E" fillOpacity="0.12"
+              cx={initialX}
+              cy={initialY}
               initial={{ cx: initialX, cy: initialY }}
               animate={{ opacity: [0.1, 0.4, 0.1], cy: [initialY, initialY - 30] }}
               transition={{ duration: duration, repeat: Infinity }}
@@ -347,21 +349,21 @@ const PROBLEMS = [
   {
     Animation: SevereValueLossAnimation,
     title: "Overpaying. Every single order.",
-    description: "Without historical price intelligence, every order is a missed saving. FactWise tracks every quote, PO, and contract — so you always know what's fair and where to push back.",
+    description: "Without historical price intelligence, you miss savings on every order. FactWise tracks all quotes, purchase orders, and contracts to ensure you always pay the best price.",
     accent: "#ef4444",
     label: "Financial Gap"
   },
   {
     Animation: InefficiencyAnimation,
     title: "Drowning in manual work.",
-    description: "Emails, follow-ups, spreadsheets — manual workflows burn out your best people. FactWise automates every workflow across your entire operations — from vendor onboarding and customer quotes to requisitions, approvals, and payments.",
+    description: "Emails, follow-ups, and spreadsheets waste valuable hours. FactWise automates your entire cycle — from onboarding and customer quotes to requisitions, approvals, and payments.",
     accent: "#f59e0b",
     label: "Productivity Gap"
   },
   {
     Animation: ZeroVisibilityAnimation,
     title: "Flying blind.",
-    description: "No idea who approved what, where costs spiked, or which vendor is underdelivering. FactWise gives your entire team a live view of spend, approvals, and performance — all in one place.",
+    description: "Lack of transparency hides costly spend spikes and late deliveries. FactWise provides real-time visibility into all purchase orders, approvals, and supplier performance.",
     accent: "#06b6d4",
     label: "Visibility Gap"
   }
@@ -508,11 +510,6 @@ export default function ProblemSection() {
                   }}>
                     {prob.description}
                   </p>
-                  <button
-                    className="absolute bottom-6 right-6 border border-gray-200 hover:-rotate-45 transition-all duration-500 rounded-full flex items-center justify-center size-8 text-[#4A6FFF] hover:bg-[#4A6FFF] hover:text-white"
-                  >
-                    <ArrowRight size={14} />
-                  </button>
                 </div>
 
                 {/* Textured blue gradient corner */}

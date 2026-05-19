@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Zap, 
-    MessageSquare, 
-    BarChart3, 
+import {
+    Zap,
+    MessageSquare,
+    BarChart3,
     FileCheck,
     CheckCircle2,
     Plus,
@@ -21,10 +21,10 @@ export default function QuoteToOrderFlow() {
         <section className="py-24 relative overflow-hidden bg-white">
             {/* Sophisticated Light Blue Gradient Background */}
             <div className="absolute inset-0 hero-gradient opacity-80" />
-            
+
             {/* Noise Overlay */}
             <div className="absolute inset-0 noise opacity-[0.02] pointer-events-none" />
-            
+
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-50 rounded-full blur-[100px] opacity-50 -z-10" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-50 rounded-full blur-[100px] opacity-50 -z-10" />
 
@@ -39,14 +39,14 @@ export default function QuoteToOrderFlow() {
                         <span className="text-[#3666ff]">change everything</span> about procurement.
                     </h2>
                     <p className="text-base md:text-lg text-slate-500 font-medium max-w-2xl leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                        Built specifically for complex manufacturing and high-volume direct spend. 
+                        Built specifically for complex manufacturing and high-volume direct spend.
                         A complete end-to-end lifecycle that replaces fragmented silos with intelligent automation.
                     </p>
                 </div>
 
                 {/* Sub-section 1: Intake & RFQ (Text Left, Dashboard Right) */}
                 <div className="grid lg:grid-cols-2 gap-16 items-center mb-40">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -61,7 +61,7 @@ export default function QuoteToOrderFlow() {
                             <span className="text-[#00b884]">before it starts.</span>
                         </h3>
                         <p className="text-slate-500 text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Consolidate thousands of line items across requisitions into structured RFQ events instantly. 
+                            Consolidate thousands of line items across requisitions into structured RFQ events instantly.
                             FW Assist auto-fills requirements based on historical patterns, while n-level sub-BOMs are handled with absolute precision.
                         </p>
                         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -79,7 +79,7 @@ export default function QuoteToOrderFlow() {
                         </ul>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -96,8 +96,8 @@ export default function QuoteToOrderFlow() {
                         </div>
                         <div className="p-8 space-y-6 bg-white relative">
                             {[1, 2, 3].map(i => (
-                                <motion.div 
-                                    key={i} 
+                                <motion.div
+                                    key={i}
                                     initial={{ opacity: 0, y: 10 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
@@ -112,7 +112,7 @@ export default function QuoteToOrderFlow() {
                                             <div className="h-2 w-16 bg-slate-100 rounded-full" />
                                         </div>
                                     </div>
-                                    <motion.div 
+                                    <motion.div
                                         animate={{ opacity: [1, 0.5, 1] }}
                                         transition={{ duration: 2, repeat: Infinity }}
                                         className="px-3 py-1 rounded-md bg-emerald-100 text-[#00b884] text-[10px] font-bold tracking-wider"
@@ -121,9 +121,9 @@ export default function QuoteToOrderFlow() {
                                     </motion.div>
                                 </motion.div>
                             ))}
-                            
+
                             {/* Floating Micro-Element */}
-                            <motion.div 
+                            <motion.div
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                                 className="absolute top-1/2 right-10 p-3 rounded-2xl bg-white shadow-xl border border-slate-100 flex items-center gap-3 z-20 pointer-events-none"
@@ -139,7 +139,7 @@ export default function QuoteToOrderFlow() {
 
                 {/* Sub-section 2: Negotiation (Dashboard Left, Text Right) */}
                 <div className="grid lg:grid-cols-2 gap-16 items-center mb-40">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -160,7 +160,7 @@ export default function QuoteToOrderFlow() {
                                         <div className="h-4 w-40 bg-slate-100 rounded-full" />
                                         <div className="h-3 w-24 bg-slate-50 rounded-full" />
                                     </div>
-                                    <motion.div 
+                                    <motion.div
                                         animate={{ opacity: [0.6, 1, 0.6] }}
                                         transition={{ duration: 1.5, repeat: Infinity }}
                                         className="text-[#3666ff] text-[10px] font-bold tracking-widest uppercase flex items-center gap-2"
@@ -170,13 +170,13 @@ export default function QuoteToOrderFlow() {
                                     </motion.div>
                                 </div>
                                 <div className="relative h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ width: 0 }}
                                         whileInView={{ width: '85%' }}
                                         transition={{ duration: 2.5, ease: "easeOut" }}
-                                        className="h-full bg-gradient-to-r from-blue-400 to-[#3666ff] relative" 
+                                        className="h-full bg-gradient-to-r from-blue-400 to-[#3666ff] relative"
                                     >
-                                        <motion.div 
+                                        <motion.div
                                             animate={{ x: ['-100%', '200%'] }}
                                             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                                             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
@@ -184,12 +184,12 @@ export default function QuoteToOrderFlow() {
                                     </motion.div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <motion.div 
+                                    <motion.div
                                         whileHover={{ y: -5 }}
                                         className="p-4 rounded-xl bg-blue-50 border border-blue-100 transition-all shadow-sm hover:shadow-md"
                                     >
                                         <div className="text-[10px] text-[#3666ff] font-bold mb-1 uppercase tracking-widest">Savings</div>
-                                        <motion.div 
+                                        <motion.div
                                             initial={{ opacity: 0 }}
                                             whileInView={{ opacity: 1 }}
                                             className="text-xl font-bold text-[#1A1D2E]"
@@ -197,7 +197,7 @@ export default function QuoteToOrderFlow() {
                                             12.4%
                                         </motion.div>
                                     </motion.div>
-                                    <motion.div 
+                                    <motion.div
                                         whileHover={{ y: -5 }}
                                         className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 transition-all shadow-sm hover:shadow-md"
                                     >
@@ -209,7 +209,7 @@ export default function QuoteToOrderFlow() {
                         </div>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -224,7 +224,7 @@ export default function QuoteToOrderFlow() {
                             <span className="text-[#3666ff]">half the time.</span>
                         </h3>
                         <p className="text-slate-500 text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Leverage FW Autobot to handle multi-round bidding on your behalf. 
+                            Leverage FW Autobot to handle multi-round bidding on your behalf.
                             Our engine uses real-time commodity data and price anchoring to ensure you always secure the best market rate without manual overhead.
                         </p>
                         <ul className="grid grid-cols-1 gap-4">
@@ -245,7 +245,7 @@ export default function QuoteToOrderFlow() {
 
                 {/* Sub-section 3: Award & Execution (Text Left, Dashboard Right) */}
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -260,7 +260,7 @@ export default function QuoteToOrderFlow() {
                             <span className="text-[#7b68ee]">Execute in one click.</span>
                         </h3>
                         <p className="text-slate-500 text-base leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Analyze Total Cost of Ownership (TCO) including BCD, SWS, freight, and landed costs. 
+                            Analyze Total Cost of Ownership (TCO) including BCD, SWS, freight, and landed costs.
                             Award bids across multiple vendors and generate all Purchase Orders instantly through native ERP integrations.
                         </p>
                         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -280,7 +280,7 @@ export default function QuoteToOrderFlow() {
                         </ul>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -335,7 +335,7 @@ export default function QuoteToOrderFlow() {
                         </div>
 
                         {/* Floating "Create Invoice" Button */}
-                        <motion.div 
+                        <motion.div
                             animate={{ y: [0, -5, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute -top-6 -right-6 bg-[#3666ff] text-white px-6 py-3 rounded-xl shadow-[0_20px_40px_rgba(54,102,255,0.3)] flex items-center gap-3 z-30"
@@ -348,7 +348,7 @@ export default function QuoteToOrderFlow() {
                         </motion.div>
 
                         {/* Floating "3-way matching" Card */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             className="absolute -bottom-10 -left-10 bg-white/90 backdrop-blur-md border border-slate-200 p-6 rounded-2xl shadow-2xl z-20 max-w-[320px]"
@@ -356,11 +356,11 @@ export default function QuoteToOrderFlow() {
                             <div className="text-center mb-6 text-sm font-bold text-slate-800">3-way matching</div>
                             <div className="relative flex justify-between items-center px-2">
                                 <div className="absolute left-0 right-0 h-0.5 bg-slate-100 top-1/2 -translate-y-1/2 z-0" />
-                                <motion.div 
+                                <motion.div
                                     initial={{ width: 0 }}
                                     whileInView={{ width: '66%' }}
                                     transition={{ duration: 1.5, delay: 0.5 }}
-                                    className="absolute left-0 h-0.5 bg-blue-500 top-1/2 -translate-y-1/2 z-0" 
+                                    className="absolute left-0 h-0.5 bg-blue-500 top-1/2 -translate-y-1/2 z-0"
                                 />
                                 {[
                                     { icon: <FileText className="size-4" />, label: 'PO' },
@@ -378,7 +378,7 @@ export default function QuoteToOrderFlow() {
                         </motion.div>
 
                         {/* Floating "Track invoices" Pill */}
-                        <motion.div 
+                        <motion.div
                             animate={{ x: [0, 10, 0] }}
                             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute bottom-20 -right-10 bg-white border border-slate-100 p-3 rounded-xl shadow-xl flex items-center gap-3 z-10"

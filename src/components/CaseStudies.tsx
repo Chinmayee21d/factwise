@@ -32,14 +32,14 @@ function wrap(min: number, max: number, v: number) {
 }
 
 const BASE_SPRING = {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 300,
     damping: 30,
     mass: 1,
 };
 
 const TAP_SPRING = {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 450,
     damping: 18,
     mass: 1,

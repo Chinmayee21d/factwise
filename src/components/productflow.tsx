@@ -345,10 +345,13 @@ function advanceFlow(){
 
 function render(now){
   if(window.__phubRid!==__rid)return;
+  if(!window.__phubVisible)return;
   if(!render.t0)render.t0=now;
   var elapsed=now-render.t0;
   var flow=FLOWS[curFlow];
-  var tl=buildTL();
+  // buildTL is cached — only rebuild when flow changes
+  if(!render.tl||render.tlFlow!==curFlow){render.tl=buildTL();render.tlFlow=curFlow;}
+  var tl=render.tl;
   var totalCycle=CHAT_TOTAL+tl.total;
   var cycleNum=Math.floor(elapsed/totalCycle);
   var cycle=elapsed%totalCycle;
@@ -441,6 +444,19 @@ function render(now){
   requestAnimationFrame(render);
 }
 
+// Pause rAF loop when element leaves viewport, resume when it returns
+var visObs=new IntersectionObserver(function(entries){
+  if(entries[0]){
+    if(entries[0].isIntersecting){
+      window.__phubVisible=true;
+      requestAnimationFrame(render);
+    } else {
+      window.__phubVisible=false;
+    }
+  }
+},{threshold:0.05});
+visObs.observe(ROOT);
+
 var obs=new IntersectionObserver(function(entries, observer){
   if(entries[0]&&entries[0].isIntersecting){
     observer.disconnect();
@@ -448,7 +464,6 @@ var obs=new IntersectionObserver(function(entries, observer){
   }
 },{threshold:0.1});
 obs.observe(ROOT);
-setTimeout(function(){if(window.__phubRid===__rid)requestAnimationFrame(render);},500);
 })();`
 
     const init = () => {

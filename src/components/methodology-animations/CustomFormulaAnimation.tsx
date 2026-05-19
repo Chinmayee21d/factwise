@@ -1,615 +1,720 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Calculator, 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreVertical, 
-  X, 
-  ChevronDown, 
-  Check, 
-  ChevronRight,
-  Info,
-  Edit2,
-  Trash2,
-  CheckCircle
-} from 'lucide-react';
+import { Calculator, Plus, Check, CheckCircle, X, GitBranch } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import Image from 'next/image';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface Formula {
-  name: string;
-  formula: string;
-  type: string;
-  links: number;
-  status: "active" | "draft";
-}
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const FORMULAS: Formula[] = [
-  { name: "Total Landed Cost",    formula: "{Unit Price} + {Freight} + {Duty}",  type: "Cost",       links: 12, status: "active" },
-  { name: "Net Material Cost",    formula: "{Base Cost} - {Discount} + {Fee}",   type: "Pricing",    links: 8,  status: "active" },
-  { name: "Effective Unit Price", formula: "{Quote} × (1 - {Disc%}/100)",        type: "Pricing",    links: 15, status: "active" },
-  { name: "Total Order Value",    formula: "{Qty} × {Unit Price} + {Ship}",      type: "Cost",       links: 20, status: "active" },
-  { name: "Assessable Value",     formula: "{CIF Value} + {Landing Charges}",    type: "Compliance", links: 6,  status: "draft"  },
+// ─── Vendor data ──────────────────────────────────────────────────────────────
+const VENDORS = [
+  { name: "Shenzhen Co.", city: "Shenzhen",  code: "USD", sym: "$", fx: 83,  quote: 9.40,  shipping: 1.80, duty: 0.22, tax: 0.95 },
+  { name: "Tata Steel",   city: "Mumbai",    code: "INR", sym: "₹", fx: 1,   quote: 920,   shipping: 35,   duty: 0,    tax: 28   },
+  { name: "EuroMetal",    city: "Frankfurt", code: "EUR", sym: "€", fx: 91,  quote: 10.20, shipping: 0.95, duty: 0.12, tax: 1.05 },
 ];
 
-const TYPE_COLORS: Record<string, string> = {
-  Cost:       "bg-purple-50 text-purple-600 border-purple-200",
-  Pricing:    "bg-blue-50   text-blue-600   border-blue-200",
-  Compliance: "bg-amber-50  text-amber-600  border-amber-200",
+const FIELDS = [
+  { key: "quote",    label: "Unit Price", color: "bg-blue-100 text-blue-700 border-blue-200",       dot: "bg-blue-500"   },
+  { key: "shipping", label: "Shipping",   color: "bg-violet-100 text-violet-700 border-violet-200", dot: "bg-violet-500" },
+  { key: "duty",     label: "Duty %",     color: "bg-amber-100 text-amber-700 border-amber-200",    dot: "bg-amber-500"  },
+  { key: "tax",      label: "Tax",        color: "bg-cyan-100 text-cyan-700 border-cyan-200",       dot: "bg-cyan-500"   },
+];
+
+type VKey = "quote" | "shipping" | "duty" | "tax";
+
+// ─── IF/ELSE formula logic ────────────────────────────────────────────────────
+// IF(Duty > 0, (Unit Price + Shipping) × (1 + Duty) + Tax, Unit Price + Shipping + Tax)
+function computeCost(v: typeof VENDORS[0]): number {
+  const base = v.quote + v.shipping;
+  const landed = v.duty > 0
+    ? base * (1 + v.duty) + v.tax   // IF branch
+    : base + v.tax;                  // ELSE branch
+  return landed * v.fx;
+}
+
+function vendorBranch(v: typeof VENDORS[0]): "if" | "else" {
+  return v.duty > 0 ? "if" : "else";
+}
+
+const fmtINR = (n: number) => "₹" + Math.round(n).toLocaleString("en-IN");
+const fmtNative = (v: typeof VENDORS[0], key: VKey) => {
+  const val = v[key];
+  if (key === "duty") return (val * 100).toFixed(0) + "%";
+  if (v.code === "INR") return "₹" + Math.round(val).toLocaleString("en-IN");
+  return v.sym + val.toFixed(2);
 };
 
-const TYPE_DOT: Record<string, string> = {
-  Cost:       "bg-purple-500",
-  Pricing:    "bg-blue-500",
-  Compliance: "bg-amber-500",
-};
+// ─── Formula token types ──────────────────────────────────────────────────────
+type TokenKind = "keyword" | "paren" | "field" | "operator" | "number" | "comma" | "space";
+interface Token { kind: TokenKind; text: string; fieldKey?: string; }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// The full formula as a sequence of tokens
+const FORMULA_TOKENS: Token[] = [
+  { kind: "keyword",  text: "IF" },
+  { kind: "paren",    text: "(" },
+  { kind: "field",    text: "Duty %",    fieldKey: "duty" },
+  { kind: "operator", text: " > " },
+  { kind: "number",   text: "0" },
+  { kind: "comma",    text: "," },
+  { kind: "space",    text: " " },
+  { kind: "paren",    text: "(" },
+  { kind: "field",    text: "Unit Price", fieldKey: "quote" },
+  { kind: "operator", text: " + " },
+  { kind: "field",    text: "Shipping",   fieldKey: "shipping" },
+  { kind: "paren",    text: ")" },
+  { kind: "operator", text: " × " },
+  { kind: "paren",    text: "(" },
+  { kind: "number",   text: "1" },
+  { kind: "operator", text: " + " },
+  { kind: "field",    text: "Duty %",    fieldKey: "duty" },
+  { kind: "paren",    text: ")" },
+  { kind: "operator", text: " + " },
+  { kind: "field",    text: "Tax",       fieldKey: "tax" },
+  { kind: "comma",    text: "," },
+  { kind: "space",    text: " " },
+  { kind: "keyword",  text: "ELSE" },
+  { kind: "space",    text: " " },
+  { kind: "field",    text: "Unit Price", fieldKey: "quote" },
+  { kind: "operator", text: " + " },
+  { kind: "field",    text: "Shipping",   fieldKey: "shipping" },
+  { kind: "operator", text: " + " },
+  { kind: "field",    text: "Tax",       fieldKey: "tax" },
+  { kind: "paren",    text: ")" },
+];
+
+// A "typed segment" — either a committed token or the currently-being-typed partial text
+interface TypedSegment {
+  kind: "committed" | "typing";
+  token?: Token;       // for committed
+  partial?: string;    // for the in-progress token being typed
+  partialKind?: TokenKind;
+  partialFieldKey?: string;
+}
+
+function tokenColor(t: Token): string {
+  if (t.kind === "keyword")  return "text-indigo-600 font-black";
+  if (t.kind === "paren")    return "text-slate-500 font-bold";
+  if (t.kind === "operator") return "text-orange-500 font-bold";
+  if (t.kind === "number")   return "text-emerald-600 font-bold";
+  if (t.kind === "comma")    return "text-slate-400 font-bold";
+  if (t.kind === "field") {
+    const f = FIELDS.find(f => f.label === t.text);
+    return f ? f.color.split(" ").filter(c => c.startsWith("text-")).join(" ") + " font-semibold" : "text-slate-700";
+  }
+  return "text-slate-400";
+}
+
+function fieldDot(fieldKey: string): string {
+  return FIELDS.find(f => f.key === fieldKey)?.dot ?? "bg-slate-400";
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function CustomFormulaAnimation() {
-  const [step, setStep]                       = useState(0);
-  const [cursorPos, setCursorPos]             = useState({ x: 50, y: 50 });
-  const [isClicking, setIsClicking]           = useState(false);
-  const [typedName, setTypedName]             = useState("");
-  const [selectedEntity, setSelectedEntity]   = useState("");
-  const [selectedModules, setSelectedModules] = useState<string[]>([]);
-  const [typedFormula, setTypedFormula]       = useState("");
-  const [showDropdown, setShowDropdown]       = useState(false);
+  const [phase, setPhase]               = useState(0);
+  const [caption, setCaption]           = useState("");
+  // Committed tokens (fully typed) + optional in-progress partial
+  const [committedTokens, setCommittedTokens] = useState<Token[]>([]);
+  const [partialText, setPartialText]   = useState("");
+  const [partialToken, setPartialToken] = useState<Token | null>(null);
+  const [addedFields, setAddedFields]   = useState<string[]>([]);
+  const [scanIdx, setScanIdx]           = useState<number | null>(null);
+  const [revealedCards, setRevealed]    = useState<number[]>([]);
+  const [activeBranch, setActiveBranch] = useState<Record<number, "if" | "else" | null>>({});
+  const [trueCosts, setTrueCosts]       = useState<number[]>([]);
+  const [winner, setWinner]             = useState<number | null>(null);
+  const [cursorPos, setCursorPos]       = useState({ x: 0, y: 0 });
+  const [isClicking, setIsClicking]     = useState(false);
 
-  const containerRef  = useRef<HTMLDivElement>(null);
-  const dashboardRef  = useRef<HTMLDivElement>(null);
+  const containerRef    = useRef<HTMLDivElement>(null);
+  const addBtnRef       = useRef<HTMLButtonElement>(null);
+  const saveBtnRef      = useRef<HTMLButtonElement>(null);
+  const formulaInputRef = useRef<HTMLDivElement>(null);
+  const cursorPosRef    = useRef({ x: 0, y: 0 });
 
-  // Clamp cursor inside dashboard bounds
-  const clampToDashboard = (px: number, py: number) => {
-    if (!dashboardRef.current || !containerRef.current) return { x: px, y: py };
-    const db = dashboardRef.current.getBoundingClientRect();
-    const ct = containerRef.current.getBoundingClientRect();
-    const left   = ((db.left   - ct.left)  / ct.width)  * 100;
-    const right  = ((db.right  - ct.left)  / ct.width)  * 100;
-    const top    = ((db.top    - ct.top)   / ct.height) * 100;
-    const bottom = ((db.bottom - ct.top)   / ct.height) * 100;
-    return {
-      x: Math.max(left + 1, Math.min(px, right  - 1)),
-      y: Math.max(top  + 1, Math.min(py, bottom - 1)),
-    };
+  const centerOf = (el: HTMLElement | null) => {
+    if (!el || !containerRef.current) return { x: 0, y: 0 };
+    const er = el.getBoundingClientRect();
+    const cr = containerRef.current.getBoundingClientRect();
+    return { x: er.left - cr.left + er.width / 2, y: er.top - cr.top + er.height / 2 };
   };
 
-  useGSAP(() => {
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
-    const pos = { x: 50, y: 50 };
+  useEffect(() => {
+    let cancelled = false;
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
-    const moveTo = (x: number, y: number, dur = 0.9) =>
-      tl.to(pos, {
-        x, y, duration: dur, ease: "power2.inOut",
-        onUpdate() { setCursorPos(clampToDashboard(pos.x, pos.y)); },
-      });
-
-    const click = (cb: () => void) => {
-      tl.set({}, { onComplete: () => setIsClicking(true) });
-      tl.to({}, { duration: 0.15 });
-      tl.set({}, { onComplete: () => { setIsClicking(false); cb(); } });
+    const moveCursor = async (el: HTMLElement | null, ms = 700) => {
+      if (!el || !containerRef.current) return;
+      const start = { ...cursorPosRef.current };
+      const end = centerOf(el);
+      const steps = Math.ceil(ms / 16);
+      for (let i = 1; i <= steps; i++) {
+        if (cancelled) return;
+        const t = i / steps;
+        const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        cursorPosRef.current = { x: start.x + (end.x - start.x) * e, y: start.y + (end.y - start.y) * e };
+        setCursorPos({ ...cursorPosRef.current });
+        await sleep(16);
+      }
     };
 
-    const pause = (d: number) => tl.to({}, { duration: d });
+    const click = async (cb: () => void) => {
+      if (cancelled) return;
+      setIsClicking(true);
+      await sleep(150);
+      setIsClicking(false);
+      cb();
+    };
 
-    // Reset
-    tl.set({}, { onComplete: () => {
-      setStep(0); setTypedName(""); setSelectedEntity("");
-      setSelectedModules([]); setTypedFormula(""); setShowDropdown(false);
-      setCursorPos({ x: 50, y: 50 });
-    }});
-    pause(1);
+    async function run() {
+      while (!cancelled) {
+        // ── Reset ──
+        setPhase(0);
+        setCaption("3 vendors quoted — but which one is truly cheapest?");
+        setCommittedTokens([]);
+        setPartialText("");
+        setPartialToken(null);
+        setAddedFields([]);
+        setScanIdx(null);
+        setRevealed([]);
+        setActiveBranch({});
+        setTrueCosts([]);
+        setWinner(null);
+        const cr = containerRef.current?.getBoundingClientRect();
+        if (cr) {
+          cursorPosRef.current = { x: cr.width / 2, y: cr.height * 0.35 };
+          setCursorPos({ ...cursorPosRef.current });
+        }
+        await sleep(1400);
 
-    // Move to "Add" button
-    moveTo(88, 14);
-    click(() => setStep(1));
-    pause(0.6);
+        // ── Open formula builder ──
+        await moveCursor(addBtnRef.current);
+        await click(() => setPhase(1));
+        setCaption("Building an IF/ELSE formula to calculate true landed cost per vendor");
+        await sleep(600);
 
-    // Type formula name
-    moveTo(50, 38);
-    "Actual Material Cost".split("").forEach(ch =>
-      tl.to({}, { duration: 0.055, onComplete: () => setTypedName(p => p + ch) })
-    );
-    pause(0.4);
+        // ── Click into expression bar ──
+        await moveCursor(formulaInputRef.current, 500);
+        await click(() => {});
+        await sleep(400);
 
-    // Select entity
-    moveTo(50, 52);
-    click(() => setSelectedEntity("FactWise Demo"));
-    pause(0.4);
+        // ── Type tokens character by character ──
+        for (let i = 0; i < FORMULA_TOKENS.length; i++) {
+          if (cancelled) return;
+          const tok = FORMULA_TOKENS[i];
 
-    // Open modules dropdown
-    moveTo(50, 65);
-    click(() => setShowDropdown(true));
-    pause(0.3);
+          // Instant tokens (space, single-char parens, comma, single-char operators)
+          const isInstant = tok.kind === "space" || tok.text.trim().length <= 1;
 
-    // Pick modules
-    moveTo(45, 70);
-    click(() => setSelectedModules(["Contract Lifecycle", "Purchase Order"]));
-    pause(0.3);
-    moveTo(60, 65);
-    click(() => setShowDropdown(false));
-    pause(0.5);
+          if (isInstant) {
+            // Commit instantly — no character-by-character needed
+            setCommittedTokens(prev => [...prev, tok]);
+            setPartialText("");
+            setPartialToken(null);
+            await sleep(tok.kind === "space" ? 80 : 120);
+          } else {
+            // Type character by character
+            setPartialToken(tok);
+            for (let c = 1; c <= tok.text.length; c++) {
+              if (cancelled) return;
+              setPartialText(tok.text.slice(0, c));
+              await sleep(110); // ~110ms per character — natural typing pace
+            }
+            // Commit the completed token as a styled chip
+            setPartialText("");
+            setPartialToken(null);
+            setCommittedTokens(prev => [...prev, tok]);
 
-    // Click Continue
-    moveTo(72, 80);
-    click(() => setStep(2));
-    pause(0.8);
+            // Mark field as added when its chip is committed
+            if (tok.kind === "field" && tok.fieldKey) {
+              setAddedFields(prev =>
+                prev.includes(tok.fieldKey!) ? prev : [...prev, tok.fieldKey!]
+              );
+            }
+            // Brief pause after completing a word
+            await sleep(tok.kind === "keyword" ? 220 : 160);
+          }
+        }
+        await sleep(1800);
+        setCaption("Formula complete — applying IF/ELSE logic to all 3 vendors at once");
 
-    // Type formula expression
-    moveTo(50, 42);
-    "{Unit Price} + {Freight} + {Tax}".split("").forEach(ch =>
-      tl.to({}, { duration: 0.065, onComplete: () => setTypedFormula(p => p + ch) })
-    );
-    pause(1.2);
+        // ── Apply formula ──
+        await moveCursor(saveBtnRef.current, 600);
+        await click(() => setPhase(3));
+        await sleep(400);
 
-    // Click Save
-    moveTo(72, 82);
-    click(() => setStep(3));
-    pause(3);
+        // ── Scan each vendor — show which branch they take ──
+        setCaption("Scanning each vendor — duty > 0 takes the IF branch, others take ELSE");
+        for (let i = 0; i < VENDORS.length; i++) {
+          if (cancelled) return;
+          setScanIdx(i);
+          await sleep(350);
+          const branch = vendorBranch(VENDORS[i]);
+          setActiveBranch(prev => ({ ...prev, [i]: branch }));
+          await sleep(500);
+          setRevealed(prev => [...prev, i]);
+          await sleep(600);
+        }
+        setScanIdx(null);
+        await sleep(400);
 
-  }, { scope: containerRef });
+        // ── Reveal true costs ──
+        const costs = VENDORS.map(computeCost);
+        setTrueCosts(costs);
+        setPhase(4);
+        setCaption("True landed cost revealed — normalized to ₹ for a fair comparison");
+        await sleep(700);
+
+        // ── Declare winner ──
+        const winIdx = costs.indexOf(Math.min(...costs));
+        setWinner(winIdx);
+        setCaption(`${VENDORS[winIdx].name} wins — the "cheapest" quote wasn't the best deal`);
+        await sleep(4200);
+      }
+    }
+
+    run();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const naiveCheapest = VENDORS.indexOf(
+    VENDORS.reduce((a, b) => a.quote * a.fx < b.quote * b.fx ? a : b)
+  );
+
+  // nothing needed here — committedTokens + partialText drive the render
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full h-full flex items-center justify-center p-4 relative overflow-hidden"
-    >
-      {/* ── Background ── */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/ChatGPT Image May 15, 2026, 12_40_41 PM.png"
-          alt="bg"
-          fill
-          className="object-cover opacity-25"
-          sizes="100vw"
-          priority
-        />
-        <div className="absolute inset-0 bg-linear-to-br from-blue-50/90 via-white/80 to-indigo-50/90" />
-      </div>
+    <div ref={containerRef} className="w-full h-full flex items-center justify-center p-4 relative overflow-hidden bg-linear-to-br from-white via-slate-50 to-indigo-50/40">
 
-      {/* ── Cursor ── */}
-      <motion.div
-        className="absolute z-200 pointer-events-none"
-        animate={{ left: `${cursorPos.x}%`, top: `${cursorPos.y}%` }}
-        transition={{ duration: 0 }}
-      >
+      {/* Background grid */}
+      <div className="absolute inset-0 opacity-[0.12] bg-[radial-gradient(#4f46e5_1px,transparent_1px)] bg-size-[16px_16px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-indigo-200/20 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-emerald-200/10 blur-3xl pointer-events-none" />
+
+      {/* Cursor */}
+      <div className="absolute z-200 pointer-events-none" style={{ left: cursorPos.x, top: cursorPos.y }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          className={cn("drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] transition-transform duration-75", isClicking && "scale-75")}
-        >
-          <path d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z"
-            fill="white" stroke="#1e293b" strokeWidth="1.5" strokeLinejoin="round" />
+          className={cn("drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] transition-transform duration-75", isClicking && "scale-75")}>
+          <path d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z" fill="white" stroke="#1e293b" strokeWidth="1.5" strokeLinejoin="round" />
         </svg>
         {isClicking && (
-          <motion.div
-            initial={{ scale: 0.4, opacity: 0.8 }}
-            animate={{ scale: 2.2, opacity: 0 }}
+          <motion.div initial={{ scale: 0.4, opacity: 0.8 }} animate={{ scale: 2.2, opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="absolute top-0 left-0 w-5 h-5 bg-blue-400/50 rounded-full -translate-x-1/2 -translate-y-1/2"
-          />
+            className="absolute top-0 left-0 w-5 h-5 bg-blue-400/50 rounded-full -translate-x-1/2 -translate-y-1/2" />
         )}
-      </motion.div>
+      </div>
 
-      {/* ── Dashboard Window (500 × 100%) ── */}
-      <div
-        ref={dashboardRef}
-        className="relative w-full max-w-3xl bg-white rounded-xl shadow-2xl border border-slate-200/60 overflow-hidden z-10"
-        style={{ height: 480 }}
-      >
+      {/* ── Dashboard shell ── */}
+      <div className="relative w-full max-w-[691px] bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.12)] border border-slate-200/70 z-10 overflow-hidden flex flex-col" style={{ height: 530 }}>
 
-        {/* ── Browser chrome (28px) ── */}
-        <div className="flex items-center gap-3 px-3 bg-slate-50 border-b border-slate-200" style={{ height: 28 }}>
+        {/* Browser chrome */}
+        <div className="flex items-center justify-between px-4 bg-slate-50/90 border-b border-slate-100 shrink-0" style={{ height: 32 }}>
           <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+            {["#FF5F56","#FFBD2E","#27C93F"].map(c => (
+              <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />
+            ))}
           </div>
           <div className="flex-1 max-w-xs mx-auto">
-            <div className="h-4 bg-white rounded border border-slate-200 flex items-center px-2 gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-              <span className="text-[7px] text-slate-400 font-mono">factwise.io/formulas</span>
+            <div className="h-5 bg-white/80 rounded-md border border-slate-200/60 flex items-center px-3 gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[7.5px] text-slate-400 font-mono select-none tracking-tight">factwise.io/rfq/bid-analysis</span>
             </div>
           </div>
+          <div className="w-10 shrink-0" />
         </div>
 
-        {/* ── Body (452px) ── */}
-        <div className="flex" style={{ height: 452 }}>
-
-          {/* Sidebar (44px wide) */}
-          <div className="flex flex-col items-center py-3 gap-3 bg-white border-r border-slate-100 shrink-0" style={{ width: 44 }}>
-            <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow">
+        {/* App header */}
+        <div className="flex items-center justify-between px-4 border-b border-slate-100 bg-white shrink-0" style={{ height: 44 }}>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
               <Calculator className="w-3.5 h-3.5 text-white" />
             </div>
-            <div className="flex flex-col gap-2 mt-1">
-              {[Search, Filter, Plus].map((Icon, i) => (
-                <div key={i} className={cn(
-                  "w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-colors",
-                  i === 2 ? "bg-blue-50 text-blue-500 border border-blue-100" : "text-slate-300 hover:text-slate-500"
-                )}>
-                  <Icon className="w-3.5 h-3.5" />
-                </div>
-              ))}
+            <div>
+              <p className="text-[11px] font-bold text-slate-800 leading-none">Bid Analysis — Steel Pipes RFQ</p>
+              <p className="text-[8px] text-slate-400 mt-0.5">3 vendors · comparing total landed cost</p>
             </div>
           </div>
-
-          {/* Main panel */}
-          <div className="flex-1 flex flex-col min-w-0 bg-linear-to-br from-slate-50/40 via-white to-blue-50/20">
-
-            {/* Header (44px) */}
-            <div className="flex items-center justify-between px-4 border-b border-slate-100 bg-white/95 shrink-0" style={{ height: 44 }}>
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-                  <Calculator className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold text-slate-800 leading-none">Formula Manager</p>
-                  <p className="text-[8px] text-slate-400 mt-0.5">24 total · 5 active</p>
-                </div>
-              </div>
-              <button className="flex items-center gap-1 px-3 py-1.5 bg-linear-to-r from-blue-500 to-indigo-600 text-white text-[9px] font-bold rounded-lg shadow-md shadow-blue-500/20">
-                <Plus className="w-3 h-3" />
-                Add Formula
-              </button>
-            </div>
-
-            {/* Search bar (32px) */}
-            <div className="flex items-center gap-2 px-4 border-b border-slate-100 bg-white/80 shrink-0" style={{ height: 32 }}>
-              <Search className="w-3 h-3 text-slate-400 shrink-0" />
-              <span className="text-[9px] text-slate-400">Search formulas…</span>
-              <div className="ml-auto flex items-center gap-1">
-                <div className="px-2 py-0.5 bg-slate-100 rounded text-[8px] text-slate-500 flex items-center gap-1">
-                  <Filter className="w-2.5 h-2.5" /> Filter
-                </div>
-              </div>
-            </div>
-
-            {/* Table (fills remaining: 452 - 44 - 32 - 32 = 344px) */}
-            <div className="flex-1 overflow-auto min-h-0">
-              <table className="w-full border-collapse text-left">
-                <thead className="sticky top-0 z-10 bg-slate-50/90 backdrop-blur-sm">
-                  <tr className="border-b border-slate-200">
-                    {["Name", "Formula Expression", "Type", "Links", ""].map((h, i) => (
-                      <th key={i} className={cn(
-                        "px-3 py-2 text-[8px] font-bold text-slate-500 uppercase tracking-wide whitespace-nowrap",
-                        i === 3 && "text-center",
-                        i === 4 && "w-12"
-                      )}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {FORMULAS.map((f, i) => (
-                    <tr key={i} className="border-b border-slate-50 hover:bg-blue-50/20 transition-colors group">
-                      {/* Name */}
-                      <td className="px-3 py-2">
-                        <div className="flex items-center gap-2">
-                          <div className={cn(
-                            "w-6 h-6 rounded-md flex items-center justify-center shrink-0",
-                            f.status === "active"
-                              ? "bg-blue-100 border border-blue-200"
-                              : "bg-slate-100 border border-slate-200"
-                          )}>
-                            <Calculator className={cn("w-3 h-3", f.status === "active" ? "text-blue-600" : "text-slate-400")} />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[10px] font-semibold text-slate-800 truncate max-w-[110px]">{f.name}</p>
-                            <p className="text-[7px] text-slate-400">#{1000 + i}</p>
-                          </div>
-                        </div>
-                      </td>
-                      {/* Formula */}
-                      <td className="px-3 py-2">
-                        <code className="px-2 py-0.5 bg-slate-100 text-blue-700 text-[8px] font-mono rounded border border-slate-200 inline-block max-w-[160px] truncate">
-                          {f.formula}
-                        </code>
-                      </td>
-                      {/* Type */}
-                      <td className="px-3 py-2">
-                        <span className={cn(
-                          "inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-semibold rounded border whitespace-nowrap",
-                          TYPE_COLORS[f.type]
-                        )}>
-                          <span className={cn("w-1.5 h-1.5 rounded-full", TYPE_DOT[f.type])} />
-                          {f.type}
-                        </span>
-                      </td>
-                      {/* Links */}
-                      <td className="px-3 py-2 text-center">
-                        <span className="inline-flex items-center justify-center w-6 h-6 bg-linear-to-br from-blue-500 to-indigo-600 rounded-md text-[8px] font-bold text-white shadow-sm">
-                          {f.links}
-                        </span>
-                      </td>
-                      {/* Actions */}
-                      <td className="px-3 py-2">
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                            <Edit2 className="w-2.5 h-2.5" />
-                          </button>
-                          <button className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
-                            <Trash2 className="w-2.5 h-2.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination (32px) */}
-            <div className="flex items-center justify-between px-4 border-t border-slate-100 bg-white/90 shrink-0" style={{ height: 32 }}>
-              <span className="text-[8px] text-slate-400">Showing 1–5 of 24 formulas</span>
-              <div className="flex items-center gap-1">
-                {["‹", "1", "2", "3", "›"].map((p, i) => (
-                  <button key={i} className={cn(
-                    "w-5 h-5 flex items-center justify-center rounded text-[8px] font-medium transition-colors",
-                    p === "1" ? "bg-blue-500 text-white" : "text-slate-500 hover:bg-slate-100"
-                  )}>{p}</button>
-                ))}
-              </div>
-            </div>
-          </div>
+          <button ref={addBtnRef}
+            className="flex items-center gap-1 px-3 py-1.5 bg-linear-to-r from-blue-500 to-indigo-600 text-white text-[9px] font-bold rounded-lg shadow-md shadow-blue-500/20 shrink-0">
+            <Plus className="w-3 h-3" /> Create Formula
+          </button>
         </div>
 
-        {/* ── Modal Overlay (absolute over entire dashboard) ── */}
-        <AnimatePresence>
-          {(step === 1 || step === 2) && (
-            <motion.div
-              key="overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 z-50 bg-slate-900/50 backdrop-blur-[2px] flex items-center justify-center p-6"
-            >
-              <motion.div
-                initial={{ scale: 0.94, opacity: 0, y: 16 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.94, opacity: 0, y: 16 }}
-                transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                className="w-full max-w-sm bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col"
-                style={{ maxHeight: 400 }}
-              >
+        {/* Body */}
+        <div className="flex flex-col items-stretch justify-center gap-3 px-4 py-4" style={{ height: 408 }}>
 
-                {/* ── Step 1: Define ── */}
-                {step === 1 && (
-                  <>
-                    {/* Modal header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-linear-to-r from-white to-blue-50/30 shrink-0">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-                          <Calculator className="w-3.5 h-3.5 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-bold text-slate-800">New Formula</p>
-                          <p className="text-[8px] text-slate-400">Step 1 of 2 — Basic Info</p>
-                        </div>
-                      </div>
-                      <X className="w-4 h-4 text-slate-400 cursor-pointer" />
+          {/* Vendor cards */}
+          <div className="grid grid-cols-3 gap-3 pt-5">
+            {VENDORS.map((v, i) => {
+              const isWinner   = winner === i;
+              const isLoser    = winner !== null && winner !== i;
+              const isScanning = scanIdx === i;
+              const isRevealed = revealedCards.includes(i);
+              const branch     = activeBranch[i];
+              const cost       = trueCosts[i];
+              const isNaive    = phase === 0 && i === naiveCheapest;
+
+              return (
+                <motion.div key={i}
+                  animate={{ y: isWinner ? -8 : 0, opacity: isLoser ? 0.72 : 1, scale: isWinner ? 1.03 : 1 }}
+                  transition={{ type: "spring", stiffness: 240, damping: 22 }}
+                  className={cn(
+                    "relative rounded-2xl border flex flex-col transition-[border-color,box-shadow,background] duration-500",
+                    isWinner
+                      ? "border-emerald-400 bg-white shadow-[0_0_0_4px_rgba(22,163,74,0.10),0_20px_48px_rgba(22,163,74,0.18)]"
+                      : isLoser
+                      ? "border-red-300 bg-red-50/30 shadow-[0_0_0_3px_rgba(220,38,38,0.08)]"
+                      : "border-slate-200 bg-white shadow-[0_8px_24px_rgba(12,16,32,0.06)]"
+                  )}
+                  style={{ padding: "14px 14px 12px" }}
+                >
+                  {/* Scan shimmer */}
+                  <AnimatePresence>
+                    {isScanning && (
+                      <motion.div
+                        initial={{ x: "-100%" }} animate={{ x: "240%" }}
+                        transition={{ duration: 1.1, ease: "easeInOut" }}
+                        style={{
+                          position: "absolute", inset: 0, width: "55%", zIndex: 10, pointerEvents: "none",
+                          borderRadius: "inherit",
+                          background: "linear-gradient(90deg, transparent, rgba(108,71,255,0.16), transparent)",
+                        }}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  {/* Winner / loser badge */}
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-4 z-30 flex justify-center">
+                    <AnimatePresence mode="wait">
+                      {isNaive && (
+                        <motion.span key="trap"
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }}
+                          className="px-3 py-1 bg-amber-100 border border-amber-300 text-amber-700 text-[7px] font-black uppercase tracking-widest rounded-full whitespace-nowrap shadow-sm">
+                          Looks cheapest
+                        </motion.span>
+                      )}
+                      {isWinner && (
+                        <motion.span key="win"
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                          className="px-3 py-1 bg-emerald-500 text-white text-[7px] font-black uppercase tracking-widest rounded-full whitespace-nowrap shadow-lg shadow-emerald-500/40">
+                          ✓ True Best
+                        </motion.span>
+                      )}
+                      {isLoser && (
+                        <motion.span key="bust"
+                          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                          className="px-3 py-1 bg-red-500 text-white text-[7px] font-black uppercase tracking-widest rounded-full whitespace-nowrap shadow-lg shadow-red-500/40">
+                          Hidden costs
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Vendor name */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="text-[8px] font-black text-slate-500 uppercase tracking-[1.4px] leading-none">{v.name}</p>
+                      <p className="text-[7px] text-slate-400 mt-0.5">{v.city}</p>
                     </div>
+                    <span className={cn(
+                      "text-[7px] font-black px-2 py-0.5 rounded text-white tracking-wide",
+                      v.code === "INR" ? "bg-amber-500" : v.code === "USD" ? "bg-blue-700" : "bg-teal-600"
+                    )}>{v.code}</span>
+                  </div>
 
-                    {/* Modal body */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
-                      {/* Field: Name */}
-                      <div className="space-y-1">
-                        <label className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-                          <span className="w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold shrink-0">1</span>
-                          Formula Name
-                        </label>
-                        <div className="flex items-center h-9 px-3 bg-slate-50 border-2 border-slate-200 rounded-lg text-[11px] text-slate-700 focus-within:border-blue-400 transition-colors">
-                          <span>{typedName}</span>
-                          <motion.span
-                            animate={{ opacity: [1, 0, 1] }}
-                            transition={{ repeat: Infinity, duration: 0.9 }}
-                            className="inline-block w-0.5 h-4 bg-blue-500 ml-0.5"
-                          />
-                        </div>
-                      </div>
+                  {/* Quote price */}
+                  <div className="flex items-baseline gap-0.5 mb-3">
+                    <span className="text-[13px] font-bold text-slate-400 leading-none">{v.sym}</span>
+                    <span className="text-[28px] font-black text-slate-900 leading-none tracking-tight tabular-nums">
+                      {v.code === "INR" ? Math.round(v.quote).toLocaleString("en-IN") : v.quote.toFixed(2)}
+                    </span>
+                    <span className="text-[8px] text-slate-400 ml-1 font-medium">/ unit</span>
+                  </div>
 
-                      {/* Field: Entity */}
-                      <div className="space-y-1">
-                        <label className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-                          <span className="w-4 h-4 bg-indigo-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold shrink-0">2</span>
-                          Entity Type
-                        </label>
-                        <div className="relative flex items-center h-9 px-3 bg-slate-50 border-2 border-slate-200 rounded-lg text-[11px] cursor-pointer">
-                          <span className={selectedEntity ? "text-slate-700 font-medium" : "text-slate-400"}>
-                            {selectedEntity || "Select entity…"}
-                          </span>
-                          <ChevronDown className="absolute right-3 w-3.5 h-3.5 text-slate-400" />
-                        </div>
-                      </div>
-
-                      {/* Field: Modules */}
-                      <div className="space-y-1">
-                        <label className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-                          <span className="w-4 h-4 bg-purple-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold shrink-0">3</span>
-                          Apply to Modules
-                        </label>
-                        <div className="relative">
-                          <div className="min-h-[36px] px-3 py-2 bg-slate-50 border-2 border-slate-200 rounded-lg flex flex-wrap gap-1 items-center cursor-pointer">
-                            {selectedModules.length === 0 && (
-                              <span className="text-[11px] text-slate-400">Select modules…</span>
-                            )}
-                            {selectedModules.map((m, i) => (
-                              <span key={i} className="flex items-center gap-1 px-2 py-0.5 bg-blue-500 text-white text-[8px] font-semibold rounded-full">
-                                <Check className="w-2.5 h-2.5" />
-                                {m}
+                  {/* Breakdown rows */}
+                  <AnimatePresence>
+                    {isRevealed && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                        transition={{ duration: 0.35 }}
+                        className="space-y-1.5 mb-3 overflow-hidden"
+                      >
+                        {(["shipping","duty","tax"] as VKey[]).map((key, ki) => {
+                          const field = FIELDS.find(f => f.key === key)!;
+                          return (
+                            <motion.div key={key}
+                              initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: ki * 0.08 }}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="flex items-center gap-1.5 text-[8px] text-slate-500 font-medium">
+                                <span className={cn("w-2 h-2 rounded-full shrink-0", field.dot)} />
+                                {field.label}
                               </span>
-                            ))}
-                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                          </div>
-                          {showDropdown && (
-                            <div className="absolute top-full mt-1 w-full bg-white rounded-lg shadow-xl border border-slate-200 z-50 overflow-hidden">
-                              {["Contract Lifecycle", "Purchase Order", "RfQ Analytics", "Project", "Cart"].map((opt, i) => (
-                                <div key={i} className="flex items-center gap-2 px-3 py-2 hover:bg-blue-50 cursor-pointer">
-                                  <div className={cn(
-                                    "w-3.5 h-3.5 rounded border-2 flex items-center justify-center",
-                                    selectedModules.includes(opt) ? "bg-blue-500 border-blue-500" : "border-slate-300"
-                                  )}>
-                                    {selectedModules.includes(opt) && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
-                                  </div>
-                                  <span className="text-[9px] text-slate-700">{opt}</span>
-                                </div>
-                              ))}
-                            </div>
+                              <span className="text-[8px] font-bold text-slate-700 font-mono tabular-nums">
+                                {fmtNative(v, key)}
+                              </span>
+                            </motion.div>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* True landed cost */}
+                  <AnimatePresence>
+                    {cost !== undefined && phase >= 4 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className={cn(
+                          "mt-auto pt-2 border-t border-dashed",
+                          isWinner ? "border-emerald-300" : isLoser ? "border-red-200" : "border-slate-200"
+                        )}
+                      >
+                        <p className="text-[7px] font-bold uppercase tracking-[2px] text-slate-400 mb-0.5">True landed cost</p>
+                        <motion.p
+                          initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+                          transition={{ type: "spring", stiffness: 280, delay: i * 0.1 + 0.08 }}
+                          className={cn(
+                            "text-[22px] font-black tracking-tight leading-none tabular-nums",
+                            isWinner ? "text-emerald-600" : isLoser ? "text-red-500" : "text-slate-800"
                           )}
-                        </div>
-                        <p className="text-[7px] text-slate-400 flex items-center gap-1">
-                          <Info className="w-2.5 h-2.5" />
-                          {selectedModules.length} module{selectedModules.length !== 1 ? "s" : ""} selected
-                        </p>
-                      </div>
+                        >
+                          {fmtINR(cost)}
+                        </motion.p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Hint banner */}
+          <AnimatePresence>
+            {phase === 0 && (
+              <motion.div exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.2 }}
+                className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg">
+                <GitBranch className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <p className="text-[8px] text-amber-700 font-medium">
+                  <span className="font-bold">True Cost</span> unknown — quote hides duty, shipping & tax.{" "}
+                  <span className="font-bold">Build an IF/ELSE formula</span> to apply the right logic per vendor.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+        </div>{/* end body */}
+
+        {/* ── Formula Builder Modal ── */}
+        <AnimatePresence>
+          {phase === 1 && (
+            <motion.div key="modal-bg"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 z-50 bg-slate-900/30 flex items-center justify-center px-4">
+              <motion.div
+                initial={{ scale: 0.94, opacity: 0, y: 16 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.94, opacity: 0, y: 16 }}
+                transition={{ type: "spring", stiffness: 280, damping: 26 }}
+                className="w-full max-w-lg bg-white rounded-2xl shadow-[0_32px_80px_rgba(15,23,42,0.28),0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden max-h-[90vh] overflow-y-auto"
+              >
+                {/* Modal header */}
+                <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-linear-to-r from-white to-blue-50/40">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+                      <Calculator className="w-3.5 h-3.5 text-white" />
                     </div>
-
-                    {/* Modal footer */}
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50 shrink-0">
-                      <button className="text-[9px] font-semibold text-slate-400 hover:text-slate-600 transition-colors">Cancel</button>
-                      <button className={cn(
-                        "flex items-center gap-1.5 px-4 py-1.5 text-[9px] font-bold rounded-lg transition-all",
-                        typedName && selectedEntity && selectedModules.length > 0
-                          ? "bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/20"
-                          : "bg-slate-200 text-slate-400 cursor-not-allowed"
-                      )}>
-                        Continue <ChevronRight className="w-3 h-3" />
-                      </button>
+                    <div>
+                      <p className="text-[11px] font-bold text-slate-800">Formula Builder · Total Landed Cost</p>
+                      <p className="text-[8px] text-slate-400">Click fields to add them to your formula</p>
                     </div>
-                  </>
-                )}
+                  </div>
+                  <X className="w-4 h-4 text-slate-400" />
+                </div>
 
-                {/* ── Step 2: Build Formula ── */}
-                {step === 2 && (
-                  <>
-                    {/* Modal header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-linear-to-r from-white to-blue-50/30 shrink-0">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 bg-linear-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-500/20">
-                          <Calculator className="w-3.5 h-3.5 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-bold text-slate-800">Build Formula</p>
-                          <p className="text-[8px] text-slate-400">Step 2 of 2 — Expression</p>
-                        </div>
-                      </div>
-                      <X className="w-4 h-4 text-slate-400 cursor-pointer" />
+                <div className="px-5 py-4 space-y-3">
+                  {/* Available field chips */}
+                  <div>
+                    <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest mb-2">Available Fields</p>
+                    <div className="flex flex-wrap gap-2">
+                      {FIELDS.map((f) => {
+                        const added = addedFields.includes(f.key);
+                        return (
+                          <motion.div key={f.key}
+                            animate={{ opacity: added ? 0.45 : 1 }}
+                            className={cn(
+                              "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[10px] font-semibold",
+                              f.color
+                            )}
+                          >
+                            <span className={cn("w-2 h-2 rounded-full shrink-0", f.dot)} />
+                            {f.label}
+                            {added && <Check className="w-3 h-3 ml-0.5" />}
+                          </motion.div>
+                        );
+                      })}
                     </div>
+                  </div>
 
-                    {/* Modal body */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
-                      {/* Name badge */}
-                      <div className="flex items-center gap-2 p-2.5 bg-blue-50 rounded-lg border border-blue-100">
-                        <div className="w-6 h-6 bg-blue-500 rounded-md flex items-center justify-center shrink-0">
-                          <Calculator className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-[7px] font-bold text-blue-500 uppercase tracking-widest">Custom Field</p>
-                          <p className="text-[10px] font-bold text-slate-800">{typedName || "Actual Material Cost"}</p>
-                        </div>
-                      </div>
-
-                      {/* Formula expression */}
-                      <div className="space-y-1.5">
-                        <label className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-                          <span className="w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold shrink-0">1</span>
-                          Formula Expression
-                        </label>
-                        <div className="min-h-[44px] px-3 py-2 bg-slate-50 border-2 border-blue-200 rounded-lg font-mono text-[10px] flex flex-wrap items-center gap-px shadow-inner">
-                          {typedFormula.split("").map((ch, i) => {
-                            const before = typedFormula.slice(0, i);
-                            const lastOpen  = before.lastIndexOf("{");
-                            const lastClose = before.lastIndexOf("}");
-                            const insideBracket = lastOpen > lastClose;
-                            const isBracket  = ch === "{" || ch === "}";
-                            const isOperator = ["+", "-", "*", "/"].includes(ch);
+                  {/* Formula expression bar */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">Formula Expression</p>
+                      <span className="text-[7px] text-indigo-500 font-bold flex items-center gap-1">
+                        <GitBranch className="w-2.5 h-2.5" /> IF / ELSE logic
+                      </span>
+                    </div>
+                    <div
+                      ref={formulaInputRef}
+                      className="min-h-[72px] px-4 py-3 bg-slate-50 border-2 border-blue-200 rounded-xl flex flex-wrap items-center gap-x-0.5 gap-y-1.5 shadow-inner font-mono text-[11px] leading-relaxed"
+                    >
+                      <AnimatePresence mode="popLayout">
+                        {committedTokens.map((tok, idx) => {
+                          if (tok.kind === "space") {
+                            return <span key={`sp-${idx}`} className="w-1 inline-block" />;
+                          }
+                          if (tok.kind === "field" && tok.fieldKey) {
+                            const f = FIELDS.find(f => f.key === tok.fieldKey)!;
                             return (
                               <motion.span
-                                key={i}
-                                initial={{ opacity: 0, scale: 0.6 }}
-                                animate={{ opacity: 1, scale: 1 }}
+                                key={`tok-${idx}-${tok.text}-${tok.fieldKey}`}
+                                initial={{ opacity: 0, scale: 0.75, y: 4 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.75 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 24 }}
                                 className={cn(
-                                  "inline-block",
-                                  isBracket                                    && "text-blue-500 font-bold",
-                                  insideBracket && !isBracket                  && "text-blue-700 font-semibold bg-blue-100 px-0.5 rounded",
-                                  isOperator                                   && "text-orange-500 font-bold mx-0.5",
-                                  !isBracket && !insideBracket && !isOperator  && "text-slate-600"
+                                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[9px] font-bold mx-0.5",
+                                  f.color
                                 )}
-                              >{ch}</motion.span>
+                              >
+                                <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", f.dot)} />
+                                {tok.text}
+                              </motion.span>
                             );
-                          })}
-                          <motion.span
-                            animate={{ opacity: [1, 0, 1] }}
-                            transition={{ repeat: Infinity, duration: 0.9 }}
-                            className="inline-block w-0.5 h-4 bg-blue-500 ml-0.5"
-                          />
-                        </div>
-                        <div className="flex items-start gap-1.5 p-2 bg-blue-50/60 rounded-lg border border-blue-100">
-                          <Info className="w-3 h-3 text-blue-500 mt-0.5 shrink-0" />
-                          <p className="text-[8px] text-blue-600 leading-relaxed">
-                            Use <code className="px-1 bg-white rounded font-mono text-blue-700">{"{Field}"}</code> to reference fields and{" "}
-                            <code className="px-1 bg-white rounded font-mono text-orange-600">+ − × ÷</code> for operations.
-                          </p>
-                        </div>
-                      </div>
+                          }
+                          return (
+                            <motion.span
+                              key={`tok-${idx}-${tok.text}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ duration: 0.08 }}
+                              className={tokenColor(tok)}
+                            >
+                              {tok.text}
+                            </motion.span>
+                          );
+                        })}
+                      </AnimatePresence>
 
-                      {/* Modules summary */}
-                      <div className="space-y-1">
-                        <label className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase tracking-wider">
-                          <span className="w-4 h-4 bg-purple-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold shrink-0">2</span>
-                          Applied Modules
-                        </label>
-                        <div className="flex flex-wrap gap-1">
-                          {(selectedModules.length > 0 ? selectedModules : ["Contract Lifecycle", "Purchase Order"]).map((m, i) => (
-                            <span key={i} className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[8px] font-semibold rounded-full border border-indigo-200">
-                              <Check className="w-2.5 h-2.5" />
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                      {/* In-progress partial text being typed character by character */}
+                      {partialToken && partialText && (
+                        <span className={cn(
+                          partialToken.kind === "field" && partialToken.fieldKey
+                            ? "inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[9px] font-bold mx-0.5 opacity-80 " +
+                              (FIELDS.find(f => f.key === partialToken.fieldKey)?.color ?? "bg-slate-100 text-slate-700 border-slate-200")
+                            : tokenColor(partialToken)
+                        )}>
+                          {partialToken.kind === "field" && partialToken.fieldKey && (
+                            <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", fieldDot(partialToken.fieldKey))} />
+                          )}
+                          {partialText}
+                        </span>
+                      )}
+
+                      {/* Placeholder */}
+                      {committedTokens.length === 0 && !partialText && (
+                        <span className="text-[10px] text-slate-300">Click expression bar to type…</span>
+                      )}
+
+                      {/* Blinking cursor */}
+                      <motion.span
+                        animate={{ opacity: [1, 0, 1] }}
+                        transition={{ repeat: Infinity, duration: 0.9 }}
+                        className="inline-block w-0.5 h-4 bg-blue-400 ml-0.5 shrink-0"
+                      />
                     </div>
 
-                    {/* Modal footer */}
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50 shrink-0">
-                      <button className="text-[9px] font-semibold text-slate-400 hover:text-slate-600 transition-colors">Back</button>
-                      <button className="flex items-center gap-1.5 px-4 py-1.5 bg-linear-to-r from-blue-500 to-indigo-600 text-white text-[9px] font-bold rounded-lg shadow-md shadow-blue-500/20">
-                        Save Formula <Check className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </>
-                )}
+                    {/* Live formula preview — shows the two branches clearly */}
+                    <AnimatePresence>
+                      {committedTokens.length >= 6 && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-2 px-3 py-2 bg-indigo-50/60 border border-indigo-100 rounded-lg overflow-hidden"
+                        >
+                          <p className="text-[7px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Logic Preview</p>
+                          <div className="space-y-1">
+                            <div className="flex items-start gap-2">
+                              <span className="text-[7px] font-black text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded shrink-0">IF</span>
+                              <span className="text-[7.5px] text-slate-600 leading-tight">Duty &gt; 0 → (Unit Price + Shipping) × (1 + Duty%) + Tax</span>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <span className="text-[7px] font-black text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded shrink-0">ELSE</span>
+                              <span className="text-[7.5px] text-slate-600 leading-tight">Unit Price + Shipping + Tax</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/60">
+                  <p className="text-[8px] text-slate-400">{addedFields.length} of {FIELDS.length} fields added</p>
+                  <button ref={saveBtnRef}
+                    className={cn(
+                      "flex items-center gap-1.5 px-4 py-1.5 text-[10px] font-bold rounded-xl transition-all",
+                      addedFields.length === FIELDS.length
+                        ? "bg-linear-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                        : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                    )}>
+                    Apply to All Vendors <Check className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── Step 3: Success toast ── */}
+        {/* Success toast */}
         <AnimatePresence>
-          {step === 3 && (
-            <motion.div
-              key="success"
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 bg-white rounded-xl shadow-2xl border border-green-200"
-            >
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                <CheckCircle className="w-4 h-4 text-green-600" />
+          {phase >= 4 && winner !== null && (
+            <motion.div key="toast"
+              initial={{ opacity: 0, y: 24, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8 }} transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.4 }}
+              className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl shadow-2xl border border-emerald-200 whitespace-nowrap">
+              <div className="w-7 h-7 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-800">Formula Saved!</p>
-                <p className="text-[8px] text-slate-500">Actual Material Cost is now active</p>
+                <p className="text-[10px] font-bold text-slate-800">{VENDORS[winner].name} is the true best deal</p>
+                <p className="text-[7px] text-slate-500">IF/ELSE formula applied · auto-normalized to ₹</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-      </div>{/* end dashboard */}
+        {/* Caption bar — inside the dashboard */}
+        <div
+          className="shrink-0 mx-4 mb-3 flex items-center gap-2.5 px-4 py-2.5 rounded-xl border pointer-events-none"
+          style={{
+            background: "#f0f9ff",
+            borderColor: "#bae6fd",
+            color: "#0c4a6e",
+            transition: "opacity 0.4s ease",
+            opacity: caption ? 1 : 0,
+          }}
+        >
+          <span
+            className="shrink-0 w-2 h-2 rounded-full animate-pulse"
+            style={{ background: "#0891b2", boxShadow: "0 0 8px rgba(8,145,178,0.5)" }}
+          />
+          <p className="text-[10.5px] font-medium leading-snug">{caption}</p>
+        </div>
+
+      </div>{/* end dashboard shell */}
+
     </div>
   );
 }

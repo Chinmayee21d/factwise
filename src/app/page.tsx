@@ -1,32 +1,26 @@
 'use client';
 
-import { Header } from '@/components/ui/header-2';
+import dynamic from 'next/dynamic';
 import Hero from '@/components/Hero';
 import StatsStrip from '@/components/StatsStrip';
-import ProblemSection from '@/components/ProblemSection';
-// import BentoGrid from '@/components/BentoGrid';
 
-// import PersonaSection from '@/components/PersonaSection';
-// import ImpactBento from '@/components/ImpactBento';
-import IntegrationsShowcase from '@/components/IntegrationsShowcase';
-
-import IndustryMarquee from '@/components/IndustryMarquee';
-import { ExpandingIndustrySection } from '@/components/ExpandingIndustryCards';
-// import ParallaxMethodology from '@/components/ParallaxMethodology';
-
-// import FAQSection from '@/components/FAQSection';
-// import CTASection from '@/components/CTASection';
-import Testimonials from '@/components/testimonials';
-// import CaseStudies from '@/components/CaseStudies';
-import ModernCaseStudies from '@/components/ModernCaseStudies';
-import { FlickeringFooter } from '@/components/ui/flickering-footer';
-import ProductHubAnimation from '@/components/productflow';
-import ProcurementModules from '@/components/ProcurementModules';
-import ImplementationRoadmap from '@/components/ImplementationRoadmap';
-import MethodologySection from '@/components/Methodology';
-// import ProcurementJourney from '@/components/ProcurementJourney';
-// import ContractManufacturerFlow from '@/components/ContractManufacturerFlow';
-// import PostAwardExecution from '@/components/PostAwardExecution';
+// Everything below the fold is lazy-loaded so it doesn't block the initial bundle
+const ProblemSection       = dynamic(() => import('@/components/ProblemSection'),        { ssr: false });
+const MethodologySection   = dynamic(() => import('@/components/Methodology'),            { ssr: false });
+const ProductHubAnimation  = dynamic(() => import('@/components/productflow'),            { ssr: false });
+const ProcurementModules   = dynamic(() => import('@/components/ProcurementModules'),     { ssr: false });
+const ImplementationRoadmap = dynamic(() => import('@/components/ImplementationRoadmap'), { ssr: false });
+const IntegrationsShowcase = dynamic(() => import('@/components/IntegrationsShowcase'),   { ssr: false });
+const Testimonials         = dynamic(() => import('@/components/testimonials'),           { ssr: false });
+const ModernCaseStudies    = dynamic(() => import('@/components/ModernCaseStudies'),      { ssr: false });
+const ExpandingIndustrySection = dynamic(
+  () => import('@/components/ExpandingIndustryCards').then(m => ({ default: m.ExpandingIndustrySection })),
+  { ssr: false }
+);
+const FlickeringFooter     = dynamic(
+  () => import('@/components/ui/flickering-footer').then(m => ({ default: m.FlickeringFooter })),
+  { ssr: false }
+);
 
 export default function Home() {
   return (
@@ -43,47 +37,20 @@ export default function Home() {
         margin: '0',
       }}
     >
-      {/* 1: Hero */}
+      {/* Above fold — loaded eagerly */}
       <Hero />
-
-      {/* 2: Stats Strip */}
       <StatsStrip />
 
-      {/* 3: Problem Section */}
+      {/* Below fold — lazy loaded */}
       <ProblemSection />
-
-      {/* 4: Methodology Section */}
-      {/* <ParallaxMethodology />*/}
       <MethodologySection />
-      {/* 4: Product Hub Animation */}
       <ProductHubAnimation />
-
-      {/* New: Core Procurement Modules */}
       <ProcurementModules />
-
-      {/* 5: Implementation Roadmap */}
       <ImplementationRoadmap />
-
-      {/* 6: Persona Deep Dive */}
-      {/* <PersonaSection />  */}
-
-      {/* 7
-      <ImpactBento /> */}
-
-      {/* 8 */}
       <IntegrationsShowcase />
-
-      {/* 9: Testimonials */}
       <Testimonials />
-
-      {/* 10: Case Studies */}
-
       <ModernCaseStudies />
-      {/* 10 */}
-      {/* <IndustryMarquee /> */}
       <ExpandingIndustrySection />
-
-
       <FlickeringFooter />
     </main>
   );

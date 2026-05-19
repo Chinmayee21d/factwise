@@ -11,20 +11,20 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "default", size = "default", className = "", children, ...props }, ref) => {
     const baseStyles = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
-    
+
     const variants = {
       default: "bg-white text-black hover:bg-gray-100",
       secondary: "bg-gray-800 text-white hover:bg-gray-700",
       ghost: "hover:bg-gray-800/50 text-white",
       gradient: "bg-gradient-to-b from-white via-white/95 to-white/60 text-black hover:scale-105 active:scale-95"
     };
-    
+
     const sizes = {
       default: "h-10 px-4 py-2 text-sm",
       sm: "h-10 px-5 text-sm",
       lg: "h-12 px-8 text-base"
     };
-    
+
     return (
       <button
         ref={ref}
@@ -107,7 +107,7 @@ const Navigation = React.memo(() => {
             <img src="/logo.png" alt="FactWise Logo" className="h-8 w-auto" />
             <span className="text-xl font-semibold text-white">FactWise</span>
           </div>
-          
+
           <div className="hidden md:flex items-center justify-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <a href="#getting-started" className="text-sm text-white/60 hover:text-white transition-colors">
               Getting started
@@ -278,7 +278,7 @@ const Hero = React.memo(() => {
             loading="eager"
           />
         </div>
-        
+
         <div className="relative z-10">
           <img
             src="https://i.postimg.cc/SKcdVTr1/Dashboard2.png"

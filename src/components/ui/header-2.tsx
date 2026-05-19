@@ -12,7 +12,10 @@ import { usePathname } from 'next/navigation';
 
 export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark' }) {
 	const pathname = usePathname();
-	const theme = pathname === '/about' ? 'light' : propTheme;
+	// Pages with white/light backgrounds need dark nav text from the start
+	const LIGHT_PAGES = ['/about', '/blog', '/pricing', '/platform', '/demo', '/enterprise'];
+	const isLightPage = LIGHT_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'));
+	const theme = isLightPage ? 'light' : propTheme;
 	const [open, setOpen] = React.useState(false);
 	const [mounted, setMounted] = React.useState(false);
 	const scrolled = useScroll(20);
@@ -34,6 +37,10 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 		{
 			label: 'Pricing',
 			href: '/pricing',
+		},
+		{
+			label: 'Blog',
+			href: '/blog',
 		},
 		{
 			label: 'About Us',
@@ -71,12 +78,12 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 				{
 					'opacity-0': !mounted,
 					'opacity-100': mounted,
-					// Initial: Transparent
-					'top-0 bg-transparent py-4 md:max-w-[1800px]': !scrolled && !open,
-					// Scrolled: White Floating Pill
-					'top-4 md:top-6 rounded-2xl md:max-w-7xl border border-black/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.08)] bg-white/95 backdrop-blur-xl py-1': scrolled && !open,
+					// Initial: Transparent, full width, no border
+					'top-0 bg-transparent py-4 md:max-w-[1800px] border border-transparent': !scrolled && !open,
+					// Scrolled: White Floating Pill with subtle border
+					'top-4 md:top-6 rounded-2xl md:max-w-7xl border border-black/5 shadow-[0_8px_32px_rgba(0,0,0,0.06)] bg-white/95 backdrop-blur-xl py-1': scrolled && !open,
 					// Mobile Open state
-					'top-0 w-full h-full bg-white': open,
+					'top-0 w-full h-full bg-white border-transparent': open,
 				},
 			)}
 		>
@@ -104,12 +111,13 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 					{links.map((link, i) => (
 						<div key={i} className="relative group">
 							<a
-								className={buttonVariants({ 
-									variant: 'ghost', 
+								className={buttonVariants({
+									variant: 'ghost',
 									className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium', {
 										'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
 										'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
-									}) 								})}
+									})
+								})}
 								href={link.href}
 							>
 								{link.label}
@@ -137,8 +145,8 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 						"bg-white/20": !scrolled && !open && theme === 'dark',
 						"bg-black/10": scrolled || open || theme === 'light',
 					})} />
-					<Button 
-						variant="ghost" 
+					<Button
+						variant="ghost"
 						className={cn("text-[14px] font-medium transition-colors duration-500", {
 							"text-white/80 hover:text-white": !scrolled && !open && theme === 'dark',
 							"text-black/60 hover:text-black": scrolled || open || theme === 'light',

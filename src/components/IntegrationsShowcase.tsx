@@ -48,37 +48,67 @@ export default function IntegrationsShowcase() {
 
   // Pill node helper
   const Pill = ({ x, y, w, h = 36, label, rx = 9, large = false }: { x: number, y: number, w: number, h?: number, label: string, rx?: number, large?: boolean }) => {
-    const fill = large ? "#4F46E5" : "#4338CA";
-    const textColor = "white";
-    const fontSize = large ? 17 : 13;
-    const fontWeight = large ? "700" : "500";
+    const defaultFill = large ? "#3666ff" : "#FFFFFF";
+    const defaultStroke = large ? "none" : "#E2E8F0";
+    const defaultText = large ? "#FFFFFF" : "#475569";
+    const fontSize = large ? 19 : 13;
+    const fontWeight = large ? "800" : "600";
+
     return (
       <g className="anim-node" style={{ cursor: "default" }}>
         {large && (
           <>
-            <rect x={x - 18} y={y - h / 2 - 20} width={w + 36} height={h + 40} rx={22}
-              fill="#4338CA" opacity={0.08} />
-            <rect x={x - 10} y={y - h / 2 - 12} width={w + 20} height={h + 24} rx={18}
-              fill="#4338CA" opacity={0.1} />
+            {/* Soft pulsing glow behind main hub */}
+            <rect x={x - 22} y={y - h / 2 - 22} width={w + 44} height={h + 44} rx={22}
+              fill="#3666ff" opacity={0.06} />
+            <rect x={x - 12} y={y - h / 2 - 12} width={w + 24} height={h + 24} rx={18}
+              fill="#3666ff" opacity={0.1} />
           </>
         )}
         <rect
           x={x} y={y - h / 2} width={w} height={h} rx={rx}
-          fill={fill}
-          style={{ transition: "filter 0.2s ease" }}
-          onMouseEnter={e => (e.currentTarget.style.filter = "brightness(1.18) saturate(1.1)")}
-          onMouseLeave={e => (e.currentTarget.style.filter = "none")}
+          fill={defaultFill}
+          stroke={defaultStroke}
+          strokeWidth={large ? 0 : 1.5}
+          style={{ transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)" }}
+          onMouseEnter={e => {
+            if (!large) {
+              e.currentTarget.style.stroke = "#3666ff";
+              e.currentTarget.style.fill = "#F8FAFF";
+              const txt = e.currentTarget.parentElement?.querySelector("text");
+              if (txt) {
+                txt.style.fill = "#3666ff";
+                txt.style.fontWeight = "700";
+              }
+            } else {
+              e.currentTarget.style.filter = "brightness(1.08) saturate(1.05)";
+            }
+          }}
+          onMouseLeave={e => {
+            if (!large) {
+              e.currentTarget.style.stroke = defaultStroke;
+              e.currentTarget.style.fill = defaultFill;
+              const txt = e.currentTarget.parentElement?.querySelector("text");
+              if (txt) {
+                txt.style.fill = defaultText;
+                txt.style.fontWeight = "600";
+              }
+            } else {
+              e.currentTarget.style.filter = "none";
+            }
+          }}
         />
         {large && (
-          <rect x={x + 1} y={y - h / 2 + 1} width={w - 2} height={h * 0.38} rx={rx}
-            fill="rgba(255,255,255,0.08)" pointerEvents="none" />
+          <rect x={x + 1} y={y - h / 2 + 1} width={w - 2} height={h * 0.35} rx={rx}
+            fill="rgba(255,255,255,0.12)" pointerEvents="none" />
         )}
         <text
           x={x + w / 2} y={y}
           dominantBaseline="central" textAnchor="middle"
-          fill={textColor} fontSize={fontSize}
+          fill={defaultText} fontSize={fontSize}
           fontFamily="Inter, sans-serif" fontWeight={fontWeight}
           letterSpacing="-0.015em"
+          style={{ transition: "all 0.3s cubic-bezier(0.22, 1, 0.36, 1)", pointerEvents: "none" }}
         >
           {label}
         </text>
@@ -133,7 +163,7 @@ export default function IntegrationsShowcase() {
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none opacity-[0.4]"
             style={{
-              backgroundImage: "radial-gradient(circle, rgba(99,102,241,0.22) 1.5px, transparent 1.5px)",
+              backgroundImage: "radial-gradient(circle, rgba(54, 102, 255, 0.12) 1.5px, transparent 1.5px)",
               backgroundSize: "26px 26px",
             }}
           />
@@ -144,8 +174,53 @@ export default function IntegrationsShowcase() {
               className="w-full max-w-[945px] mx-auto overflow-visible block"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <style dangerouslySetInnerHTML={{ __html: `
+                @keyframes flipCard3D {
+                  0%, 35% {
+                    transform: rotateY(0deg);
+                  }
+                  45%, 85% {
+                    transform: rotateY(180deg);
+                  }
+                  95%, 100% {
+                    transform: rotateY(360deg);
+                  }
+                }
+                .flip-container {
+                  perspective: 1000px;
+                  width: 48px;
+                  height: 48px;
+                }
+                .flip-card-inner {
+                  position: relative;
+                  width: 100%;
+                  height: 100%;
+                  text-align: center;
+                  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+                  transform-style: preserve-3d;
+                  animation: flipCard3D 6s infinite ease-in-out;
+                }
+                .flip-card-front, .flip-card-back {
+                  position: absolute;
+                  width: 100%;
+                  height: 100%;
+                  backface-visibility: hidden;
+                  border-radius: 10px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+                }
+                .flip-card-front {
+                  transform: rotateY(0deg);
+                }
+                .flip-card-back {
+                  transform: rotateY(180deg);
+                }
+              `}} />
+
               {/* ── Dashed connection paths ── */}
-              <g fill="none" stroke="#818CF8" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.72">
+              <g fill="none" stroke="#94A3B8" strokeWidth="1.5" strokeDasharray="5 4" opacity="0.48">
                 <path d="M 192,64  H 736" />
                 <path d="M 334,64  V 150" />
                 <path d="M 730,64  V 150" />
@@ -162,21 +237,21 @@ export default function IntegrationsShowcase() {
               </g>
 
               {/* ── Junction dots ── */}
-              <circle cx="334" cy="64"  r="4" fill="#6366F1" />
-              <circle cx="730" cy="64"  r="4" fill="#6366F1" />
-              <circle cx="530" cy="388" r="4" fill="#6366F1" />
+              <circle cx="334" cy="64"  r="4" fill="#3666ff" />
+              <circle cx="730" cy="64"  r="4" fill="#3666ff" />
+              <circle cx="530" cy="388" r="4" fill="#3666ff" />
 
               {/* ── Animated traveling dots ── */}
               {PATHS.map(({ d, dur, begin, begin2 }, i) => (
                 <g key={i}>
-                  <circle r="3.5" fill="#6366F1" opacity="0">
+                  <circle r="3.5" fill="#3666ff" opacity="0">
                     <animateMotion path={d} dur={`${dur}s`} repeatCount="indefinite" begin={`${begin}s`} />
                     <animate attributeName="opacity" values="0;1;1;0"
                       keyTimes="0;0.07;0.93;1" dur={`${dur}s`}
                       repeatCount="indefinite" begin={`${begin}s`} />
                   </circle>
                   {begin2 !== undefined && (
-                    <circle r="3.5" fill="#6366F1" opacity="0">
+                    <circle r="3.5" fill="#3666ff" opacity="0">
                       <animateMotion path={d} dur={`${dur}s`} repeatCount="indefinite" begin={`${begin2}s`} />
                       <animate attributeName="opacity" values="0;1;1;0"
                         keyTimes="0;0.07;0.93;1" dur={`${dur}s`}
@@ -188,20 +263,69 @@ export default function IntegrationsShowcase() {
 
               {/* ── App icon grid (far left) ── */}
               <rect x="5" y="217" width="123" height="110" rx="14"
-                fill="none" stroke="#818CF8" strokeWidth="1" strokeDasharray="5 4" opacity="0.4" />
+                fill="none" stroke="#3666ff" strokeWidth="1.5" strokeDasharray="5 4" opacity="0.25" />
               {[
-                { x: 12, y: 222, bg: "#312E81", label: "X",  tc: "#a5b4fc", fs: 20 },
-                { x: 68, y: 222, bg: "#065F46", label: "↑",  tc: "#6EE7B7", fs: 22 },
-                { x: 12, y: 278, bg: "#991B1B", label: "RC", tc: "#FCA5A5", fs: 13, fw: "700" },
-                { x: 68, y: 278, bg: "#5B21B6", label: "▶",  tc: "#DDD6FE", fs: 18 },
-              ].map(({ x, y, bg, label, tc, fs, fw = "400" }, i) => (
-                <g key={i} className="anim-node" style={{ cursor: "default" }}>
-                  <rect x={x} y={y} width={48} height={48} rx={10} fill={bg} />
-                  <text x={x + 24} y={y + 24} dominantBaseline="central" textAnchor="middle"
-                    fill={tc} fontSize={fs} fontFamily="Inter, sans-serif" fontWeight={fw}>
-                    {label}
-                  </text>
-                </g>
+                {
+                  x: 12,
+                  y: 222,
+                  front: { bg: "#312E81", label: "X", tc: "#a5b4fc", fs: 20, fw: "400" },
+                  back: { bg: "#0052CC", label: "JR", tc: "#ffffff", fs: 16, fw: "700" },
+                  delay: "0s"
+                },
+                {
+                  x: 68,
+                  y: 222,
+                  front: { bg: "#065F46", label: "↑", tc: "#6EE7B7", fs: 22, fw: "400" },
+                  back: { bg: "#FF7A59", label: "HS", tc: "#ffffff", fs: 16, fw: "700" },
+                  delay: "0.3s"
+                },
+                {
+                  x: 12,
+                  y: 278,
+                  front: { bg: "#991B1B", label: "RC", tc: "#FCA5A5", fs: 13, fw: "700" },
+                  back: { bg: "#4A154B", label: "SL", tc: "#ffffff", fs: 16, fw: "700" },
+                  delay: "0.6s"
+                },
+                {
+                  x: 68,
+                  y: 278,
+                  front: { bg: "#5B21B6", label: "▶", tc: "#DDD6FE", fs: 18, fw: "400" },
+                  back: { bg: "#635BFF", label: "ST", tc: "#ffffff", fs: 16, fw: "700" },
+                  delay: "0.9s"
+                }
+              ].map(({ x, y, front, back, delay }, i) => (
+                <foreignObject key={i} x={x} y={y} width="48" height="48" className="anim-node">
+                  <div className="flip-container select-none">
+                    <div className="flip-card-inner" style={{ animationDelay: delay }}>
+                      {/* Front Face */}
+                      <div className="flip-card-front" style={{ backgroundColor: front.bg }}>
+                        <span 
+                          style={{ 
+                            color: front.tc, 
+                            fontSize: `${front.fs}px`, 
+                            fontWeight: front.fw,
+                            fontFamily: "Inter, sans-serif"
+                          }}
+                        >
+                          {front.label}
+                        </span>
+                      </div>
+                      {/* Back Face */}
+                      <div className="flip-card-back" style={{ backgroundColor: back.bg }}>
+                        <span 
+                          style={{ 
+                            color: back.tc, 
+                            fontSize: `${back.fs}px`, 
+                            fontWeight: back.fw,
+                            fontFamily: "Inter, sans-serif"
+                          }}
+                        >
+                          {back.label}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </foreignObject>
               ))}
 
               {/* ── TOP ROW (cy=64) ── */}
@@ -219,18 +343,28 @@ export default function IntegrationsShowcase() {
               <Pill x={234}  y={270} w={158} label="App Marketplace ↗" />
 
               {/* CENTER HUB — FactWise */}
-              <Pill x={468} y={270} w={124} h={52} label="FactWise" rx={14} large />
+              <Pill x={456} y={270} w={148} h={76} rx={18} label="FactWise" large />
 
               <Pill x={670}  y={270} w={162} label="Data Pipeline" />
 
               {/* Snowflake-style icon */}
-              <g className="anim-node">
+              <g className="anim-node" style={{ cursor: "default" }}>
                 <rect x={876} y={248} width={60} height={44} rx={11}
-                  fill="#EFF6FF" stroke="#BFDBFE" strokeWidth={1.5} />
-                <line x1={906} y1={256} x2={906} y2={284} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
-                <line x1={894} y1={263} x2={918} y2={277} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
-                <line x1={918} y1={263} x2={894} y2={277} stroke="#3B82F6" strokeWidth={2.5} strokeLinecap="round" />
-                <circle cx={906} cy={270} r={3.5} fill="#60A5FA" />
+                  fill="#FFFFFF" stroke="#E2E8F0" strokeWidth={1.5}
+                  style={{ transition: "stroke 0.3s ease, fill 0.3s ease" }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.stroke = "#3666ff";
+                    e.currentTarget.style.fill = "#F8FAFF";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.stroke = "#E2E8F0";
+                    e.currentTarget.style.fill = "#FFFFFF";
+                  }}
+                />
+                <line x1={906} y1={256} x2={906} y2={284} stroke="#3666ff" strokeWidth={2.5} strokeLinecap="round" pointerEvents="none" />
+                <line x1={894} y1={263} x2={918} y2={277} stroke="#3666ff" strokeWidth={2.5} strokeLinecap="round" pointerEvents="none" />
+                <line x1={918} y1={263} x2={894} y2={277} stroke="#3666ff" strokeWidth={2.5} strokeLinecap="round" pointerEvents="none" />
+                <circle cx={906} cy={270} r={3.5} fill="#3666ff" pointerEvents="none" />
               </g>
 
               {/* ── ORCHESTRATION (cy=370) ── */}

@@ -1,378 +1,960 @@
 "use client";
-
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BarChart3, 
-  Plus, 
-  Search, 
-  Filter, 
-  MoreVertical, 
-  X, 
-  ChevronDown, 
-  Check, 
-  ArrowLeft,
-  ChevronRight,
-  Info,
-  LineChart,
-  PieChart,
-  MessageSquare,
-  Sparkles,
-  TrendingUp,
-  Target,
-  ArrowUpRight
+  Compass, BarChart3, Grid3x3, Plus, TrendingUp, TrendingDown, 
+  Shield, Coins, Activity, PieChart, Target, Star, Check, 
+  HelpCircle, Award, Zap, Upload, Eye, Database, Layers
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import Image from 'next/image';
 
-export default function AnalyticsAnimation() {
-  const [step, setStep] = useState(0); // 0: Dashboard, 1: Deep Dive, 2: ChatWise Interaction
-  const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
-  const [isClicking, setIsClicking] = useState(false);
-  const [dataPoints, setDataPoints] = useState([30, 45, 60, 40, 75, 55, 90]);
-  const [activeMetric, setActiveMetric] = useState(0);
+/* ============ DATA ============ */
+const VENDORS = [
+  { code: "BS", name: "Bharat Steel",     final: 124400, base: 132100, delta: -5.8, color: "#6366f1", best: true,
+    perf: { price: 92, otd: 96, qty: 88, qual: 95, risk: 84 } },
+  { code: "SK", name: "SKF Engineering",  final: 128900, base: 130200, delta: -1.0, color: "#06b6d4", best: false,
+    perf: { price: 76, otd: 88, qty: 82, qual: 90, risk: 78 } },
+  { code: "TM", name: "Timken Co.",       final: 131600, base: 129400, delta: +1.7, color: "#8b5cf6", best: false,
+    perf: { price: 64, otd: 92, qty: 86, qual: 88, risk: 80 } },
+  { code: "NK", name: "Nakamura Metals",  final: 134200, base: 138900, delta: -3.4, color: "#ec4899", best: false,
+    perf: { price: 58, otd: 84, qty: 78, qual: 82, risk: 72 } },
+];
 
-  const containerRef = useRef<HTMLDivElement>(null);
+const MONTHS = ["J","F","M","A","M","J","J","A","S","O","N","D"];
 
-  const metrics = [
-    { label: 'Cost Savings', value: '$2.4M', trend: '+18%', color: 'emerald' },
-    { label: 'Vendor Score', value: '94/100', trend: '+12%', color: 'blue' },
-    { label: 'Cycle Time', value: '3.2 Days', trend: '-24%', color: 'indigo' },
+// Spend categories for donut chart
+const SPEND = [
+  { cat: "Direct Materials",  value: 1240, color: "#6366f1" },
+  { cat: "Indirect Materials",value: 620,  color: "#06b6d4" },
+  { cat: "Logistics",         value: 380,  color: "#f59e0b" },
+  { cat: "Operations",        value: 280,  color: "#10b981" },
+  { cat: "Capex",             value: 180,  color: "#ec4899" },
+];
+
+// Live KPIs flip from red/amber → green as data lands
+const KPIS = [
+  { label: "Margin Focus",  red: "-2.4%",  green: "+3.1%", icon: Shield,  tone: "rose" },
+  { label: "Cycle Time",   red: "14 days", green: "6 days", icon: Activity, tone: "amber" },
+  { label: "PO Accuracy",  red: "82%",    green: "98%",   icon: Target,  tone: "cyan" },
+  { label: "Spend / SKU",  red: "$2.1K",  green: "$1.7K", icon: Coins,   tone: "pink" },
+];
+
+// Vendor performance scorecard radar dimensions
+const RADAR_DIMS = [
+  { key: "price", label: "Price"   },
+  { key: "otd",   label: "OTD"     },
+  { key: "qty",   label: "Quantity" },
+  { key: "qual",  label: "Quality"  },
+  { key: "risk",  label: "Risk"     },
+];
+
+/* ============ COUNTER HOOK ============ */
+function useCount(target: number, active: boolean, dur = 1000) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (!active) { setV(0); return; }
+    const t0 = performance.now();
+    let raf: number;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active, dur]);
+  return v;
+}
+
+/* ============ RADAR HELPERS ============ */
+function radarPoints(perf: Record<string, number>, dims: typeof RADAR_DIMS, cx = 90, cy = 90, r = 60) {
+  const step = (Math.PI * 2) / dims.length;
+  const pts = dims.map((d, i) => {
+    const a = -Math.PI / 2 + i * step;
+    const val = (perf[d.key] || 0) / 100;
+    return [cx + Math.cos(a) * r * val, cy + Math.sin(a) * r * val];
+  });
+  return pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" ") + " Z";
+}
+
+function radarAxis(dims: typeof RADAR_DIMS, cx = 90, cy = 90, r = 60) {
+  const step = (Math.PI * 2) / dims.length;
+  return dims.map((d, i) => {
+    const a = -Math.PI / 2 + i * step;
+    return {
+      x1: cx, y1: cy,
+      x2: cx + Math.cos(a) * r, y2: cy + Math.sin(a) * r,
+      lx: cx + Math.cos(a) * (r + 14), ly: cy + Math.sin(a) * (r + 14),
+      label: d.label,
+      anchor: (Math.abs(Math.cos(a)) < 0.2 ? "middle" : (Math.cos(a) > 0 ? "start" : "end")) as "middle" | "start" | "end"
+    };
+  });
+}
+
+/* ============ STAT COMPONENT ============ */
+function StatCard({ icon: Icon, num, label, active, tone, delta, deltaDir }: any) {
+  return (
+    <div className={cn(
+      "relative overflow-hidden bg-white/70 backdrop-blur-md border rounded-xl p-2.5 transition-all duration-300",
+      active 
+        ? "border-indigo-200 shadow-[0_8px_20px_-6px_rgba(99,102,241,0.12)] scale-[1.01]" 
+        : "border-slate-100/80 shadow-xs"
+    )}>
+      {active && (
+        <div className={cn(
+          "absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r",
+          tone === "green" ? "from-emerald-400 to-teal-500" :
+          tone === "cyan" ? "from-cyan-400 to-indigo-500" :
+          "from-indigo-500 to-purple-600"
+        )} />
+      )}
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest leading-none">{label}</span>
+        <div className={cn("w-5 h-5 rounded-lg flex items-center justify-center shadow-xs transition-colors shrink-0", 
+          tone === "green" ? "bg-emerald-50 text-emerald-600 border border-emerald-100/50" :
+          tone === "cyan" ? "bg-cyan-50 text-cyan-600 border border-cyan-100/50" :
+          "bg-indigo-50 text-indigo-600 border border-indigo-100/50"
+        )}>
+          <Icon className="w-3.5 h-3.5" />
+        </div>
+      </div>
+      <div className="text-xs font-black text-slate-800 tracking-tight leading-none mt-0.5">{num}</div>
+      {delta && (
+        <div className={cn(
+          "text-[8.5px] font-black mt-1.5 flex items-center gap-0.5 leading-none",
+          deltaDir === "down" ? "text-emerald-600" : "text-rose-600"
+        )}>
+          {deltaDir === "down" ? <TrendingDown className="w-2.5 h-2.5" /> : <TrendingUp className="w-2.5 h-2.5" />}
+          {delta}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============ PILL COMPONENT ============ */
+function PillDeck({ icon: Icon, label, lit }: any) {
+  return (
+    <div className={cn(
+      "flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all duration-300 relative overflow-hidden",
+      lit 
+        ? "border-indigo-200 bg-indigo-50/40 shadow-[0_4px_12px_-3px_rgba(99,102,241,0.12)] ring-1 ring-indigo-500/5" 
+        : "border-slate-100 bg-white/60 hover:bg-white hover:border-slate-200 shadow-xs"
+    )}>
+      {lit && (
+        <div className="absolute top-0 left-0 bottom-0 w-[3px] bg-indigo-500" />
+      )}
+      <div className={cn("w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-300",
+        lit ? "bg-indigo-100 text-indigo-600" : "bg-slate-100 text-slate-400"
+      )}>
+        <Icon className="w-3.5 h-3.5" />
+      </div>
+      <span className={cn("text-[9px] font-bold tracking-tight transition-colors duration-300",
+        lit ? "text-slate-800 font-extrabold" : "text-slate-500"
+      )}>{label}</span>
+      <div className={cn("w-1.5 h-1.5 rounded-full ml-auto transition-all shrink-0 duration-300",
+        lit ? "bg-indigo-500 shadow-[0_0_8px_#6366f1]" : "bg-slate-200"
+      )} />
+    </div>
+  );
+}
+
+/* ============ MAIN CLASS COMPONENT ============ */
+export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { speed?: number; onPhaseChange?: (phase: number) => void }) {
+  const [phase, setPhase] = useState(0);
+  const [qmarks, setQmarks] = useState(0);
+  const [bidRows, setBidRows] = useState(0);
+  const [bidPrices, setBidPrices] = useState([0,0,0,0]);
+  const [bidScores, setBidScores] = useState([0,0,0,0]);
+  const [chartIn, setChartIn] = useState(false);
+  const [perfRows, setPerfRows] = useState(0);
+  const [perfShape, setPerfShape] = useState(false);
+  const [spendRows, setSpendRows] = useState(0);
+  const [donutFill, setDonutFill] = useState(0);
+  const [kpiTiles, setKpiTiles] = useState(0);
+  const [kpiGood, setKpiGood] = useState(0);
+  const [recIn, setRecIn] = useState(false);
+  const [recRows, setRecRows] = useState(0);
+  const [confidence, setConfidence] = useState(0);
+  const [awardState, setAwardState] = useState(0); // 0 hidden | 1 in | 2 pulse | 3 done
+  const [finaleChips, setFinaleChips] = useState(0);
+  
+  const [lit, setLit] = useState({ bids: false, history: false, perf: false, spend: false, kpi: false });
+
+  const cancelRef = useRef(false);
+
+  useEffect(() => {
+    cancelRef.current = false;
+    const speedMul = Math.max(0.3, Number(speed) || 1);
+    const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms / speedMul));
+
+    async function loop() {
+      while (!cancelRef.current) {
+        // Reset
+        setPhase(0); setQmarks(0);
+        setBidRows(0); setBidPrices([0,0,0,0]); setBidScores([0,0,0,0]);
+        setChartIn(false);
+        setPerfRows(0); setPerfShape(false);
+        setSpendRows(0); setDonutFill(0);
+        setKpiTiles(0); setKpiGood(0);
+        setRecIn(false); setRecRows(0); setConfidence(0); setAwardState(0);
+        setFinaleChips(0);
+        setLit({ bids: false, history: false, perf: false, spend: false, kpi: false });
+        onPhaseChange?.(0);
+        await sleep(400);
+
+        // 1. GUESS
+        setPhase(1); onPhaseChange?.(1);
+        for (let i = 1; i <= 8; i++) {
+          if (cancelRef.current) return;
+          setQmarks(i);
+          await sleep(160);
+        }
+        await sleep(2400);
+
+        // 2. SIGNAL (short trans)
+        setPhase(2); onPhaseChange?.(2);
+        await sleep(1200);
+
+        // 3. BIDS
+        setPhase(3); onPhaseChange?.(3);
+        setLit(s => ({ ...s, bids: true }));
+        for (let i = 1; i <= VENDORS.length; i++) {
+          if (cancelRef.current) return;
+          setBidRows(i);
+          await sleep(320);
+        }
+        for (let step = 0; step <= 16; step++) {
+          if (cancelRef.current) return;
+          const t = step / 16;
+          const eased = 1 - Math.pow(1 - t, 3);
+          setBidPrices(VENDORS.map(v => Math.round(v.final * eased + v.base * (1 - eased))));
+          await sleep(60);
+        }
+        const maxPrice = Math.max(...VENDORS.map(v => v.final));
+        const minPrice = Math.min(...VENDORS.map(v => v.final));
+        setBidScores(VENDORS.map(v => Math.round(100 - ((v.final - minPrice) / (maxPrice - minPrice)) * 50)));
+        await sleep(2400);
+
+        // 4. HISTORY
+        setPhase(4); onPhaseChange?.(4);
+        setLit(s => ({ ...s, history: true }));
+        setChartIn(true);
+        await sleep(3200);
+
+        // 5. VENDOR PERFORMANCE
+        setPhase(5); onPhaseChange?.(5);
+        setLit(s => ({ ...s, perf: true }));
+        setPerfShape(true);
+        for (let i = 1; i <= RADAR_DIMS.length; i++) {
+          if (cancelRef.current) return;
+          setPerfRows(i);
+          await sleep(280);
+        }
+        await sleep(2400);
+
+        // 6. SPEND
+        setPhase(6); onPhaseChange?.(6);
+        setLit(s => ({ ...s, spend: true }));
+        const total = SPEND.reduce((s, x) => s + x.value, 0);
+        let cum = 0;
+        for (let i = 0; i < SPEND.length; i++) {
+          if (cancelRef.current) return;
+          cum += SPEND[i].value;
+          setDonutFill(cum);
+          setSpendRows(i + 1);
+          await sleep(380);
+        }
+        await sleep(2000);
+
+        // 7. KPI
+        setPhase(7); onPhaseChange?.(7);
+        setLit(s => ({ ...s, kpi: true }));
+        for (let i = 1; i <= KPIS.length; i++) {
+          if (cancelRef.current) return;
+          setKpiTiles(i);
+          await sleep(220);
+        }
+        await sleep(600);
+        for (let i = 1; i <= KPIS.length; i++) {
+          if (cancelRef.current) return;
+          setKpiGood(i);
+          await sleep(380);
+        }
+        await sleep(2000);
+
+        // 8. DECIDE
+        setPhase(8); onPhaseChange?.(8);
+        setRecIn(true);
+        await sleep(500);
+        for (let i = 1; i <= 3; i++) {
+          if (cancelRef.current) return;
+          setRecRows(i);
+          await sleep(320);
+        }
+        await sleep(300);
+        setConfidence(94);
+        await sleep(1400);
+        setAwardState(1); await sleep(350);
+        setAwardState(2); await sleep(1800);
+        setAwardState(3); await sleep(1400);
+
+        // 9. FINALE
+        setPhase(9); onPhaseChange?.(9);
+        for (let i = 1; i <= 4; i++) {
+          if (cancelRef.current) return;
+          setFinaleChips(i);
+          await sleep(180);
+        }
+        await sleep(4800);
+      }
+    }
+
+    loop();
+    return () => { cancelRef.current = true; };
+  }, [speed, onPhaseChange]);
+
+  /* ===== Captions ===== */
+  const captions: Record<number, string> = {
+    1: "Three vendors. Five plants. No clear answer. Decisions made on hunches.",
+    2: "FactWise turns on. Every operational signal consolidates instantly.",
+    3: "Real-time bid intelligence — quotes update across vendors as they land.",
+    4: "12 months of price history. Know what 'fair' really looks like.",
+    5: "Vendor performance: OTD, quality, risk — scored, ranked, compared.",
+    6: "Live spend visibility. Surfacing category and operations distribution YTD.",
+    7: "Margin protected. KPIs flip green. You see it before finance asks.",
+    8: "Award Bharat Steel — 94% confidence, recommendation logged.",
+    9: "Stop guessing. Start knowing.",
+  };
+
+  /* ===== Q-mark positions for SCENE 1 ===== */
+  const QMARK_POS = [
+    { x: 10, y: 12, s: 32, d: 0   },
+    { x: 78, y: 18, s: 26, d: 120 },
+    { x: 22, y: 70, s: 38, d: 240 },
+    { x: 80, y: 72, s: 30, d: 80  },
+    { x: 50, y: 8,  s: 22, d: 300 },
+    { x: 6,  y: 44, s: 28, d: 160 },
+    { x: 88, y: 48, s: 24, d: 200 },
+    { x: 44, y: 84, s: 20, d: 60  },
   ];
 
-  useGSAP(() => {
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 3 });
+  /* ===== History chart ===== */
+  const CHART_VB_W = 100, CHART_VB_H = 50;
+  const histMax = 145, histMin = 120;
+  const buildPath = (data: number[]) => {
+    const stepX = CHART_VB_W / (data.length - 1);
+    const pts = data.map((v, i) => [
+      i * stepX,
+      CHART_VB_H - ((v - histMin) / (histMax - histMin)) * CHART_VB_H
+    ]);
+    const line = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" ");
+    const fill = `${line} L ${CHART_VB_W.toFixed(2)} ${CHART_VB_H.toFixed(2)} L 0 ${CHART_VB_H.toFixed(2)} Z`;
+    return { line, fill, pts };
+  };
+  const HIST_BS = [142,138,135,131,128,130,127,131,128,126,125,124];
+  const HIST_SK = [134,133,134,132,131,132,130,131,130,129,129,129];
+  const bsChart = buildPath(HIST_BS);
+  const skChart = buildPath(HIST_SK);
 
-    // Initial state
-    tl.set({}, { onComplete: () => {
-      setStep(0);
-      setActiveMetric(0);
-      setCursorPos({ x: 50, y: 50 });
-    }});
+  /* ===== Radar geometry ===== */
+  const axes = useMemo(() => radarAxis(RADAR_DIMS, 90, 90, 60), []);
+  const ringRs = [15, 30, 45, 60];
+  const bsZero = useMemo(() => radarPoints({ price: 0, otd: 0, qty: 0, qual: 0, risk: 0 }, RADAR_DIMS, 90, 90, 60), []);
+  const skZero = bsZero;
+  const bsFull = useMemo(() => radarPoints(VENDORS[0].perf, RADAR_DIMS, 90, 90, 60), []);
+  const skFull = useMemo(() => radarPoints(VENDORS[1].perf, RADAR_DIMS, 90, 90, 60), []);
 
-    tl.to({}, { duration: 1.5 });
-
-    // 1. Move to "Cost Savings" Card
-    tl.to(cursorPos, {
-      x: 35,
-      y: 35,
-      duration: 1,
-      ease: "power2.inOut",
-      onUpdate: function() { setCursorPos({ x: this.targets()[0].x, y: this.targets()[0].y }); }
-    });
-    
-    tl.set({}, { onComplete: () => {
-      setIsClicking(true);
-      setActiveMetric(0);
-    }});
-    tl.to({}, { duration: 0.15 });
-    tl.set({}, { onComplete: () => setIsClicking(false) });
-    tl.to({}, { duration: 0.8 });
-
-    // 2. Move to "Vendor Score" Card
-    tl.to(cursorPos, {
-      x: 50,
-      y: 35,
-      duration: 0.8,
-      onUpdate: function() { setCursorPos({ x: this.targets()[0].x, y: this.targets()[0].y }); }
-    });
-    tl.set({}, { onComplete: () => {
-      setIsClicking(true);
-      setActiveMetric(1);
-      setDataPoints([50, 40, 70, 85, 60, 95, 80]);
-    }});
-    tl.to({}, { duration: 0.15 });
-    tl.set({}, { onComplete: () => setIsClicking(false) });
-    tl.to({}, { duration: 0.8 });
-
-    // 3. Move to ChatWise AI input
-    tl.to(cursorPos, {
-      x: 50,
-      y: 85,
-      duration: 1.2,
-      ease: "power2.inOut",
-      onUpdate: function() { setCursorPos({ x: this.targets()[0].x, y: this.targets()[0].y }); }
-    });
-    tl.set({}, { onComplete: () => {
-      setIsClicking(true);
-      setStep(2);
-    }});
-    tl.to({}, { duration: 0.15 });
-    tl.set({}, { onComplete: () => setIsClicking(false) });
-
-    tl.to({}, { duration: 4 });
-
-  }, { scope: containerRef });
+  /* ===== Donut geometry ===== */
+  const donutR = 64, donutCx = 85, donutCy = 85;
+  const donutCirc = 2 * Math.PI * donutR;
+  const totalSpend = SPEND.reduce((s, x) => s + x.value, 0); // 2700 → "$2.7M"
+  
+  let segStart = 0;
+  const segs = SPEND.map((s) => {
+    const frac = s.value / totalSpend;
+    const len = frac * donutCirc;
+    const offset = -((segStart / totalSpend) * donutCirc); // negative offset rotates clockwise
+    segStart += s.value;
+    return { color: s.color, len, offset, filled: donutFill >= segStart };
+  });
 
   return (
-    <div ref={containerRef} className="w-full h-full flex flex-col items-center justify-center p-4 lg:p-8 relative overflow-hidden">
+    <div className="w-full h-full flex items-center justify-center p-4 relative overflow-hidden bg-linear-to-br from-white via-slate-50 to-indigo-50/40">
       
-      {/* Background with same texture and gradients */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/ChatGPT Image May 15, 2026, 12_40_41 PM.png"
-          alt="Background Texture"
-          fill
-          className="object-cover opacity-30"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/90 via-white/80 to-blue-50/90" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-500/5 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.08),transparent_50%)]" />
-      </div>
+      {/* Visual background enhancements */}
+      <div className="absolute inset-0 opacity-[0.12] bg-[radial-gradient(#4f46e5_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-indigo-200/20 blur-3xl pointer-events-none animate-pulse duration-[8s]" />
+      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-emerald-200/10 blur-3xl pointer-events-none animate-pulse duration-[10s]" />
 
-      {/* Animated Cursor */}
-      <motion.div
-        className="absolute z-[100] pointer-events-none"
-        animate={{
-          left: `${cursorPos.x}%`,
-          top: `${cursorPos.y}%`,
-        }}
-        transition={{ duration: 0, ease: "linear" }}
-      >
-        <div className="relative">
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            className={cn("drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-transform", isClicking && "scale-90")}
-          >
-            <path
-              d="M3 3L10.07 19.97L12.58 12.58L19.97 10.07L3 3Z"
-              fill="white"
-              stroke="black"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </motion.div>
-
-      {/* Main Dashboard Window - Fixed 500px */}
-      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-200/50 overflow-hidden flex flex-col h-[500px] z-10 backdrop-blur-sm">
-        {/* Browser Top Bar - 28px */}
-        <div className="flex items-center justify-between px-3 py-1.5 bg-slate-50 border-b border-slate-200 h-[28px] flex-shrink-0">
+      <div className="relative w-full max-w-[691px] bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.12)] border border-slate-200/70 z-10 overflow-hidden flex flex-col" style={{ height: 552 }}>
+        
+        {/* Browser Chrome */}
+        <div className="flex items-center justify-between px-4 bg-slate-50/90 backdrop-blur-md border-b border-slate-100 shrink-0" style={{ height: 32 }}>
           <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
+            {["#FF5F56","#FFBD2E","#27C93F"].map(c => (
+              <div key={c} className="w-2.5 h-2.5 rounded-full shadow-xs transition-transform hover:scale-110" style={{ background: c }} />
+            ))}
           </div>
-          <div className="flex-1 max-w-md mx-4">
-            <div className="h-4 bg-white rounded border border-slate-200 flex items-center px-2 gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-100" />
-              <div className="text-[7px] text-slate-400 truncate font-mono">factwise.io/analytics/overview</div>
+          <div className="flex-1 max-w-xs mx-auto">
+            <div className="h-5 bg-white/80 backdrop-blur-md rounded-md border border-slate-200/60 flex items-center px-3 gap-1.5 shadow-2xs">
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+              <span className="text-[7.5px] text-slate-400 font-mono select-none tracking-tight">factwise.io/intelligence/award</span>
             </div>
           </div>
-          <div className="w-16" />
+          <div className="w-10 shrink-0" />
         </div>
 
-        <div className="flex-1 flex relative overflow-hidden min-h-0">
-          {/* Sidebar - 40px */}
-          <div className="w-10 bg-white border-r border-slate-100 flex flex-col items-center py-2 gap-2 flex-shrink-0">
-            <div className="w-6 h-6 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100">
-              <BarChart3 className="w-3 h-3" />
+        <div className="flex flex-1 min-h-0">
+          {/* Side rail */}
+          <div className="w-14 px-2 py-4 bg-slate-50/50 backdrop-blur-md border-r border-slate-100 flex flex-col items-center gap-3 shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <Compass className="w-4 h-4" />
             </div>
-            <div className="flex flex-col gap-2">
-              <div className="w-6 h-6 flex items-center justify-center text-slate-300"><Target className="w-3 h-3" /></div>
-              <div className="w-6 h-6 flex items-center justify-center text-slate-300"><TrendingUp className="w-3 h-3" /></div>
-              <div className="w-6 h-6 bg-indigo-500 text-white rounded-lg shadow-lg shadow-indigo-500/20 flex items-center justify-center"><Plus className="w-3 h-3" /></div>
+            <div className="w-8 h-8 rounded-xl text-slate-400 flex items-center justify-center hover:bg-slate-200/50 transition-colors duration-200">
+              <BarChart3 className="w-4 h-4" />
+            </div>
+            <div className="w-8 h-8 rounded-xl text-slate-400 flex items-center justify-center hover:bg-slate-200/50 transition-colors duration-200">
+              <Grid3x3 className="w-4 h-4" />
+            </div>
+            <div className="w-8 h-8 rounded-xl bg-indigo-50/60 text-indigo-500 border border-indigo-100/50 flex items-center justify-center transition-colors">
+              <Plus className="w-4 h-4" />
             </div>
           </div>
 
-          {/* Main Area */}
-          <div className="flex-1 flex flex-col bg-slate-50/30 overflow-hidden min-w-0">
-            {/* Page Header - 36px */}
-            <div className="px-3 py-1.5 flex items-center justify-between bg-white border-b border-slate-100 h-[36px] flex-shrink-0">
+          {/* Main content */}
+          <div className="flex-1 flex flex-col p-4 gap-3.5 min-w-0 overflow-hidden">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between shrink-0">
               <div>
-                <h2 className="text-[10px] font-bold text-slate-800 leading-tight">Intelligence Dashboard</h2>
-                <p className="text-[7px] text-slate-400 font-medium uppercase tracking-widest">Real-Time Insights</p>
+                <h3 className="text-[13px] font-extrabold text-slate-900 tracking-tight leading-none">Decision Intelligence</h3>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-[0.14em] mt-1">The Right Data at Every Decision Point</p>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="flex -space-x-1">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="w-4 h-4 rounded-full border border-white bg-slate-200" />
-                  ))}
-                </div>
-                <div className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">Live</div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-50 border border-indigo-100 rounded-full text-[8.5px] font-bold text-indigo-600 tracking-wide shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+                Live Engine
               </div>
             </div>
 
-            {/* Analytics Grid - Flexible */}
-            <div className="p-2 space-y-2 flex-1 overflow-hidden flex flex-col min-h-0">
-              <div className="grid grid-cols-3 gap-2 flex-shrink-0">
-                {metrics.map((m, i) => (
-                  <motion.div
-                    key={i}
-                    whileHover={{ scale: 1.02 }}
-                    animate={{ 
-                      scale: activeMetric === i ? 1.02 : 1,
-                      borderColor: activeMetric === i ? '#6366f1' : '#e2e8f0',
-                      backgroundColor: activeMetric === i ? '#ffffff' : '#f8fafc'
-                    }}
-                    className="p-2 rounded-lg border-2 shadow-sm transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">{m.label}</div>
-                      <div className={cn(
-                        "text-[7px] font-bold px-1 py-0.5 rounded",
-                        m.trend.startsWith('+') ? "bg-emerald-50 text-emerald-600" : m.trend.startsWith('-') ? "bg-indigo-50 text-indigo-600" : "bg-blue-50 text-blue-600"
-                      )}>{m.trend}</div>
-                    </div>
-                    <div className="text-[13px] font-black text-slate-800 tracking-tight">{m.value}</div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Main Chart Area - Flexible */}
-              <div className="flex-1 bg-white rounded-lg border border-slate-200/60 shadow-sm p-3 relative flex flex-col overflow-hidden min-h-0">
-                <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                  <div className="flex items-center gap-2">
-                    <div className="text-[9px] font-bold text-slate-800">
-                      {activeMetric === 0 ? 'Cost Savings Trend' : activeMetric === 1 ? 'Vendor Performance' : 'Cycle Time Analysis'}
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-[7px] font-bold rounded">Weekly</div>
-                      <div className="px-1.5 py-0.5 bg-slate-50 text-slate-400 text-[7px] font-bold rounded">Monthly</div>
-                    </div>
+            {/* Stage */}
+            <div className="flex-1 bg-linear-to-b from-slate-50/50 to-slate-100/40 border border-slate-200/60 rounded-2xl p-3.5 relative overflow-hidden min-h-0 flex flex-col shadow-inner">
+              <div className="absolute inset-0 opacity-[0.25] bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:14px_14px] pointer-events-none z-0" />
+              
+              <div className="flex items-center justify-between mb-3 shrink-0 z-10">
+                <h4 className="text-[10px] font-bold text-slate-700 tracking-wide">
+                  {phase === 1 ? "Operating Without Data" :
+                   phase === 2 ? "Operational Signal Locked" :
+                   phase === 3 ? "Real-Time Bid Intelligence" :
+                   phase === 4 ? "Historical Pricing Trend" :
+                   phase === 5 ? "Vendor Performance Radar" :
+                   phase === 6 ? "YTD Spend Distribution" :
+                   phase === 7 ? "Live Margin KPIs" :
+                   phase === 8 ? "Smart Recommendation" :
+                   phase === 9 ? "Consolidated Decision Captured" :
+                   "Command Center"}
+                </h4>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex gap-1">
+                    {[1,2,3,4,5,6,7,8,9].map(i => (
+                      <div key={i} className={cn(
+                        "h-1.5 rounded-full transition-all duration-500",
+                        phase === i ? "bg-indigo-500 w-3" :
+                        phase > i ? "bg-indigo-300 w-1.5" : "bg-slate-200 w-1.5"
+                      )} />
+                    ))}
                   </div>
-                  <MoreVertical className="w-3 h-3 text-slate-300" />
-                </div>
-
-                {/* SVG Line + Area Chart */}
-                <div className="flex-1 relative min-h-0" style={{ minHeight: 120 }}>
-                  <svg
-                    className="absolute inset-0 w-full h-full overflow-visible"
-                    viewBox="0 0 280 120"
-                    preserveAspectRatio="none"
-                  >
-                    <defs>
-                      <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={activeMetric === 0 ? '#10b981' : activeMetric === 1 ? '#3b82f6' : '#6366f1'} stopOpacity="0.25" />
-                        <stop offset="100%" stopColor={activeMetric === 0 ? '#10b981' : activeMetric === 1 ? '#3b82f6' : '#6366f1'} stopOpacity="0.02" />
-                      </linearGradient>
-                    </defs>
-
-                    {/* Grid lines */}
-                    {[0, 30, 60, 90, 120].map((y) => (
-                      <line key={y} x1="0" y1={y} x2="280" y2={y} stroke="#e2e8f0" strokeWidth="0.5" />
-                    ))}
-
-                    {/* Y-axis labels */}
-                    {[{ y: 4, label: '100' }, { y: 34, label: '75' }, { y: 64, label: '50' }, { y: 94, label: '25' }, { y: 118, label: '0' }].map(({ y, label }) => (
-                      <text key={label} x="0" y={y} fontSize="6" fill="#94a3b8" fontWeight="600">{label}</text>
-                    ))}
-
-                    {/* Area fill */}
-                    <motion.path
-                      key={`fill-${activeMetric}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.6 }}
-                      d={(() => {
-                        const pts = dataPoints;
-                        const w = 280, h = 120, pad = 18;
-                        const xs = pts.map((_, i) => pad + (i / (pts.length - 1)) * (w - pad * 2));
-                        const ys = pts.map(v => h - (v / 100) * (h - 10) - 4);
-                        const line = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
-                        return `${line} L${xs[xs.length-1].toFixed(1)},${h} L${xs[0].toFixed(1)},${h} Z`;
-                      })()}
-                      fill="url(#chartFill)"
-                    />
-
-                    {/* Line */}
-                    <motion.path
-                      key={`line-${activeMetric}`}
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ duration: 0.8, ease: "easeOut" }}
-                      d={(() => {
-                        const pts = dataPoints;
-                        const w = 280, h = 120, pad = 18;
-                        const xs = pts.map((_, i) => pad + (i / (pts.length - 1)) * (w - pad * 2));
-                        const ys = pts.map(v => h - (v / 100) * (h - 10) - 4);
-                        return xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
-                      })()}
-                      fill="none"
-                      stroke={activeMetric === 0 ? '#10b981' : activeMetric === 1 ? '#3b82f6' : '#6366f1'}
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-
-                    {/* Data points */}
-                    {dataPoints.map((v, i) => {
-                      const w = 280, h = 120, pad = 18;
-                      const x = pad + (i / (dataPoints.length - 1)) * (w - pad * 2);
-                      const y = h - (v / 100) * (h - 10) - 4;
-                      const color = activeMetric === 0 ? '#10b981' : activeMetric === 1 ? '#3b82f6' : '#6366f1';
-                      return (
-                        <motion.g key={i} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.4 + i * 0.06 }}>
-                          <circle cx={x} cy={y} r="3.5" fill="white" stroke={color} strokeWidth="2" />
-                          <text x={x} y={y - 7} textAnchor="middle" fontSize="6" fill="#64748b" fontWeight="700">{v}</text>
-                        </motion.g>
-                      );
-                    })}
-
-                    {/* X-axis labels */}
-                    {dataPoints.map((_, i) => {
-                      const w = 280, pad = 18;
-                      const x = pad + (i / (dataPoints.length - 1)) * (w - pad * 2);
-                      return (
-                        <text key={i} x={x} y={118} textAnchor="middle" fontSize="6" fill="#94a3b8" fontWeight="600">W{i + 1}</text>
-                      );
-                    })}
-                  </svg>
+                  <span className="text-[8px] font-semibold text-indigo-600 flex items-center gap-1 whitespace-nowrap bg-indigo-50/60 border border-indigo-100/40 px-1.5 py-0.5 rounded-md">
+                    <span className="w-1 h-1 rounded-full bg-indigo-500 animate-pulse" />
+                    Auto-Processing
+                  </span>
                 </div>
               </div>
 
-              {/* ChatWise AI Bottom Bar - 48px */}
-              <div className="relative flex-shrink-0">
-                <AnimatePresence>
-                  {step === 2 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute bottom-full mb-2 right-0 left-0 p-2 bg-slate-900 rounded-lg shadow-2xl z-50 border border-slate-800"
+              {/* Dynamic Content Area with AnimatePresence */}
+              <div className="flex-1 overflow-hidden flex flex-col relative z-10">
+                <AnimatePresence mode="wait">
+                  
+                  {/* SCENE 1 - GUESS */}
+                  {phase === 1 && (
+                    <motion.div 
+                      key="s1"
+                      initial={{ opacity: 0, scale: 0.97 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0 flex items-center justify-center pointer-events-none"
                     >
-                      <div className="flex items-start gap-2">
-                        <div className="w-5 h-5 rounded bg-indigo-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/20">
-                          <Sparkles className="w-3 h-3 text-white" />
+                      {/* Floating question marks */}
+                      {QMARK_POS.map((p, i) => (
+                        <div key={i} className={cn(
+                          "absolute font-extrabold text-slate-300/60 select-none transition-all duration-1000",
+                          qmarks > i ? "opacity-100 scale-110" : "opacity-0 scale-90"
+                        )}
+                        style={{ left: `${p.x}%`, top: `${p.y}%`, fontSize: p.s, transitionDelay: `${p.d}ms` }}>
+                          ?
                         </div>
-                        <div>
-                          <div className="text-indigo-400 text-[7px] font-black uppercase tracking-widest mb-0.5">ChatWise Intelligence</div>
-                          <div className="text-white text-[8px] leading-relaxed">
-                            Based on historical pricing, I recommend awarding <span className="text-indigo-400 font-bold">Vendor B</span>. Their delivery score is 15% higher than average.
+                      ))}
+                      <div className="w-64 bg-white border border-slate-200 rounded-xl p-3 shadow-lg z-10 pointer-events-auto">
+                        <h5 className="font-extrabold text-slate-800 text-[10px] flex items-center gap-1.5 mb-2">
+                          <HelpCircle className="w-4 h-4 text-slate-400" /> Which vendor wins this award?
+                        </h5>
+                        <div className="space-y-1.5">
+                          {VENDORS.slice(0, 3).map((v) => (
+                            <div key={v.code} className="flex justify-between items-center px-2 py-1.5 border border-dashed border-slate-200 rounded-lg text-[9px]">
+                              <span className="flex items-center gap-2">
+                                <span className="w-4 h-4 rounded bg-slate-100 flex items-center justify-center text-[8px] font-black text-slate-500">{v.code}</span>
+                                <span className="text-slate-500 font-bold">{v.name}</span>
+                              </span>
+                              <span className="text-slate-300 font-extrabold">?</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-2.5 text-[8.5px] text-slate-400 font-semibold italic text-center select-none">
+                          Decision made on gut feel...
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 2 - SIGNAL */}
+                  {phase === 2 && (
+                    <motion.div 
+                      key="s2"
+                      initial={{ opacity: 0, scale: 0.97 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none"
+                    >
+                      <div className="relative">
+                        <div className="absolute inset-0 -m-3 bg-indigo-100/50 rounded-full animate-ping opacity-75" />
+                        <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                          <Zap className="w-7 h-7 animate-pulse" />
+                        </div>
+                      </div>
+                      <div className="text-center mt-2">
+                        <h5 className="text-[14px] font-bold text-slate-800 tracking-tight">Operational Signal Locked</h5>
+                        <p className="text-[10px] text-slate-400 font-medium mt-1">Connecting historical prices, vendor metrics, & raw bids...</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 3 - BIDS */}
+                  {phase === 3 && (
+                    <motion.div 
+                      key="s3"
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0 flex flex-col gap-1.5 overflow-y-auto pr-1"
+                    >
+                      <div className="grid grid-cols-[28px_1.5fr_0.9fr_0.9fr_1fr_20px] gap-2 items-center px-2 py-1 text-[8px] font-bold uppercase text-slate-400 tracking-wider">
+                        <div></div>
+                        <div>Vendor</div>
+                        <div>Quote</div>
+                        <div>vs LY</div>
+                        <div>Score</div>
+                        <div></div>
+                      </div>
+                      <div className="space-y-1.5">
+                        {VENDORS.map((b, i) => (
+                          <div key={b.code} className={cn(
+                            "grid grid-cols-[28px_1.5fr_0.9fr_0.9fr_1fr_20px] gap-2 items-center p-2.5 bg-white border rounded-xl transition-all duration-300 shadow-2xs",
+                            b.best ? "border-indigo-200 bg-indigo-50/20 shadow-sm" : "border-slate-100",
+                            bidRows > i ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                          )}>
+                            <div className="w-6 h-6 rounded-lg text-white font-mono text-[9px] font-black flex items-center justify-center shadow-xs shrink-0" style={{ background: b.color }}>
+                              {b.code}
+                            </div>
+                            <div className="font-semibold text-slate-800 text-[10px] truncate">{b.name}</div>
+                            <div className="font-mono text-slate-900 text-[10px] font-bold">${(bidPrices[i] / 1000).toFixed(1)}K</div>
+                            <div className={cn(
+                              "text-[9px] font-bold flex items-center gap-0.5",
+                              b.delta < 0 ? "text-emerald-600" : "text-rose-600"
+                            )}>
+                              {b.delta < 0 ? <TrendingDown className="w-2.5 h-2.5" /> : <TrendingUp className="w-2.5 h-2.5" />}
+                              {b.delta > 0 ? "+" : ""}{b.delta.toFixed(1)}%
+                            </div>
+                            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden shrink-0">
+                              <div className="h-full rounded-full transition-all duration-1000" 
+                                   style={{ 
+                                     width: `${bidScores[i] || 0}%`, 
+                                     background: b.best ? "linear-gradient(90deg, #6366f1 0%, #a78bfa 100%)" : `linear-gradient(90deg, ${b.color}cc, ${b.color})` 
+                                   }} />
+                            </div>
+                            <div className="shrink-0 flex items-center justify-center">
+                              {b.best && <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 animate-pulse" />}
+                            </div>
                           </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 4 - HISTORY */}
+                  {phase === 4 && (
+                    <motion.div 
+                      key="s4"
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0 flex flex-col"
+                    >
+                      <div className="flex items-center justify-between mb-2 px-1 shrink-0">
+                        <span className="text-[10px] font-semibold text-slate-700">12-Month Historical Pricing · SKU-1003</span>
+                        <div className="flex gap-3 text-[9px] font-medium text-slate-500 leading-none select-none">
+                          <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-indigo-500 rounded" />Bharat Steel</span>
+                          <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-cyan-500 rounded" />SKF</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-h-0 relative bg-white border border-slate-100 rounded-xl p-3 pb-6 pr-8 shadow-2xs flex flex-col">
+                        <div className="flex-1 min-h-0 relative">
+                          <svg className="w-full h-full overflow-visible" viewBox={`0 0 ${CHART_VB_W} ${CHART_VB_H}`} preserveAspectRatio="none">
+                            <defs>
+                              <linearGradient id="fillBS" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25"/>
+                                <stop offset="100%" stopColor="#6366f1" stopOpacity="0"/>
+                              </linearGradient>
+                            </defs>
+                            <g className="stroke-slate-100/50 stroke-1">
+                              {[0, 0.25, 0.5, 0.75, 1].map(p => (
+                                <line key={p} x1="0" x2={CHART_VB_W} y1={p * CHART_VB_H} y2={p * CHART_VB_H}/>
+                              ))}
+                            </g>
+                            <path className={cn("fill-none stroke-[1.5] transition-all duration-1000", chartIn ? "stroke-dashoffset-0" : "stroke-dashoffset-100")} 
+                                  d={skChart.line} stroke="#06b6d4" strokeOpacity="0.6" style={{ strokeDasharray: 200, strokeDashoffset: chartIn ? 0 : 200 }} />
+                            <path className={cn("transition-opacity duration-1000", chartIn ? "opacity-100" : "opacity-0")} d={bsChart.fill} fill="url(#fillBS)" />
+                            <path className={cn("fill-none stroke-[1.5] transition-all duration-1000", chartIn ? "stroke-dashoffset-0" : "stroke-dashoffset-100")} 
+                                  d={bsChart.line} stroke="#6366f1" style={{ strokeDasharray: 200, strokeDashoffset: chartIn ? 0 : 200 }} />
+                          </svg>
+                        </div>
+                        {/* Y-Axis HTML Labels */}
+                        <div className="absolute right-2 top-3 bottom-6 flex flex-col justify-between text-[8px] font-mono font-black text-slate-400 select-none h-[calc(100%-36px)] text-right">
+                          <span>$145</span>
+                          <span>$138</span>
+                          <span>$131</span>
+                          <span>$125</span>
+                          <span>$120</span>
+                        </div>
+                        {/* X-Axis HTML Labels */}
+                        <div className="absolute left-3 right-8 bottom-1 flex justify-between text-[8px] font-mono font-black text-slate-400 select-none">
+                          {MONTHS.map((m, i) => (
+                            <span key={i} className="w-4 text-center">{m}</span>
+                          ))}
                         </div>
                       </div>
                     </motion.div>
                   )}
-                </AnimatePresence>
 
-                <div className="bg-white rounded-lg border border-indigo-100 shadow-sm p-2 flex items-center gap-2 group transition-all hover:border-indigo-300">
-                  <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white shadow-md">
-                    <MessageSquare className="w-3 h-3" />
-                  </div>
-                  <div className="flex-1 text-slate-400 text-[8px] font-medium">Ask ChatWise: "Which vendor should I award for this RFQ?"</div>
-                  <div className="flex gap-0.5">
-                    <div className="w-1 h-1 rounded-full bg-indigo-500 animate-pulse" />
-                    <div className="w-1 h-1 rounded-full bg-indigo-500/50" />
-                  </div>
-                </div>
+                  {/* SCENE 5 - VENDOR PERFORMANCE RADAR */}
+                  {phase === 5 && (
+                    <motion.div 
+                      key="s5"
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0 flex items-center gap-5"
+                    >
+                      <div className="w-40 h-40 shrink-0 bg-white border border-slate-100 rounded-xl p-1.5 shadow-2xs">
+                        <svg className="w-full h-full overflow-visible" viewBox="0 0 180 180">
+                          {ringRs.map(r => (
+                            <circle key={r} className="stroke-slate-100 fill-none stroke-[1]" cx="90" cy="90" r={r}/>
+                          ))}
+                          <circle className="fill-indigo-50/5 stroke-none" cx="90" cy="90" r={60}/>
+                          {axes.map((a, i) => (
+                            <g key={i}>
+                              <line className="stroke-slate-200 fill-none stroke-[1]" x1={a.x1} y1={a.y1} x2={a.x2} y2={a.y2}/>
+                              <text className="font-semibold text-[8px] fill-slate-400 uppercase tracking-wide leading-none" x={a.lx} y={a.ly} textAnchor={a.anchor} dominantBaseline="middle">{a.label}</text>
+                            </g>
+                          ))}
+                          <path className="stroke-cyan-500 fill-cyan-500/10 stroke-[1.5] transition-all duration-1000" d={perfShape ? skFull : skZero}/>
+                          <path className="stroke-indigo-600 fill-indigo-600/20 stroke-[1.5] transition-all duration-1000" d={perfShape ? bsFull : bsZero}/>
+                        </svg>
+                      </div>
+                      <div className="flex-1 flex flex-col gap-1.5 overflow-y-auto min-w-0 pr-1">
+                        <div className="text-[11px] font-semibold text-slate-800 mb-1 leading-none shrink-0 flex items-center gap-1.5">
+                          Bharat Steel Score <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded-md text-[9px] font-bold">91/100</span>
+                        </div>
+                        {RADAR_DIMS.map((d, i) => {
+                          const val = VENDORS[0].perf[d.key as keyof typeof VENDORS[0]["perf"]];
+                          return (
+                            <div key={d.key} className={cn(
+                              "flex items-center gap-2.5 transition-all duration-300 shrink-0",
+                              perfRows > i ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"
+                            )}>
+                              <span className="text-[9px] font-medium text-slate-500 w-12 truncate">{d.label}</span>
+                              <div className="flex-1 h-1.5 bg-slate-100 border border-slate-200/40 rounded-full overflow-hidden shrink-0">
+                                <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-700" 
+                                     style={{ width: perfRows > i ? `${val}%` : "0%" }} />
+                              </div>
+                              <span className="font-mono font-bold text-slate-800 text-[9px] w-6 text-right shrink-0">{val}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 6 - SPEND DONUT */}
+                  {phase === 6 && (
+                    <motion.div 
+                      key="s6"
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0 flex items-center gap-5"
+                    >
+                      <div className="w-40 h-40 shrink-0 relative bg-white border border-slate-100 rounded-xl p-1.5 shadow-2xs">
+                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 170 170">
+                          <circle cx={donutCx} cy={donutCy} r={donutR} fill="none" stroke="#f8fafc" strokeWidth="18"/>
+                          {segs.map((s, i) => (
+                            <circle key={i}
+                              className="fill-none stroke-[18] transition-all duration-1000"
+                              cx={donutCx} cy={donutCy} r={donutR}
+                              stroke={s.color}
+                              strokeDasharray={`${s.filled ? s.len : 0} ${donutCirc}`}
+                              strokeDashoffset={s.offset}
+                            />
+                          ))}
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center leading-none pointer-events-none select-none">
+                          <span className="text-base font-bold text-slate-800">$2.7M</span>
+                          <span className="text-[8px] text-slate-400 font-medium uppercase tracking-wider mt-1.5">YTD Spend</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 flex flex-col gap-2 overflow-y-auto min-w-0 pr-1">
+                        {SPEND.map((s, i) => (
+                          <div key={s.cat} className={cn(
+                            "flex items-center gap-2.5 transition-all duration-300 shrink-0",
+                            spendRows > i ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2"
+                          )}>
+                            <span className="w-2.5 h-2.5 rounded shadow-xs shrink-0" style={{ background: s.color }} />
+                            <span className="text-[9.5px] font-medium text-slate-600 flex-1 truncate">{s.cat}</span>
+                            <span className="font-mono font-bold text-slate-800 text-[9px] shrink-0">${s.value}K</span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 7 - LIVE KPIs */}
+                  {phase === 7 && (
+                    <motion.div 
+                      key="s7"
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                      className="absolute inset-0 grid grid-cols-2 gap-2.5 min-h-0"
+                    >
+                      {KPIS.map((k, i) => {
+                        const Ic = k.icon;
+                        const good = kpiGood > i;
+                        return (
+                          <div key={k.label} className={cn(
+                            "flex flex-col justify-between p-3 bg-white border rounded-xl shadow-2xs transition-all duration-500 overflow-hidden relative",
+                            good ? "border-emerald-200 bg-emerald-50/20 shadow-sm" : "border-slate-100/80",
+                            kpiTiles > i ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                          )}>
+                            <div className="flex items-center gap-2.5 shrink-0">
+                              <div className={cn(
+                                "w-6 h-6 rounded-lg flex items-center justify-center transition-colors shrink-0",
+                                good 
+                                  ? "bg-emerald-100 text-emerald-600" 
+                                  : k.tone === "rose" ? "bg-rose-50 text-rose-500"
+                                  : k.tone === "amber" ? "bg-amber-50 text-amber-500"
+                                  : k.tone === "cyan" ? "bg-cyan-50 text-cyan-500"
+                                  : "bg-slate-50 text-slate-400"
+                              )}>
+                                <Ic className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider leading-none truncate">{k.label}</span>
+                            </div>
+                            <div className={cn(
+                              "text-[17px] font-bold transition-colors shrink-0 mt-2 tracking-tight",
+                              good ? "text-emerald-600" : "text-rose-600"
+                            )}>
+                              {good ? k.green : k.red}
+                            </div>
+                            <span className="absolute right-2 bottom-2 opacity-35 shrink-0">
+                              {good ? <TrendingUp className="w-3.5 h-3.5 text-emerald-500" /> : <TrendingDown className="w-3.5 h-3.5 text-rose-400" />}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 8 - DECIDE */}
+                  {phase === 8 && (
+                    <motion.div 
+                      key="s8"
+                      initial={{ opacity: 0, scale: 0.97 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0 flex flex-col justify-between min-h-0"
+                    >
+                      <div className={cn(
+                        "bg-linear-to-b from-white to-indigo-50/30 border border-indigo-200/80 rounded-xl p-3 shadow-md transition-all duration-500 flex flex-col gap-2 relative",
+                        recIn ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                      )}>
+                        <div className="flex items-center justify-between shrink-0 mb-0.5">
+                          <span className="px-2 py-0.5 bg-indigo-600 text-white rounded-md text-[8.5px] font-semibold tracking-wider uppercase shadow-xs shrink-0 flex items-center gap-1 select-none">
+                            <Zap className="w-2.5 h-2.5 fill-white" /> Recommend
+                          </span>
+                          <span className="font-semibold text-slate-800 text-[12px] truncate flex-1 ml-2.5">Bharat Steel</span>
+                          <span className="font-mono text-[12px] font-bold text-indigo-600 shrink-0 ml-2">$124.4K</span>
+                        </div>
+                        <div className="space-y-1.5 mt-0.5">
+                          <div className={cn("flex items-center gap-2.5 transition-all duration-300 text-[9.5px] text-slate-600", recRows > 0 ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1.5")}>
+                            <span className="w-5 h-5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0"><TrendingDown className="w-3.5 h-3.5" /></span>
+                            <span>5.8% below last year · historical downward trend detected</span>
+                          </div>
+                          <div className={cn("flex items-center gap-2.5 transition-all duration-300 text-[9.5px] text-slate-600", recRows > 1 ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1.5")}>
+                            <span className="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0"><Star className="w-3.5 h-3.5" /></span>
+                            <span>Vendor score 91/100 — OTD 96%, Quality rating: A+</span>
+                          </div>
+                          <div className={cn("flex items-center gap-2.5 transition-all duration-300 text-[9.5px] text-slate-600", recRows > 2 ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-1.5")}>
+                            <span className="w-5 h-5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0"><Shield className="w-3.5 h-3.5" /></span>
+                            <span>Margin impact: +3.1pts. Consolidated audit log stored.</span>
+                          </div>
+                        </div>
+                        <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-col gap-1 shrink-0">
+                          <div className="flex justify-between font-semibold text-indigo-700 text-[9px] uppercase tracking-wider leading-none">
+                            <span>Confidence Signal</span>
+                            <span>{confidence}%</span>
+                          </div>
+                          <div className="h-1.5 bg-slate-100 border border-slate-200/40 rounded-full overflow-hidden shrink-0 mt-0.5">
+                            <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.4)] transition-all duration-1000" style={{ width: `${confidence}%` }} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className={cn(
+                        "flex items-center justify-center gap-2 py-2.5 px-4 font-semibold text-[12px] rounded-xl shadow-lg border relative select-none shrink-0 transition-all duration-300 mt-2",
+                        awardState >= 1 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+                        awardState === 2 ? "animate-pulse shadow-indigo-500/20 bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-indigo-400" :
+                        awardState === 3 ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400 shadow-emerald-500/25" :
+                        "bg-slate-100 text-slate-400 border-slate-200"
+                      )}>
+                        {awardState === 3 ? (
+                          <>
+                            <Check className="w-4 h-4 shrink-0 shadow-md" />
+                            <span>Awarded · $7.7K under historical avg captured</span>
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="w-3.5 h-3.5 shrink-0 fill-white" />
+                            <span>Award Bharat Steel</span>
+                          </>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* SCENE 9 - FINALE */}
+                  {phase === 9 && (
+                    <motion.div 
+                      key="s9"
+                      initial={{ opacity: 0, scale: 0.97 }} 
+                      animate={{ opacity: 1, scale: 1 }} 
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 text-center px-4"
+                    >
+                      <div className="font-bold text-[30px] leading-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent tracking-tight shrink-0 select-none">
+                        Stop guessing.
+                      </div>
+                      <div className="text-[16px] font-semibold text-slate-800 tracking-tight leading-none shrink-0 select-none">
+                        Start <span className="font-bold text-indigo-600">knowing</span>.
+                      </div>
+                      <p className="text-[10.5px] text-slate-500 font-normal leading-relaxed max-w-sm mt-1 shrink-0 select-none">
+                        Every decision backed by dynamic operational intelligence. Every parameter instantly audited and compared.
+                      </p>
+                      <div className="flex gap-2 justify-center flex-wrap mt-3.5 shrink-0 select-none">
+                        {[
+                          { text: "Real-Time Bids", ic: BarChart3 },
+                          { text: "Vendor Score", ic: Star },
+                          { text: "Spend Visibility", ic: PieChart },
+                          { text: "Margin Protected", ic: Shield },
+                        ].map((c, idx) => {
+                          const IC = c.ic;
+                          return (
+                            <div key={c.text} className={cn(
+                              "inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-100 rounded-full text-[9.5px] font-medium text-slate-700 shadow-2xs transition-all duration-300",
+                              finaleChips > idx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                            )}>
+                              <IC className="w-3 h-3 text-indigo-500 shrink-0" />
+                              {c.text}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+
+                </AnimatePresence>
               </div>
+
+
             </div>
 
-            {/* Corner Decorative Glows */}
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
-            <div className="absolute -bottom-24 -right-24 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none z-0" />
+            {/* Caption popup — between stage and pills, in normal flow */}
+            <AnimatePresence mode="wait">
+              {captions[phase] && (
+                <motion.div
+                  key={phase}
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl shrink-0"
+                  style={{
+                    background: "rgba(248,250,255,0.95)",
+                    border: "1px solid rgba(99,102,241,0.18)",
+                    boxShadow: "0 2px 16px -4px rgba(99,102,241,0.14), 0 1px 3px rgba(15,23,42,0.05)",
+                  }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_#818cf8] shrink-0 mt-[3px] animate-pulse" />
+                  <p className="text-[10px] font-semibold text-slate-600 leading-relaxed tracking-wide m-0">
+                    {captions[phase]}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Pills Deck */}
+            <div className="grid grid-cols-2 gap-2 shrink-0">
+              <PillDeck icon={BarChart3} label="Real-Time Bids" lit={lit.bids} />
+              <PillDeck icon={TrendingUp} label="Historical Pricing" lit={lit.history} />
+              <PillDeck icon={Star} label="Vendor Performance" lit={lit.perf} />
+              <PillDeck icon={PieChart} label="Spend Visibility" lit={lit.spend} />
+            </div>
+
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes scaleIn {
+          from { transform: scale(0.85); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideIn {
+          from { transform: translateX(8px); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slideIn {
+          animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+      `}</style>
     </div>
   );
 }

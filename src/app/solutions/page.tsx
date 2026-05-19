@@ -8,6 +8,7 @@ import SolutionsTabbedFeatures from "./components/SolutionsTabbedFeatures";
 import EcoSystemFeatures from "./components/EcoSystemFeatures";
 import QuoteToOrderFlow from "./components/QuoteToOrderFlow";
 import QuoteToOrderFeatures from "./components/QuoteToOrderFeatures";
+import StackedCards from "./components/StackedCards";
 
 export default function SolutionsPage() {
   return (
@@ -18,6 +19,7 @@ export default function SolutionsPage() {
       <SolutionsTabbedFeatures />
       <QuoteToOrderFlow />
       <QuoteToOrderFeatures />
+      <StackedCards />
       <FlickeringFooter />
     </main>
   );
