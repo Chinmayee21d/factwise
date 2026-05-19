@@ -41,23 +41,21 @@ export default function SolutionsHero() {
                         </div>
 
                         <h1 
-                            className="text-4xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-8"
+                            className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.1] mb-8"
                             style={{ fontFamily: "var(--font-display)" }}
                         >
-                            Accelerate your <br />
+                            From Customer Inquiry to <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-blue-500">
-                                Quote-to-Order
+                                Winning Quote.
                             </span> <br />
-                            cycle with AI
+                            Faster Than You Think.
                         </h1>
 
                         <p 
                             className="text-base md:text-lg text-slate-400 mb-12 leading-relaxed"
                             style={{ fontFamily: "var(--font-inter)" }}
                         >
-                            Transform fragmented sourcing into a unified, high-speed engine. 
-                            Automate normalization, contract management, and order execution 
-                            with absolute visibility.
+                            Quoting takes too long and margins are constantly under pressure. FactWise automates the entire inquiry-to-quote journey — helping you move faster, price smarter, and win more business.
                         </p>
 
                         <div className="flex flex-wrap items-center gap-6">

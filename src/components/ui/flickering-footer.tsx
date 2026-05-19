@@ -114,7 +114,7 @@ const AnimatedContainer = ({ children, delay = 0.1 }: { children: React.ReactNod
 export function FlickeringFooter() {
   return (
     <footer
-      className="relative w-full h-[480px] bg-[#000212] overflow-hidden"
+      className="relative w-full h-[480px] bg-slate-50 overflow-hidden"
       style={{ clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)' }}
     >
       {/* Sticky Reveal Wrapper */}
@@ -122,16 +122,15 @@ export function FlickeringFooter() {
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.3 }}
-        className="fixed bottom-0 left-0 w-full h-[480px] bg-[#000212]"
+        className="fixed bottom-0 left-0 w-full h-[480px] bg-slate-50"
       >
         <div className="sticky top-[calc(100vh-480px)] h-full w-full flex flex-col justify-between">
 
           {/* Main Content Area */}
-          <div className="relative flex-1 flex items-center border-t border-white/10 py-8">
-            {/* Background Decorative Elements */}
-            <div className="absolute inset-0 pointer-events-none opacity-20">
-              <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] -translate-y-1/2" />
-              <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-[100px] translate-y-1/2" />
+          <div className="relative flex-1 flex items-center border-t border-slate-200 py-8">
+            {/* Minimal Background Decorative Elements */}
+            <div className="absolute inset-0 pointer-events-none opacity-40">
+              <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-100 rounded-full blur-[100px] -translate-y-1/2" />
             </div>
 
             <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -142,16 +141,16 @@ export function FlickeringFooter() {
                   <AnimatedContainer>
                     <Link href="/" className="flex items-center gap-3 group">
                       <img
-                        src="/logowhite.png"
+                        src="/logo.png"
                         alt="FactWise Logo"
                         className="h-8 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 rounded-tl-sm rounded-br-sm"
                       />
-                      <span className="text-[17px] font-bold tracking-tight text-white">FactWise</span>
+                      <span className="text-[17px] font-bold tracking-tight text-[#1A1D2E]">FactWise</span>
                     </Link>
                   </AnimatedContainer>
 
                   <AnimatedContainer delay={0.2}>
-                    <p className="text-slate-400 text-base leading-relaxed font-medium max-w-sm">
+                    <p className="text-slate-500 text-base leading-relaxed font-medium max-w-sm">
                       The next-generation source-to-pay platform. Unifying your entire supply chain in one intelligent, automated ecosystem.
                     </p>
                   </AnimatedContainer>
@@ -163,7 +162,7 @@ export function FlickeringFooter() {
                           key={platform.name}
                           variant="outline"
                           size="icon"
-                          className="size-10 rounded-xl border-white/10 bg-white/5 text-white hover:bg-[#3666ff] hover:text-white hover:border-blue-500 transition-all duration-300 shadow-sm"
+                          className="size-10 rounded-xl border-slate-200 bg-white text-slate-500 hover:bg-[#3666ff] hover:text-white hover:border-[#3666ff] transition-all duration-300 shadow-sm"
                         >
                           <platform.icon />
                         </Button>
@@ -177,7 +176,7 @@ export function FlickeringFooter() {
                   {footerLinks.map((section, idx) => (
                     <AnimatedContainer key={section.title} delay={0.2 + idx * 0.1}>
                       <div className="space-y-6">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] text-white/40">
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400">
                           {section.title}
                         </h4>
                         <ul className="space-y-4">
@@ -185,7 +184,7 @@ export function FlickeringFooter() {
                             <li key={link.name}>
                               <a
                                 href={link.href}
-                                className="text-slate-400 hover:text-[#3666ff] text-[14px] font-medium transition-colors inline-flex items-center group/link"
+                                className="text-slate-600 hover:text-[#3666ff] text-[14px] font-medium transition-colors inline-flex items-center group/link"
                               >
                                 {link.name}
                                 <ArrowRight className="w-0 h-3 ml-1.5 opacity-0 -translate-x-2 transition-all group-hover/link:w-3 group-hover/link:opacity-100 group-hover/link:translate-x-0 text-[#3666ff]" />
@@ -203,7 +202,7 @@ export function FlickeringFooter() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-white/10 py-8 bg-[#000212] relative z-10">
+          <div className="border-t border-slate-200 py-8 bg-slate-50 relative z-10">
             <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
               <AnimatedContainer delay={0.4}>
                 <p className="text-slate-500 text-[10px] font-medium uppercase tracking-widest">
@@ -214,7 +213,7 @@ export function FlickeringFooter() {
               <AnimatedContainer delay={0.5}>
                 <div className="flex gap-8">
                   {['Privacy Policy', 'Terms of Service', 'Security'].map((item) => (
-                    <a key={item} href="#" className="text-slate-500 hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors">
+                    <a key={item} href="#" className="text-slate-400 hover:text-[#1A1D2E] text-[11px] font-bold uppercase tracking-widest transition-colors">
                       {item}
                     </a>
                   ))}

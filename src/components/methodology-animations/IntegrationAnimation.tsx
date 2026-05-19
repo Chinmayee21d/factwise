@@ -470,26 +470,24 @@ const II: Record<string, React.FC<IconProps>> = {
 
 /* ============ DATA ============ */
 const SYSTEMS: SystemInfo[] = [
-  { id: "erp", name: "SAP S/4", sub: "ERP", icon: "Cube", color: "#0891b2", angle: -135, dist: 95 },
-  { id: "ora", name: "Oracle Fusion", sub: "ERP", icon: "Server", color: "#14b8a6", angle: -45, dist: 95 },
-  { id: "dig", name: "Digi-Key", sub: "Component Distributor", icon: "Chip", color: "#10b981", angle: 135, dist: 95 },
-  { id: "mou", name: "Mouser", sub: "Component Distributor", icon: "Chip", color: "#f59e0b", angle: 45, dist: 95 },
-  { id: "ven", name: "Vendor Portals", sub: "Direct vendor APIs", icon: "Vendor", color: "#8b5cf6", angle: 180, dist: 95 },
-  { id: "wms", name: "Inhouse WMS", sub: "Warehouse Mgmt", icon: "Server", color: "#06b6d4", angle: 0, dist: 95 }
+  { id: "erp", name: "SAP S/4",       sub: "ERP",                    icon: "Cube",   color: "#0891b2", angle: -135, dist: 95 },
+  { id: "dig", name: "electronic",    sub: "Component Distributor",  icon: "Chip",   color: "#10b981", angle: 135,  dist: 95 },
+  { id: "ven", name: "Vendor Portals",sub: "Direct vendor APIs",     icon: "Vendor", color: "#8b5cf6", angle: 180,  dist: 95 },
+  { id: "wms", name: "Inhouse WMS",   sub: "Warehouse Mgmt",         icon: "Server", color: "#06b6d4", angle: 0,    dist: 95 }
 ];
 
 const PACKETS_IN = [
   { label: "Requisition", shortId: "REQ-2417", from: "erp", color: "#0891b2" },
-  { label: "Contract", shortId: "CTR-118", from: "ora", color: "#14b8a6" },
-  { label: "BOM", shortId: "BOM-9043", from: "wms", color: "#06b6d4" },
-  { label: "Catalog feed", shortId: "Δ 312", from: "dig", color: "#10b981" }
+  { label: "BOM",         shortId: "BOM-9043", from: "wms", color: "#06b6d4" },
+  { label: "Catalog feed",shortId: "Δ 312",    from: "dig", color: "#10b981" },
+  { label: "Vendor bid",  shortId: "BID-441",  from: "ven", color: "#8b5cf6" }
 ];
 
 const PACKETS_OUT = [
-  { label: "PO", shortId: "PO-8842", to: "erp", color: "#0891b2" },
-  { label: "Quote", shortId: "QT-2244", to: "ven", color: "#8b5cf6" },
-  { label: "GR Record", shortId: "GRN-771", to: "ora", color: "#14b8a6" },
-  { label: "RFQ blast", shortId: "× 18", to: "mou", color: "#f59e0b" }
+  { label: "PO",       shortId: "PO-8842",  to: "erp", color: "#0891b2" },
+  { label: "GR Record",shortId: "GRN-771",  to: "wms", color: "#06b6d4" },
+  { label: "RFQ blast",shortId: "× 18",     to: "ven", color: "#8b5cf6" },
+  { label: "Quote",    shortId: "QT-2244",  to: "dig", color: "#10b981" }
 ];
 
 const FIELD_SCHEMA = [
@@ -592,7 +590,7 @@ const IN_STYLE = `
 
 .in-caption-bar { display: flex; align-items: center; gap: 10px; flex-shrink: 0;
   background: rgba(248,250,255,0.95); color: #475569; border: 1px solid rgba(99,102,241,0.18);
-  border-radius: 12px; padding: 11px 15px; font-size: 11px; font-weight: 600; line-height: 1.4;
+  border-radius: 12px; padding: 11px 15px; font-size: 12px; font-weight: 600; line-height: 1.4;
   box-shadow: 0 2px 16px -4px rgba(99,102,241,0.14), 0 1px 3px rgba(15,23,42,0.05);
   transition: opacity .4s ease, transform .4s ease;
   opacity: 0; transform: translateY(4px); pointer-events: none; }
@@ -601,8 +599,8 @@ const IN_STYLE = `
   box-shadow: 0 0 6px #818cf8; flex-shrink: 0; animation: in-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 @keyframes in-pulse { 50% { opacity: 0.5; } }
 
-.in-scene { position: absolute; inset: 12px; top: 32px; opacity: 0; transition: opacity .4s ease; pointer-events: none; }
-.in-scene.on { opacity: 1; }
+.in-scene { position: absolute; inset: 12px; top: 32px; opacity: 0; transition: opacity .4s ease; pointer-events: none; will-change: opacity; }
+.in-scene.on { opacity: 1; pointer-events: auto; }
 
 .in-hubScene { position: absolute; inset: 0; }
 .in-hub { position: absolute; left: 50%; top: 50%;
@@ -788,6 +786,67 @@ const IN_STYLE = `
 .in-tlSummary .sStat .v { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 14.5px; font-weight: 800; color: #0d9488; font-variant-numeric: tabular-nums; }
 .in-tlSummary .sStat .l { font-size: 8px; font-weight: 800; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; }
 
+/* ===== PROCUREMENT LOOP SCENE ===== */
+.in-procWrap { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 4px 2px; }
+.in-procFlow { display: flex; align-items: stretch; justify-content: center; gap: 0; flex: 0 0 auto; }
+.in-procCard { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center;
+  background: white; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px 10px;
+  width: 72px; min-height: 80px;
+  box-shadow: 0 2px 8px -2px rgba(15,23,42,0.08);
+  transition: all 0.45s cubic-bezier(.22,.61,.36,1);
+  opacity: 0; transform: translateY(6px); flex-shrink: 0; }
+.in-procCard.in { opacity: 1; transform: translateY(0); }
+.in-procCard.active { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12), 0 4px 12px -4px rgba(99,102,241,0.2); }
+.in-procCard.done { border-color: #a5b4fc; background: #fafafe; }
+.in-procCard.hub { background: linear-gradient(145deg, #6366f1, #4f46e5); border-color: #4f46e5; color: white;
+  box-shadow: 0 6px 20px -4px rgba(99,102,241,0.4); }
+.in-procCard.hub.active { box-shadow: 0 0 0 4px rgba(99,102,241,0.2), 0 8px 24px -4px rgba(99,102,241,0.45); }
+.in-procCardIc { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: white; flex-shrink: 0; }
+.in-procCardName { font-size: 9px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; line-height: 1.2; }
+.in-procCard.hub .in-procCardName { color: white; }
+.in-procCardSub { font-size: 7px; font-weight: 700; color: #94a3b8; letter-spacing: 0.06em; text-transform: uppercase; }
+.in-procCard.hub .in-procCardSub { color: rgba(255,255,255,0.65); }
+.in-procCardStatus { font-size: 7px; font-weight: 800; padding: 2px 6px; border-radius: 99px; margin-top: auto;
+  opacity: 0; transform: scale(0.85); transition: all 0.3s ease; white-space: nowrap; }
+.in-procCardStatus.in { opacity: 1; transform: scale(1); }
+
+/* Arrow connector between cards */
+.in-procArrow { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; flex: 1; min-width: 20px; max-width: 38px; padding: 0 3px;
+  padding-bottom: 18px; /* offset down to align with card icon row */ }
+.in-procArrowTrack { position: relative; height: 2px; width: 100%; background: #e2e8f0; border-radius: 99px; overflow: visible; }
+.in-procArrowFill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 99px;
+  background: #6366f1; width: 0%; transition: width 0.65s cubic-bezier(.45,.05,.45,1); }
+.in-procArrowHead { position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+  width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  border-left: 6px solid #e2e8f0; transition: border-left-color 0.3s ease; }
+.in-procArrowHead.active { border-left-color: #6366f1; }
+.in-procArrowLabel { font-size: 7px; font-weight: 800; color: #94a3b8; letter-spacing: 0.06em;
+  text-transform: uppercase; white-space: nowrap; transition: color 0.3s ease; }
+.in-procArrowLabel.active { color: #6366f1; }
+
+/* Return arc row */
+.in-procReturn { display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 5px 10px; background: rgba(99,102,241,0.04); border: 1px dashed rgba(99,102,241,0.22);
+  border-radius: 8px; flex-shrink: 0;
+  opacity: 0; transform: translateY(4px); transition: all 0.5s ease; }
+.in-procReturn.in { opacity: 1; transform: translateY(0); }
+.in-procReturnDot { width: 5px; height: 5px; border-radius: 50%; background: #6366f1; flex-shrink: 0; animation: in-pulse 1.8s ease-in-out infinite; }
+.in-procReturnText { font-size: 8px; font-weight: 700; color: #6366f1; }
+
+/* Step log */
+.in-procStepLog { display: flex; flex-direction: column; gap: 3px; flex: 1; min-height: 0; justify-content: flex-end; }
+.in-procStepRow { display: flex; align-items: center; gap: 6px; padding: 5px 8px;
+  background: white; border: 1px solid #f1f5f9; border-radius: 7px;
+  font-size: 8px; font-weight: 600; color: #64748b;
+  opacity: 0; transform: translateY(3px); transition: all 0.4s cubic-bezier(.22,.61,.36,1); }
+.in-procStepRow.in { opacity: 1; transform: translateY(0); }
+.in-procStepRow.done { color: #4f46e5; border-color: rgba(99,102,241,0.15); background: rgba(99,102,241,0.03); }
+.in-procStepRow .sdot { width: 5px; height: 5px; border-radius: 50%; background: #6366f1; flex-shrink: 0; }
+.in-procStepRow .stag { font-family: "JetBrains Mono", monospace; font-size: 6.5px; font-weight: 800;
+  padding: 1px 5px; border-radius: 3px; margin-left: auto; white-space: nowrap;
+  background: rgba(99,102,241,0.08); color: #4f46e5; }
+
 .in-finale { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; }
 .in-finaleA { font-size: 28px; font-weight: 900; letter-spacing: -0.04em; line-height: 1;
   background: linear-gradient(135deg, #6366f1 0%, #14b8a6 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -818,15 +877,12 @@ const IN_STYLE = `
 
 /* ============ CAPTIONS ============ */
 const CAPTIONS: Record<number, string> = {
-  1: "ERP, distributors, vendor portals, WMS — all islands. Nothing talks.",
-  2: "FactWise connects via open APIs. No middleware. No extra cost.",
-  3: "Requisitions, contracts, BOMs flow into FactWise — automatically.",
-  4: "POs, quotes, GR records flow back out — to every system that needs them.",
-  5: "Add custom fields without IT. Drag, drop, deploy.",
-  6: "Build your own formulas. Match exactly how your business operates.",
-  7: "Configure workflows by your team — not a developer.",
-  8: "Live in 2–4 weeks. Not 6 months.",
-  9: "Built to last forever."
+  1: "FactWise connects via open APIs. No middleware. No extra cost.",
+  2: "Requisitions, contracts, BOMs flow into FactWise — automatically.",
+  3: "POs, quotes, GR records flow back out — to every system that needs them.",
+  4: "Add custom fields without IT. Drag, drop, deploy.",
+  5: "SAP raises a requisition → FactWise processes it → Draft PO written back to SAP. Closed loop.",
+  6: "Built to last forever."
 };
 
 /* ============ HELPERS ============ */
@@ -927,6 +983,205 @@ function Pill({ icon, label, lit }: PillProps) {
   );
 }
 
+/* ============ PROCUREMENT LOOP COMPONENT ============ */
+function ProcurementLoop({ procStep }: { procStep: number }) {
+  // Pure SVG layout matching the reference diagram:
+  // SAP (top-center), REQ (bottom-left), FactWise (center), PO (bottom-right)
+  // Rounded-corner orthogonal paths, single indigo palette, animated draw-on
+
+  // SVG coordinate system: 400 × 290
+  // Node boxes (cx, cy, w, h):
+  const SAP = { x: 200, y: 55,  w: 124, h: 54 };
+  const FW  = { x: 200, y: 155, w: 124, h: 50 };
+  const REQ = { x: 65,  y: 230, w: 110, h: 54 };
+  const PO  = { x: 335, y: 230, w: 110, h: 54 };
+
+  // Box edges
+  const sapL = SAP.x - SAP.w/2, sapR = SAP.x + SAP.w/2, sapT = SAP.y - SAP.h/2, sapB = SAP.y + SAP.h/2;
+  const fwL  = FW.x  - FW.w/2,  fwR  = FW.x  + FW.w/2,  fwT  = FW.y  - FW.h/2,  fwB  = FW.y  + FW.h/2;
+  const reqL = REQ.x - REQ.w/2, reqR = REQ.x + REQ.w/2, reqT = REQ.y - REQ.h/2, reqB = REQ.y + REQ.h/2;
+  const poL  = PO.x  - PO.w/2,  poR  = PO.x  + PO.w/2,  poT  = PO.y  - PO.h/2,  poB  = PO.y  + PO.h/2;
+
+  const R = 12; // corner radius for paths
+
+  // Path 1: SAP left → left → down → REQ top
+  const p1 = `M ${sapL} ${SAP.y} L ${REQ.x + R} ${SAP.y} Q ${REQ.x} ${SAP.y} ${REQ.x} ${SAP.y + R} L ${REQ.x} ${reqT}`;
+  const p1Len = 280;
+
+  // Path 2: REQ right → right → up → FactWise bottom-left
+  const p2 = `M ${reqR} ${REQ.y} L ${160 - R} ${REQ.y} Q 160 ${REQ.y} 160 ${REQ.y - R} L 160 ${fwB}`;
+  const p2Len = 120;
+
+  // Path 3: FactWise bottom-right → down → right → PO left
+  const p3 = `M 240 ${fwB} L 240 ${REQ.y - R} Q 240 ${REQ.y} ${240 + R} ${REQ.y} L ${poL} ${REQ.y}`;
+  const p3Len = 120;
+
+  // Path 4: PO top → up → left → SAP right
+  const p4 = `M ${PO.x} ${poT} L ${PO.x} ${SAP.y + R} Q ${PO.x} ${SAP.y} ${PO.x - R} ${SAP.y} L ${sapR} ${SAP.y}`;
+  const p4Len = 280;
+
+  const INDIGO = "#6366f1";
+  const INDIGO_DIM = "#e0e7ff";
+
+  // Animated path: draws from 0 to full length
+  const AnimPath = ({ d, len, active, dashed = false }: { d: string; len: number; active: boolean; dashed?: boolean }) => (
+    <path
+      d={d}
+      fill="none"
+      stroke={active ? INDIGO : INDIGO_DIM}
+      strokeWidth={active ? 1.5 : 1}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeDasharray={dashed ? "5 4" : `${len}`}
+      strokeDashoffset={active ? 0 : len}
+      style={{
+        transition: `stroke-dashoffset 0.75s cubic-bezier(.45,.05,.45,1), stroke 0.3s ease, stroke-width 0.3s ease`,
+      }}
+    />
+  );
+
+  // Arrowhead marker at path end
+  const Arrow = ({ cx, cy, dir, active }: { cx: number; cy: number; dir: "up"|"left"|"right"|"down"; active: boolean }) => {
+    const c = active ? INDIGO : INDIGO_DIM;
+    const pts: Record<string, string> = {
+      up:    `${cx},${cy} ${cx-4},${cy+7} ${cx+4},${cy+7}`,
+      down:  `${cx},${cy} ${cx-4},${cy-7} ${cx+4},${cy-7}`,
+      left:  `${cx},${cy} ${cx+7},${cy-4} ${cx+7},${cy+4}`,
+      right: `${cx},${cy} ${cx-7},${cy-4} ${cx-7},${cy+4}`,
+    };
+    return <polygon points={pts[dir]} fill={c} style={{ transition: "fill 0.3s ease" }} />;
+  };
+
+  // Node card rendered in SVG
+  const Node = ({
+    cx, cy, w, h, label, sub, badge, badgeVisible, isHub, active, visible
+  }: {
+    cx: number; cy: number; w: number; h: number;
+    label: string; sub: string; badge?: string; badgeVisible?: boolean;
+    isHub?: boolean; active?: boolean; visible?: boolean;
+  }) => {
+    const x = cx - w/2, y = cy - h/2;
+    const bg = isHub ? INDIGO : "white";
+    const border = active ? INDIGO : isHub ? "#4f46e5" : "#cbd5e1";
+    const bw = active ? 2 : 1.5;
+    
+    // Shift text up if there's a badge space
+    const hasBadge = badge !== undefined;
+    const textYOffset = hasBadge ? -4 : 0;
+
+    return (
+      <g style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "scale(1)" : "scale(0.88)",
+        transformOrigin: `${cx}px ${cy}px`,
+        transition: "opacity 0.45s cubic-bezier(.22,.61,.36,1), transform 0.45s cubic-bezier(.22,.61,.36,1)"
+      }}>
+        {/* Drop shadow */}
+        <rect x={x+1} y={y+2} width={w} height={h} rx={9} fill="rgba(15,23,42,0.07)" />
+        {/* Card */}
+        <rect x={x} y={y} width={w} height={h} rx={9}
+          fill={bg}
+          stroke={border}
+          strokeWidth={bw}
+        />
+        {/* Active glow ring */}
+        {active && !isHub && (
+          <rect x={x-1} y={y-1} width={w+2} height={h+2} rx={10}
+            fill="none" stroke={INDIGO} strokeWidth={1} opacity={0.25} />
+        )}
+        {/* Icon circle */}
+        <circle cx={cx - w/2 + 20} cy={cy + textYOffset} r={12}
+          fill={isHub ? "rgba(255,255,255,0.18)" : "rgba(99,102,241,0.1)"} />
+        <text x={cx - w/2 + 20} y={cy + textYOffset + 1} textAnchor="middle" dominantBaseline="middle"
+          fill={isHub ? "white" : INDIGO} fontSize={10} fontWeight={800}>
+          {label[0]}
+        </text>
+        {/* Label */}
+        <text x={cx - w/2 + 38} y={cy - 4 + textYOffset} fill={isHub ? "white" : "#0f172a"}
+          fontSize={9.5} fontWeight={800} letterSpacing={-0.3}>{label}</text>
+        <text x={cx - w/2 + 38} y={cy + 8 + textYOffset} fill={isHub ? "rgba(255,255,255,0.65)" : "#64748b"}
+          fontSize={7.5} fontWeight={700} letterSpacing={0.5}>{sub}</text>
+        {/* Badge */}
+        {hasBadge && (
+          <g style={{ opacity: badgeVisible ? 1 : 0, transition: "opacity 0.3s ease" }}>
+            <rect x={cx - w/2 + 38} y={cy + 13} width={w - 46} height={14} rx={4}
+              fill={isHub ? "rgba(255,255,255,0.15)" : "rgba(99,102,241,0.08)"} />
+            <text x={cx - w/2 + 38 + (w - 46)/2} y={cy + 20}
+              textAnchor="middle" dominantBaseline="middle"
+              fill={isHub ? "white" : INDIGO} fontSize={7} fontWeight={800}>{badge}</text>
+          </g>
+        )}
+      </g>
+    );
+  };
+
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", gap: 5, padding: "8px 0", alignItems: "center", justifyContent: "center" }}>
+
+      {/* ── SVG diagram ── */}
+      <div style={{ flex: "1 1 auto", width: "100%", position: "relative", minHeight: 250, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <svg viewBox="0 0 400 290" style={{ width: "100%", height: "100%", maxWidth: 500, overflow: "visible" }}>
+
+          {/* ── Paths (drawn behind nodes) ── */}
+          <AnimPath d={p1} len={p1Len} active={procStep >= 2} />
+          <AnimPath d={p2} len={p2Len} active={procStep >= 3} />
+          <AnimPath d={p3} len={p3Len} active={procStep >= 5} />
+          <AnimPath d={p4} len={p4Len} active={procStep >= 6} dashed />
+
+          {/* ── Arrowheads ── */}
+          {/* p1 ends at REQ top-center */}
+          <Arrow cx={REQ.x} cy={reqT} dir="down" active={procStep >= 2} />
+          {/* p2 ends at FW bottom left (160, fwB) */}
+          <Arrow cx={160} cy={fwB} dir="up" active={procStep >= 3} />
+          {/* p3 ends at PO left-center */}
+          <Arrow cx={poL} cy={REQ.y} dir="right" active={procStep >= 5} />
+          {/* p4 ends at SAP right-center */}
+          <Arrow cx={sapR} cy={SAP.y} dir="left" active={procStep >= 6} />
+
+          {/* ── Edge labels ── */}
+          {procStep >= 2 && (
+            <text x={REQ.x + 8} y={SAP.y + (reqT - SAP.y)/2} fill="#4f46e5" fontSize={9} fontFamily="Inter, sans-serif" fontWeight={700} letterSpacing={0.5}>REQ-2417</text>
+          )}
+          {procStep >= 3 && (
+            <text x={reqR + 8} y={REQ.y - 8} fill="#4f46e5" fontSize={9} fontFamily="Inter, sans-serif" fontWeight={700} letterSpacing={0.5}>INBOUND</text>
+          )}
+          {procStep >= 5 && (
+            <text x={240 + 8} y={REQ.y - 8} fill="#4f46e5" fontSize={9} fontFamily="Inter, sans-serif" fontWeight={700} letterSpacing={0.5}>DRAFT PO</text>
+          )}
+          {procStep >= 6 && (
+            <text x={PO.x - 60} y={SAP.y - 8} fill="#4f46e5" fontSize={9} fontFamily="Inter, sans-serif" fontWeight={700} letterSpacing={0.5}>PO BACK</text>
+          )}
+
+          {/* ── Nodes (drawn on top) ── */}
+          <Node cx={SAP.x} cy={SAP.y} w={SAP.w} h={SAP.h}
+            label="SAP S/4" sub="3RD PARTY ERP"
+            badge="✓ PO Received" badgeVisible={procStep >= 7}
+            active={procStep >= 1 && procStep < 3 || procStep >= 6}
+            visible={procStep >= 1} />
+
+          <Node cx={REQ.x} cy={REQ.y} w={REQ.w} h={REQ.h}
+            label="REQ-2417" sub="REQUISITION"
+            badge="→ FactWise" badgeVisible={procStep >= 4}
+            active={procStep === 2 || procStep === 3}
+            visible={procStep >= 2} />
+
+          <Node cx={FW.x} cy={FW.y} w={FW.w} h={FW.h}
+            label="FactWise" sub={procStep >= 4 && procStep < 6 ? "PROCESSING…" : "HUB"}
+            isHub active={procStep >= 3 && procStep < 6}
+            visible={procStep >= 1} />
+
+          <Node cx={PO.x} cy={PO.y} w={PO.w} h={PO.h}
+            label="Draft PO" sub="PO-8842"
+            badge="→ SAP" badgeVisible={procStep >= 6}
+            active={procStep === 5 || procStep === 6}
+            visible={procStep >= 5} />
+
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 /* ============ MAIN PORTED COMPONENT ============ */
 export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: IntegrationAnimationProps) {
   const [phase, setPhase] = useState(0);
@@ -935,11 +1190,10 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
   const [packetTick, setPacketTick] = useState(0);
   const [fieldRows, setFieldRows] = useState(0);
   const [fieldDragging, setFieldDragging] = useState(false);
-  const [fxTokens, setFxTokens] = useState(0);
-  const [fxResultIn, setFxResultIn] = useState(false);
   const [wfNodes, setWfNodes] = useState(0);
   const [wfStep, setWfStep] = useState(-1);
   const [tlStep, setTlStep] = useState(0);
+  const [procStep, setProcStep] = useState(0); // 0=idle 1=sap-lit 2=req-arrow 3=fw-lit 4=fw-processing 5=po-arrow 6=return-arrow 7=done
   const [finaleChips, setFinaleChips] = useState(0);
   const [lit, setLit] = useState({ api: false, custom: false, formula: false, fast: false });
 
@@ -961,26 +1215,19 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
         setPacketTick(0);
         setFieldRows(0);
         setFieldDragging(false);
-        setFxTokens(0);
-        setFxResultIn(false);
         setWfNodes(0);
         setWfStep(-1);
         setTlStep(0);
+        setProcStep(0);
         setFinaleChips(0);
         setLit({ api: false, custom: false, formula: false, fast: false });
         onPhaseChangeRef.current?.(0);
         await sleep(400);
 
-        // 1. SILOS
+        // 1. HUB + CABLES
         if (cancelRef.current) return;
         setPhase(1);
         onPhaseChangeRef.current?.(1);
-        await sleep(2600);
-
-        // 2. HUB + CABLES
-        if (cancelRef.current) return;
-        setPhase(2);
-        onPhaseChangeRef.current?.(2);
         setLit((s) => ({ ...s, api: true }));
         setHubIn(true);
         await sleep(400);
@@ -995,24 +1242,24 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
         }
         await sleep(800);
 
-        // 3. INBOUND
+        // 2. INBOUND
+        if (cancelRef.current) return;
+        setPhase(2);
+        onPhaseChangeRef.current?.(2);
+        setPacketTick((t) => t + 1);
+        await sleep(2400);
+
+        // 3. OUTBOUND
         if (cancelRef.current) return;
         setPhase(3);
         onPhaseChangeRef.current?.(3);
         setPacketTick((t) => t + 1);
         await sleep(2400);
 
-        // 4. OUTBOUND
+        // 4. FIELDS
         if (cancelRef.current) return;
         setPhase(4);
         onPhaseChangeRef.current?.(4);
-        setPacketTick((t) => t + 1);
-        await sleep(2400);
-
-        // 5. FIELDS
-        if (cancelRef.current) return;
-        setPhase(5);
-        onPhaseChangeRef.current?.(5);
         setLit((s) => ({ ...s, custom: true }));
         for (let i = 1; i <= 3; i++) {
           if (cancelRef.current) return;
@@ -1026,53 +1273,24 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
         setFieldRows(4);
         await sleep(1700);
 
-        // 6. FORMULA
+        // 5. PROCUREMENT LOOP
+        if (cancelRef.current) return;
+        setPhase(5);
+        onPhaseChangeRef.current?.(5);
+        setLit((s) => ({ ...s, fast: true }));
+        // Step through the procurement loop
+        setProcStep(1); await sleep(600);  // SAP lights up
+        setProcStep(2); await sleep(700);  // REQ arrow animates
+        setProcStep(3); await sleep(600);  // FactWise lights up
+        setProcStep(4); await sleep(900);  // FactWise processing
+        setProcStep(5); await sleep(700);  // Draft PO arrow animates
+        setProcStep(6); await sleep(700);  // Return arrow to SAP
+        setProcStep(7); await sleep(1800); // Done — all lit
+
+        // 6. FINALE
         if (cancelRef.current) return;
         setPhase(6);
         onPhaseChangeRef.current?.(6);
-        setLit((s) => ({ ...s, formula: true }));
-        for (let i = 1; i <= FORMULA_CHIPS.length; i++) {
-          if (cancelRef.current) return;
-          setFxTokens(i);
-          await sleep(380);
-        }
-        await sleep(250);
-        setFxResultIn(true);
-        await sleep(1500);
-
-        // 7. WORKFLOW
-        if (cancelRef.current) return;
-        setPhase(7);
-        onPhaseChangeRef.current?.(7);
-        for (let i = 1; i <= WF_NODES.length; i++) {
-          if (cancelRef.current) return;
-          setWfNodes(i);
-          await sleep(220);
-        }
-        await sleep(400);
-        for (let i = 0; i < WF_NODES.length; i++) {
-          if (cancelRef.current) return;
-          setWfStep(i);
-          await sleep(430);
-        }
-        await sleep(900);
-
-        // 8. TIMELINE
-        if (cancelRef.current) return;
-        setPhase(8);
-        onPhaseChangeRef.current?.(8);
-        setLit((s) => ({ ...s, fast: true }));
-        for (let i = 1; i <= TIMELINE.length; i++) {
-          if (cancelRef.current) return;
-          setTlStep(i);
-          await sleep(560);
-        }
-        await sleep(1500);
-
-        // 9. FINALE
-        if (cancelRef.current) return;
-        setPhase(9);
-        onPhaseChangeRef.current?.(9);
         for (let i = 1; i <= 4; i++) {
           if (cancelRef.current) return;
           setFinaleChips(i);
@@ -1090,42 +1308,24 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
 
   /* ===== Position Calculations for Orbit ===== */
   const sysPositions = useMemo<SystemPosition[]>(() => {
-    return SYSTEMS.map((s) => {
-      let xPct = 50;
-      let yPct = 50;
-
-      if (s.id === "ven") {
-        xPct = 17; // Clean clearance for left-hand legend
-        yPct = 50;
-      } else if (s.id === "wms") {
-        xPct = 83; // Clean clearance for right-hand legend
-        yPct = 50;
-      } else if (s.id === "erp") {
-        xPct = 34; // Shift right to avoid overlap
-        yPct = 21;
-      } else if (s.id === "dig") {
-        xPct = 34; // Shift right to avoid overlap
-        yPct = 79;
-      } else if (s.id === "ora") {
-        xPct = 66; // Shift left to avoid overlap
-        yPct = 21;
-      } else if (s.id === "mou") {
-        xPct = 66; // Shift left to avoid overlap
-        yPct = 79;
-      }
-
-      return {
-        ...s,
-        xPct,
-        yPct
-      };
-    });
+    // 4 systems placed at the four diagonal corners, evenly spaced around the hub
+    const positions: Record<string, { xPct: number; yPct: number }> = {
+      erp: { xPct: 22, yPct: 20 },  // top-left
+      wms: { xPct: 78, yPct: 20 },  // top-right
+      ven: { xPct: 22, yPct: 80 },  // bottom-left
+      dig: { xPct: 78, yPct: 80 },  // bottom-right
+    };
+    return SYSTEMS.map((s) => ({
+      ...s,
+      xPct: positions[s.id]?.xPct ?? 50,
+      yPct: positions[s.id]?.yPct ?? 50,
+    }));
   }, []);
 
   /* ===== Smooth Stats Counters ===== */
-  const apisTarget = phase >= 2 ? 6 : 0;
-  const objsTarget = phase >= 4 ? 12 : phase >= 3 ? 6 : 0;
-  const wksTarget = phase >= 8 ? 2 : 0;
+  const apisTarget = phase >= 1 ? 6 : 0;
+  const objsTarget = phase >= 3 ? 12 : phase >= 2 ? 6 : 0;
+  const wksTarget = phase >= 6 ? 2 : 0;
 
   const apisVal = useCount(apisTarget, true, 600);
   const objsVal = useCount(objsTarget, true, 700);
@@ -1197,20 +1397,17 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
               <div className="in-stage">
                 <div className="in-stageHead">
                   <h4>
-                    {phase === 1 && "Disconnected Systems"}
-                    {phase === 2 && "API Connections"}
-                    {phase === 3 && "Inbound Sync"}
-                    {phase === 4 && "Outbound Sync"}
-                    {phase === 5 && "Custom Fields"}
-                    {phase === 6 && "Formula Builder"}
-                    {phase === 7 && "Configurable Workflow"}
-                    {phase === 8 && "Time to Go-Live"}
-                    {phase === 9 && "Built to Last"}
+                    {phase === 1 && "API Connections"}
+                    {phase === 2 && "Inbound Sync"}
+                    {phase === 3 && "Outbound Sync"}
+                    {phase === 4 && "Custom Fields"}
+                    {phase === 5 && "SAP ↔ FactWise ↔ SAP Loop"}
+                    {phase === 6 && "Built to Last"}
                     {phase === 0 && "Initializing..."}
                   </h4>
                   <div className="flex gap-4 items-center">
                     <div className="in-dots2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
                         <div key={i} className={`in-pd ${phase === i ? "on" : phase > i ? "done" : ""}`} />
                       ))}
                     </div>
@@ -1221,8 +1418,8 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                   </div>
                 </div>
 
-                {/* ===== SCENES 1-4: ORBIT SYSTEM MAP + PACKETS ===== */}
-                <div className={`in-scene ${phase >= 1 && phase <= 4 ? "on" : ""}`}>
+                {/* ===== SCENES 1-3: ORBIT SYSTEM MAP + PACKETS ===== */}
+                <div className={`in-scene ${phase >= 1 && phase <= 3 ? "on" : ""}`}>
                   <div className="in-hubScene">
                     
                     {/* SVG connecting cables background */}
@@ -1236,10 +1433,10 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                           return (
                             <path
                               key={s.id}
-                              className={`in-cable ${phase === 1 ? "broken" : isConnected ? "in" : ""}`}
+                              className={`in-cable ${isConnected ? "in" : ""}`}
                               d={d}
                               stroke={isConnected ? s.color : "#cbd5e1"}
-                              strokeOpacity={phase === 1 ? 0.4 : isConnected ? 0.8 : 0.2}
+                              strokeOpacity={isConnected ? 0.8 : 0.2}
                             />
                           );
                         })}
@@ -1271,15 +1468,12 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                           </div>
                           <div className="in-sysSub">{s.sub}</div>
                           <div className="in-sysDot" />
-                          <div className={`in-sysQ ${phase === 1 ? "in" : ""}`} style={{ right: -8, top: -14 }}>
-                            ?
-                          </div>
                         </div>
                       );
                     })}
 
-                    {/* INBOUND packets flow (Scene 3) */}
-                    {phase === 3 &&
+                    {/* INBOUND packets flow (Scene 2) */}
+                    {phase === 2 &&
                       PACKETS_IN.map((p, i) => {
                         const src = sysPositions.find((s) => s.id === p.from);
                         if (!src) return null;
@@ -1296,8 +1490,8 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                         );
                       })}
 
-                    {/* OUTBOUND packets flow (Scene 4) */}
-                    {phase === 4 &&
+                    {/* OUTBOUND packets flow (Scene 3) */}
+                    {phase === 3 &&
                       PACKETS_OUT.map((p, i) => {
                         const dst = sysPositions.find((s) => s.id === p.to);
                         if (!dst) return null;
@@ -1315,7 +1509,7 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                       })}
 
                     {/* Flow legends */}
-                    {phase === 3 && (
+                    {phase === 2 && (
                       <div className="in-flowKey">
                         <div className="lab">Inbound</div>
                         {PACKETS_IN.map((p) => (
@@ -1326,7 +1520,7 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                         ))}
                       </div>
                     )}
-                    {phase === 4 && (
+                    {phase === 3 && (
                       <div className="in-flowKey right">
                         <div className="lab">Outbound</div>
                         {PACKETS_OUT.map((p) => (
@@ -1340,8 +1534,8 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                   </div>
                 </div>
 
-                {/* ===== SCENE 5: CUSTOM FIELDS SCHEMAS ===== */}
-                <div className={`in-scene ${phase === 5 ? "on" : ""}`}>
+                {/* ===== SCENE 4: CUSTOM FIELDS SCHEMAS ===== */}
+                <div className={`in-scene ${phase === 4 ? "on" : ""}`}>
                   <div className="in-fields">
                     <div className="in-fieldsLeft">
                       <div className="in-fieldsTitle">Field types</div>
@@ -1373,132 +1567,13 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                   </div>
                 </div>
 
-                {/* ===== SCENE 6: FORMULA BUILDER ===== */}
+                {/* ===== SCENE 5: PROCUREMENT LOOP ===== */}
+                <div className={`in-scene ${phase === 5 ? "on" : ""}`}>
+                  <ProcurementLoop procStep={procStep} />
+                </div>
+
+                {/* ===== SCENE 6: FINALE CAPABILITIES ===== */}
                 <div className={`in-scene ${phase === 6 ? "on" : ""}`}>
-                  <div className="in-formula">
-                    <div className="in-formulaTitle">Custom formula · Landed Cost</div>
-                    <div className="in-formulaPalette">
-                      {FORMULA_CHIPS.map((c, i) => (
-                        <div key={c.id} className={`in-fxChip ${fxTokens === i ? "dragging" : ""}`}>
-                          <span className="sw" style={{ background: c.color }} />
-                          {c.label}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="in-formulaCanvas">
-                      <div className="in-formulaName">
-                        <span className="ic">
-                          <II.Fx s={11} />
-                        </span>
-                        <span>landed_cost =</span>
-                      </div>
-                      <div className="in-formulaExpr">
-                        {FORMULA_CHIPS.map((c, i) => (
-                          <React.Fragment key={c.id}>
-                            {i > 0 && <span className={`in-fxOp ${fxTokens > i ? "in" : ""}`}>+</span>}
-                            <span className={`in-fxToken ${fxTokens > i ? "in" : ""}`}>
-                              <span className="sw" style={{ background: c.color }} />
-                              {c.label}
-                            </span>
-                          </React.Fragment>
-                        ))}
-                      </div>
-                      <div className="in-formulaResult">
-                        <span className="lab">Auto-applied to all vendors</span>
-                        <span className="val" style={{ opacity: fxResultIn ? 1 : 0, transition: "opacity .5s ease" }}>
-                          $124.4K
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ===== SCENE 7: CONFIGURABLE WORKFLOW NODES ===== */}
-                <div className={`in-scene ${phase === 7 ? "on" : ""}`}>
-                  <div className="in-wf">
-                    <div className="in-wfEdge">
-                      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-                        {WF_NODES.slice(0, -1).map((n, i) => {
-                          const n2 = WF_NODES[i + 1];
-                          const isIn = wfNodes > i + 1;
-                          const isLive = wfStep >= i + 1;
-                          const d = `M ${n.x} ${n.y} C ${n.x + 6} ${n.y + (n2.y - n.y) / 2}, ${n2.x - 6} ${n.y + (n2.y - n.y) / 2}, ${n2.x} ${n2.y}`;
-                          return (
-                            <path
-                              key={i}
-                              className={`in-wfEdgePath ${isIn ? "in " : ""}${isLive ? "live" : ""}`}
-                              d={d}
-                            />
-                          );
-                        })}
-                      </svg>
-                    </div>
-                    {WF_NODES.map((n, i) => (
-                      <div
-                        key={n.id}
-                        className={`in-wfNode ${wfNodes > i ? "in " : ""}${wfStep >= i ? "lit" : ""}`}
-                        style={{ left: n.x + "%", top: n.y + "%" }}
-                      >
-                        <span className="sw" style={{ background: n.color }} />
-                        {n.label}
-                      </div>
-                    ))}
-                    <div className="in-wfHint">
-                      <span className="ic">
-                        <II.PenSq s={10} />
-                      </span>
-                      Edit any step · No code
-                    </div>
-                  </div>
-                </div>
-
-                {/* ===== SCENE 8: TIMELINE MILESTONES ===== */}
-                <div className={`in-scene ${phase === 8 ? "on" : ""}`}>
-                  <div className="in-tlScene">
-                    <div className="in-tlHead">
-                      <span>From kickoff to go-live</span>
-                      <span className="small">5 milestones</span>
-                    </div>
-                    <div style={{ position: "relative" }}>
-                      <div className="in-tlRail">
-                        <div className="in-tlFill" style={{ width: `${(tlStep / TIMELINE.length) * 100}%` }} />
-                      </div>
-                      <div className="in-tlDots">
-                        {TIMELINE.map((_, i) => (
-                          <div key={i} className={`in-tlDot ${tlStep > i ? "on" : ""}`} />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="in-tlMilestones">
-                      {TIMELINE.map((m, i) => {
-                        const IconComponent = II[m.icon];
-                        return (
-                          <div key={i} className={`in-tlMilestone ${tlStep > i ? "on" : ""}`}>
-                            <div className="in-tlIc">{IconComponent && <IconComponent s={11} />}</div>
-                            <div className="in-tlWk">{m.week}</div>
-                            <div className="in-tlLab">{m.label}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="in-tlSummary">
-                      <div className="sIc">
-                        <II.Check s={16} />
-                      </div>
-                      <div className="sBody">
-                        <div className="t">Live in 2–4 weeks</div>
-                        <div className="d">Open APIs · No middleware · No IT ticket</div>
-                      </div>
-                      <div className="sStat">
-                        <div className="v">8×</div>
-                        <div className="l">vs. legacy</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ===== SCENE 9: FINALE CAPABILITIES ===== */}
-                <div className={`in-scene ${phase === 9 ? "on" : ""}`}>
                   <div className="in-finale">
                     <div className="in-finaleA">Live in 2–4 weeks.</div>
                     <div className="in-finaleB">
@@ -1519,21 +1594,21 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                       </div>
                       <div className={`in-finaleChip ${finaleChips > 1 ? "in" : ""}`}>
                         <span className="ic">
-                          <II.Fx s={10} />
-                        </span>
-                        Custom formulas
-                      </div>
-                      <div className={`in-finaleChip ${finaleChips > 2 ? "in" : ""}`}>
-                        <span className="ic">
                           <II.PenSq s={10} />
                         </span>
                         Custom fields
                       </div>
-                      <div className={`in-finaleChip ${finaleChips > 3 ? "in" : ""}`}>
+                      <div className={`in-finaleChip ${finaleChips > 2 ? "in" : ""}`}>
                         <span className="ic">
                           <II.Workflow s={10} />
                         </span>
                         Configurable workflows
+                      </div>
+                      <div className={`in-finaleChip ${finaleChips > 3 ? "in" : ""}`}>
+                        <span className="ic">
+                          <II.Link s={10} />
+                        </span>
+                        Closed-Loop PO
                       </div>
                     </div>
                   </div>
@@ -1551,8 +1626,8 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
               <div className="in-pills">
                 <Pill icon={<II.Link s={13} />} label="Open APIs" lit={lit.api} />
                 <Pill icon={<II.PenSq s={13} />} label="Custom Fields" lit={lit.custom} />
-                <Pill icon={<II.Fx s={13} />} label="Custom Formulas" lit={lit.formula} />
-                <Pill icon={<II.Clock s={13} />} label="Live in 2–4 Weeks" lit={lit.fast} />
+                <Pill icon={<II.Workflow s={13} />} label="Configurable Workflows" lit={lit.formula} />
+                <Pill icon={<II.Link s={13} />} label="Closed-Loop PO" lit={lit.fast} />
               </div>
 
             </div>

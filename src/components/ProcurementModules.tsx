@@ -10,14 +10,13 @@ import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 const modules = [
   {
     tag: "SOURCE TO CONTRACT",
-    title: "Quote to Order",
-    description: "Streamline the transition from supplier quotes to purchase orders. Automate bid comparison and award logic.",
+    title: "Inquiry to Quote",
+    description: "Turn every customer inquiry into a winning quote. Intelligent sourcing, automated negotiations, and true landed cost analytics — from BOM to customer quote in record time.",
     imageUrl: "/images/quote-order.png",
     features: [
-      "Smart Bid Comparison",
-      "Auto-Award Logic",
-      "Vendor Performance",
-      "Negotiation History"
+      "BOM & cost intelligence",
+      "Automated vendor sourcing & negotiations",
+      "One-click customer quote generation",
     ],
     href: "/solutions/quote-to-order",
     icon: BarChart3
@@ -25,13 +24,12 @@ const modules = [
   {
     tag: "PROCURE TO PAY",
     title: "Requisition to PO",
-    description: "Simplify internal approvals. Convert approved requisitions into POs instantly with full budget tracking.",
+    description: "From internal request to approved purchase order — without the back and forth. Raise, approve, source, negotiate, and issue POs across your entire organisation in one seamless flow.",
     imageUrl: "/images/req-po.png",
     features: [
-      "Budget Tracking",
-      "Multi-Level Approvals",
-      "Compliance Checks",
-      "Instant PO Generation"
+      "Combine requisitions for bulk pricing",
+      "Auto-filled target prices on every RFQ",
+      "Multi-vendor POs in one click",
     ],
     href: "/solutions/requisition-to-po",
     icon: ShieldCheck
@@ -39,95 +37,369 @@ const modules = [
   {
     tag: "INVOICE AUTOMATION",
     title: "Invoice to Pay",
-    description: "Close the loop with automated 3-way matching. Ensure compliance and timely payments with integrated AP.",
+    description: "Every invoice verified. Every payment controlled. Quadruple validation across PO, GR, QC, and contract terms — so not a single rupee moves without full confidence.",
     imageUrl: "/images/invoice-pay.png",
     features: [
-      "AP Automation",
-      "Compliance Verification",
-      "Digital Archiving",
-      "Payment Scheduling"
+      "AI-powered invoice generation",
+      "Flexible GR, QC & payment sequencing",
+      "Always pay the right amount — automatically",
     ],
     href: "/solutions/invoice-to-pay",
     icon: ZapIcon
   },
 ];
 
+const CARDS_STYLE = `
+  .factwise-cards-section {
+    --blue-50: #eff4ff;
+    --blue-100: #dbeafe;
+    --blue-400: #60a5fa;
+    --blue-600: #3666ff;
+    --blue-800: #1e3a8a;
+    --gray-50: #F7F6F3;
+    --gray-100: #EFEDE8;
+    --gray-200: #DDD9D0;
+    --gray-400: #94a3b8;
+    --gray-700: #334155;
+    --gray-900: #0f172a;
+    --radius: 20px;
+    --radius-sm: 10px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 24px rgba(0,0,0,0.07), 0 24px 64px rgba(0,0,0,0.10);
+  }
+
+  .fw-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 340px);
+    gap: 24px;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+
+  @media (max-width: 1100px) {
+    .fw-cards-grid { grid-template-columns: repeat(2, 340px); }
+  }
+  @media (max-width: 740px) {
+    .fw-cards-grid { grid-template-columns: 1fr; max-width: 350px; margin: 0 auto; }
+  }
+
+  /* Card */
+  .fw-card {
+    background: #FFFFFF;
+    border-radius: var(--radius);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.38s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.38s cubic-bezier(0.23, 1, 0.32, 1),
+                border-color 0.3s ease;
+    will-change: transform;
+  }
+
+  .fw-card.featured {
+    border-color: var(--blue-600);
+  }
+
+  /* Shimmer on hover */
+  .fw-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .fw-card:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* Card top color bar */
+  .fw-card-bar {
+    height: 4px;
+    width: 100%;
+    transition: height 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .fw-card:hover .fw-card-bar { height: 6px; }
+
+  .fw-card-blue  .fw-card-bar { background: linear-gradient(90deg, var(--blue-400), var(--blue-600)); }
+
+  /* Card header */
+  .fw-card-header {
+    padding: 24px 24px 0;
+    text-align: left;
+  }
+
+  .fw-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .fw-card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  .fw-card:hover .fw-card-badge { transform: scale(1.05); }
+
+  .fw-badge-blue  { background: var(--blue-50);  color: var(--blue-800); }
+
+  .fw-popular-pill {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--blue-50);
+    color: var(--blue-600);
+    border: 1px solid var(--blue-100);
+    animation: fwPulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes fwPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(54, 102, 255, 0.18); }
+    50%       { box-shadow: 0 0 0 5px rgba(54, 102, 255, 0); }
+  }
+
+  /* Icon */
+  .fw-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fw-card:hover .fw-card-icon { transform: scale(1.12) rotate(-4deg); }
+
+  .fw-icon-blue  { background: var(--blue-50); }
+
+  .fw-card-icon svg { width: 22px; height: 22px; }
+
+  .fw-card-title {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: var(--gray-900) !important;
+    letter-spacing: -0.3px !important;
+    margin-bottom: 10px !important;
+    line-height: 1.2 !important;
+    transition: color 0.2s ease;
+    text-align: left;
+  }
+
+  .fw-card-blue:hover  .fw-card-title { color: var(--blue-800) !important; }
+
+  .fw-card-desc {
+    font-size: 13.5px !important;
+    color: var(--gray-400) !important;
+    line-height: 1.65 !important;
+    font-weight: 300 !important;
+    padding-bottom: 20px !important;
+    text-align: left;
+  }
+
+  /* Divider */
+  .fw-card-divider {
+    height: 1px;
+    background: var(--gray-100);
+    margin: 0 24px;
+    transition: background 0.3s ease;
+  }
+
+  .fw-card:hover .fw-card-divider { background: var(--gray-200); }
+
+  /* Features */
+  .fw-card-features {
+    padding: 18px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    text-align: left;
+  }
+
+  .fw-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px !important;
+    color: var(--gray-700) !important;
+    line-height: 1.45 !important;
+    transition: transform 0.25s ease;
+    font-weight: 500 !important;
+    text-align: left;
+  }
+
+  .fw-card:hover .fw-feature:nth-child(1) { transform: translateX(3px); transition-delay: 0.03s; }
+  .fw-card:hover .fw-feature:nth-child(2) { transform: translateX(3px); transition-delay: 0.07s; }
+  .fw-card:hover .fw-feature:nth-child(3) { transform: translateX(3px); transition-delay: 0.11s; }
+
+  .fw-feature-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .fw-dot-blue  { background: var(--blue-50); }
+  .fw-dot-green { background: var(--green-50); }
+  .fw-dot-amber { background: var(--amber-50); }
+
+  .fw-feature-dot svg { width: 10px; height: 10px; }
+
+  /* Footer */
+  .fw-card-footer {
+    padding: 16px 24px 22px;
+  }
+
+  .fw-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 0;
+    border-radius: 12px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease,
+                gap 0.25s ease;
+    letter-spacing: 0.01em !important;
+    text-transform: uppercase !important;
+  }
+
+  .fw-card:hover .fw-card-btn { gap: 12px; }
+
+  .fw-btn-blue {
+    background: var(--blue-50);
+    color: var(--blue-800);
+  }
+  .fw-btn-blue:hover {
+    background: var(--blue-100);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(54, 102, 255, 0.18);
+  }
+
+  .fw-btn-arrow {
+    display: inline-flex;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fw-card-btn:hover .fw-btn-arrow { transform: translate(3px, -3px); }
+`;
+
 function Card({ module, index }: { module: typeof modules[0], index: number }) {
+  const [tilt, setTilt] = React.useState({ x: 0, y: 0, isHovered: false });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: x * 5, y: -y * 5, isHovered: true });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0, isHovered: false });
+  };
+
+  const transformStyle = tilt.isHovered
+    ? `translateY(-6px) scale(1.012) rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`
+    : '';
+
+  // Theme configuration
+  const t = {
+    colorKey: "blue",
+    badgeClass: "fw-badge-blue",
+    iconClass: "fw-icon-blue",
+    dotClass: "fw-dot-blue",
+    btnClass: "fw-btn-blue",
+    iconStroke: "#3666ff",
+  };
+  const isFeatured = index === 1;
+
   return (
-    <CardContainer className="inter-var">
-      <CardBody className="bg-white relative group/card border-slate-200 w-auto sm:w-[22rem] h-auto rounded-[2rem] p-7 border shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] hover:shadow-[0_40px_80px_-15px_rgba(54,102,255,0.12)] transition-all duration-500">
-        <CardItem
-          translateZ="50"
-          className="flex items-center gap-3 mb-4"
-        >
-          <div className="p-3 rounded-2xl border bg-slate-50 border-slate-100 text-slate-400 group-hover/card:bg-blue-50 group-hover/card:border-blue-100 group-hover/card:text-[#3666ff] transition-all duration-500">
-            <module.icon className="w-5 h-5" />
-          </div>
-          <span className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover/card:text-[#3666ff] transition-colors">
-            {module.tag}
-          </span>
-        </CardItem>
-        
-        <CardItem
-          translateZ="60"
-          className="text-xl font-bold text-[#1A1D2E] mb-2 tracking-tight group-hover/card:text-[#3666ff] transition-colors"
-        >
-          {module.title}
-        </CardItem>
-        
-        <CardItem
-          as="p"
-          translateZ="50"
-          className="text-slate-500 text-[13px] font-medium leading-relaxed mb-6"
-        >
-          {module.description}
-        </CardItem>
-        
-        <CardItem translateZ="100" className="w-full mb-6">
-          <img
-            src={module.imageUrl}
-            height="600"
-            width="600"
-            className="h-40 w-full object-cover rounded-xl group-hover/card:shadow-xl border border-slate-100"
-            alt={module.title}
-          />
-        </CardItem>
-
-        <CardItem translateZ="40" className="space-y-2.5 mb-8">
-           {module.features.slice(0, 3).map((feature, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-blue-50 text-[#3666ff]">
-                <Check className="h-2.5 w-2.5 stroke-[3]" />
-              </div>
-              <span className="text-[12px] font-bold text-slate-600">
-                {feature}
-              </span>
-            </div>
-          ))}
-        </CardItem>
-
-        <div className="mt-auto">
-          <CardItem
-            translateZ={40}
-            as="button"
-            className="w-full px-6 py-3 rounded-xl bg-slate-50 text-slate-600 border border-slate-100 text-[11px] font-black uppercase tracking-widest hover:bg-[#3666ff] hover:text-white hover:border-[#3666ff] transition-all duration-300 shadow-sm hover:shadow-blue-500/25"
-            onClick={() => {
-              if (index === 0) {
-                window.location.href = "/solutions";
-                return;
-              }
-              const targetId = index === 1 ? "roadmap" : "case-studies";
-              const element = document.getElementById(targetId);
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-          >
-            Explore Solution
-          </CardItem>
+    <div
+      className={`fw-card fw-card-${t.colorKey} ${isFeatured ? "featured" : ""}`}
+      style={{ transform: transformStyle }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={() => {
+        if (index === 0) {
+          window.location.href = "/solutions";
+          return;
+        }
+        const targetId = index === 1 ? "roadmap" : "case-studies";
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }}
+    >
+      <div className="fw-card-bar"></div>
+      <div className="fw-card-header">
+        <div className="fw-card-meta">
+          <span className={`fw-card-badge ${t.badgeClass}`}>{module.tag}</span>
+          {isFeatured && <span className="fw-popular-pill">⚡ Most popular</span>}
         </div>
-      </CardBody>
-    </CardContainer>
+        <div className={`fw-card-icon ${t.iconClass}`}>
+          <module.icon className="w-5 h-5" style={{ color: t.iconStroke }} />
+        </div>
+        <h2 className="fw-card-title">{module.title}</h2>
+        <p className="fw-card-desc">{module.description}</p>
+      </div>
+
+      <div className="fw-card-divider mt-4"></div>
+      <div className="fw-card-features">
+        {module.features.map((feature, i) => (
+          <div key={i} className="fw-feature">
+            <span className={`fw-feature-dot ${t.dotClass}`}>
+              <svg viewBox="0 0 12 12" fill="none" stroke={t.iconStroke} strokeWidth="2" strokeLinecap="round">
+                <polyline points="2,6 5,9 10,3"/>
+              </svg>
+            </span>
+            {feature}
+          </div>
+        ))}
+      </div>
+
+      <div className="fw-card-footer">
+        <button className={`fw-card-btn ${t.btnClass}`}>
+          Explore solution
+          <span className="fw-btn-arrow">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <path d="M2 12L12 2M12 2H6M12 2v6"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -135,7 +407,8 @@ import ScrollReveal from "./ui/ScrollReveal";
 
 export default function ProcurementModules() {
   return (
-    <section className="py-20 relative bg-white overflow-hidden" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
+    <section className="py-20 relative bg-white overflow-hidden factwise-cards-section">
+      <style dangerouslySetInnerHTML={{ __html: CARDS_STYLE }} />
       <div className="max-w-7xl px-6 mx-auto relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -155,7 +428,7 @@ export default function ProcurementModules() {
           </p>
         </motion.div>
 
-        <ScrollReveal className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch" stagger={0.15} delay={0.3}>
+        <ScrollReveal className="fw-cards-grid" stagger={0.15} delay={0.3}>
           {modules.map((module, index) => (
             <Card key={index} module={module} index={index} />
           ))}

@@ -6,7 +6,6 @@ import {
   CareersCulture,
   CareersOpenings,
   CareersTestimonials,
-  CareersBenefits
 } from '@/components/careers';
 
 export default function CareersPage() {
@@ -17,7 +16,6 @@ export default function CareersPage() {
         <CareersCulture />
         <CareersOpenings />
         <CareersTestimonials />
-        <CareersBenefits />
         <FlickeringFooter />
       </main>
     </ReactLenis>

@@ -19,7 +19,7 @@ export default function SolutionsPage() {
       <SolutionsTabbedFeatures />
       <QuoteToOrderFlow />
       <QuoteToOrderFeatures />
-      <StackedCards />
+      {/* <StackedCards /> */}
       <FlickeringFooter />
     </main>
   );

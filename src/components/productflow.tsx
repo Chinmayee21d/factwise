@@ -17,7 +17,7 @@ var ROOT=document.getElementById('phub-root');
 if(!ROOT)return;
 
 var PROMPTS={
-  p2q:'Show me the quote to order flow for raw materials with 3 vendors',
+  p2q:'Show me the inquiry to quote flow for raw materials with 3 vendors',
   r2po:'Raise a purchase requisition for 500 units and convert to PO',
   i2p:'Match this supplier invoice to the PO and release payment'
 };
@@ -163,20 +163,20 @@ function renderChat(ms,flowKey,flowColor){
 
 var C={p2q:'#3666ff',r2po:'#4b8bff',i2p:'#3666ff'};
 var FLOWS={
-  p2q:{title:'Quote to Order',color:C.p2q,
-    desc:'From initial project scoping to final PO — streamline your entire sourcing lifecycle with data-driven RFQs and automated contracts.',
-    nodes:['Project','RfQ Creation','Contracts','Negotiations','Bid Analysis','PO Creation'],
-    bullets:['Centralize project scope and requirements','Auto-generate RFQs with approval workflows','Contract Pricing & automated terms','AI-assisted negotiation tracking','Compare bids side-by-side with smart shortlisting','One-click PO generation post-approval'],
+  p2q:{title:'Inquiry to Quote',color:C.p2q,
+    desc:'Customer RFQ to winning quote — faster and smarter.',
+    nodes:['Project','RfQ Creation','Contracts','Negotiations','Bid Analysis','Quote'],
+    bullets:['Instant project on customer RFQ landing','Best prices auto-filled from contracts & past POs','One-click RFQ dispatch with approval workflows','Platform-native negotiation — no emails','True landed cost with custom formulas','One-click customer quote from winning bids'],
     icons:['proj','rfq','contract','neg','bid','po']},
   r2po:{title:'Requisition to PO',color:C.r2po,
-    desc:'From internal request to purchase order — choose the right approval path based on your procurement policies and order value.',
+    desc:'Internal request to purchase order — structured and approved.',
     nodes:['Requisition','RfQ Creation + Approvals','Negotiations','Bid Analysis & Shortlisting','PO Creation'],
-    bullets:['Raise and route requisitions with multi-level approvals','Convert approved reqs directly to RFQs','Structured negotiation rounds with vendors','Bid evaluation with scoring and shortlisting','One-click PO generation post-approval'],
-    icons:['req','rfq','neg','bid','po']},
+    bullets:['Raise requisitions with multi-level approvals','Convert approved reqs to RFQs — prices auto-filled','Structured vendor negotiation rounds','Landed cost analysis — shortlist best bids','Split quantities across vendors flexibly','Single-click PO generation post-approval'],
+    icons:['req','rfq','neg','bid','po','po']},
   i2p:{title:'Invoice to Pay',color:C.i2p,
-    desc:'From purchase order to final payment — choose the right verification path based on your supplier trust level and order criticality.',
+    desc:'Seller invoice to final payment — every step controlled.',
     nodes:['Seller Invoice Creation','Goods Receipt','Quality Check','Payments','Settled'],
-    bullets:['Three-way matching: PO, GR, and Invoice','Flexible bypass routes for trusted suppliers','Automated payment release after approvals','Real-time payment status tracking','Early payment discount capture'],
+    bullets:['Vendor creates invoice on-platform','4-way match: PO, GR, QC & contract terms','Flexible GR → QC → payment ordering','Auto-release payments once conditions met','Real-time invoice status for all stakeholders'],
     icons:['inv','gr','qc','pay','done']}
 };
 
@@ -494,8 +494,9 @@ obs.observe(ROOT);
             </ScrollReveal>
             
             <ScrollReveal type="kinetic">
-              <h2 style={{ fontSize: 'clamp(36px, 5vw, 60px)', fontWeight: 700, margin: '0 0 24px 0', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#1A1D2E' }}>
-                One Platform. <span style={{ color: '#3666ff' }}>Every Workflow.</span>
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
+                Every Way You Procure. <br />
+                <span style={{ color: '#3666ff' }}>One Platform.</span>
               </h2>
             </ScrollReveal>
 
@@ -506,12 +507,12 @@ obs.observe(ROOT);
               transition={{ duration: 0.5, delay: 0.4 }}
               style={{ color: '#64748b', maxWidth: '720px', fontSize: '18px', lineHeight: 1.6, fontWeight: 500, margin: 0 }}
             >
-              Experience high-fidelity automation across every procurement journey. From the first request to the final payment, FactWise handles the complexity.
+              Every manufacturer procures differently — some start with a customer RFQ, some with a requisition, some with a vendor invoice. FactWise handles all three, end to end.
             </motion.p>
           </div>
 
           <div style={{ display: 'flex', gap: '12px', marginBottom: '48px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button className="ftab active" data-flow="p2q">Quote to Order</button>
+            <button className="ftab active" data-flow="p2q">Inquiry to Quote</button>
             <button className="ftab" data-flow="r2po">Requisition to PO</button>
             <button className="ftab" data-flow="i2p">Invoice to Pay</button>
           </div>

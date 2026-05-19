@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FactWise — Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-50: #EAF2FF;
+    --blue-100: #C0D9FA;
+    --blue-400: #378ADD;
+    --blue-600: #185FA5;
+    --blue-800: #0C447C;
+    --green-50: #E8F7F0;
+    --green-100: #B8E8D2;
+    --green-400: #1D9E75;
+    --green-600: #0F6E56;
+    --green-800: #085041;
+    --amber-50: #FEF5E7;
+    --amber-100: #FAD99A;
+    --amber-400: #EF9F27;
+    --amber-600: #BA7517;
+    --amber-800: #854F0B;
+    --gray-50: #F7F6F3;
+    --gray-100: #EFEDE8;
+    --gray-200: #DDD9D0;
+    --gray-400: #9B9890;
+    --gray-700: #4A4844;
+    --gray-900: #1C1B18;
+    --radius: 20px;
+    --radius-sm: 10px;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.04), 0 8px 32px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 24px rgba(0,0,0,0.07), 0 24px 64px rgba(0,0,0,0.10);
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F4F2EE;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    overflow-x: hidden;
+  }
+
+  /* Subtle noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--gray-900);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-icon svg { width: 18px; height: 18px; fill: white; }
+
+  .brand-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+
+  .page-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    color: var(--gray-900);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 14px;
+  }
+
+  .page-title em {
+    font-style: italic;
+    color: var(--gray-400);
+  }
+
+  .page-subtitle {
+    font-size: 15px;
+    color: var(--gray-400);
+    font-weight: 300;
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 340px);
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 1100px) {
+    .cards-grid { grid-template-columns: repeat(2, 340px); }
+  }
+  @media (max-width: 740px) {
+    .cards-grid { grid-template-columns: 1fr; max-width: 400px; width: 100%; }
+  }
+
+  /* Card */
+  .card {
+    background: #FFFFFF;
+    border-radius: var(--radius);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.38s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.38s cubic-bezier(0.23, 1, 0.32, 1),
+                border-color 0.3s ease;
+    will-change: transform;
+    /* Entrance animation */
+    opacity: 0;
+    animation: cardIn 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.22s; }
+  .card:nth-child(3) { animation-delay: 0.34s; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:hover {
+    transform: translateY(-6px) scale(1.012);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .card.featured {
+    border-color: var(--green-400);
+  }
+
+  /* Shimmer on hover */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .card:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* Card top color bar */
+  .card-bar {
+    height: 4px;
+    width: 100%;
+    transition: height 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card:hover .card-bar { height: 6px; }
+
+  .card-blue  .card-bar { background: linear-gradient(90deg, var(--blue-400), var(--blue-100)); }
+  .card-green .card-bar { background: linear-gradient(90deg, var(--green-400), var(--green-100)); }
+  .card-amber .card-bar { background: linear-gradient(90deg, var(--amber-400), var(--amber-100)); }
+
+  /* Card header */
+  .card-header {
+    padding: 24px 24px 0;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  .card:hover .card-badge { transform: scale(1.05); }
+
+  .badge-blue  { background: var(--blue-50);  color: var(--blue-800); }
+  .badge-green { background: var(--green-50); color: var(--green-800); }
+  .badge-amber { background: var(--amber-50); color: var(--amber-800); }
+
+  .popular-pill {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--green-50);
+    color: var(--green-600);
+    border: 1px solid var(--green-100);
+    animation: pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29, 158, 117, 0.18); }
+    50%       { box-shadow: 0 0 0 5px rgba(29, 158, 117, 0); }
+  }
+
+  /* Icon */
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card:hover .card-icon { transform: scale(1.12) rotate(-4deg); }
+
+  .icon-blue  { background: var(--blue-50); }
+  .icon-green { background: var(--green-50); }
+  .icon-amber { background: var(--amber-50); }
+
+  .card-icon svg { width: 22px; height: 22px; }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+  }
+
+  .card-blue:hover  .card-title { color: var(--blue-800); }
+  .card-green:hover .card-title { color: var(--green-800); }
+  .card-amber:hover .card-title { color: var(--amber-800); }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--gray-400);
+    line-height: 1.65;
+    font-weight: 300;
+    padding-bottom: 20px;
+  }
+
+  /* Divider */
+  .card-divider {
+    height: 1px;
+    background: var(--gray-100);
+    margin: 0 24px;
+    transition: background 0.3s ease;
+  }
+
+  .card:hover .card-divider { background: var(--gray-200); }
+
+  /* Features */
+  .card-features {
+    padding: 18px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.45;
+    transition: transform 0.25s ease;
+  }
+
+  .card:hover .feature:nth-child(1) { transform: translateX(3px); transition-delay: 0.03s; }
+  .card:hover .feature:nth-child(2) { transform: translateX(3px); transition-delay: 0.07s; }
+  .card:hover .feature:nth-child(3) { transform: translateX(3px); transition-delay: 0.11s; }
+
+  .feature-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .dot-blue  { background: var(--blue-50); }
+  .dot-green { background: var(--green-50); }
+  .dot-amber { background: var(--amber-50); }
+
+  .feature-dot svg { width: 10px; height: 10px; }
+
+  /* Footer */
+  .card-footer {
+    padding: 16px 24px 22px;
+  }
+
+  .card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 0;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease,
+                gap 0.25s ease;
+    letter-spacing: 0.01em;
+  }
+
+  .card:hover .card-btn { gap: 12px; }
+
+  .btn-blue {
+    background: var(--blue-50);
+    color: var(--blue-800);
+  }
+  .btn-blue:hover {
+    background: var(--blue-100);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(55, 138, 221, 0.18);
+  }
+
+  .btn-green {
+    background: var(--green-400);
+    color: #fff;
+  }
+  .btn-green:hover {
+    background: var(--green-600);
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(29, 158, 117, 0.30);
+  }
+
+  .btn-amber {
+    background: var(--amber-50);
+    color: var(--amber-800);
+  }
+  .btn-amber:hover {
+    background: var(--amber-100);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(239, 159, 39, 0.18);
+  }
+
+  .btn-arrow {
+    display: inline-flex;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card-btn:hover .btn-arrow { transform: translate(3px, -3px); }
+
+  /* Flow steps diagram */
+  .flow-section {
+    margin-top: 56px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1060px;
+  }
+
+  .flow-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 20px 28px;
+    box-shadow: var(--shadow-card);
+    gap: 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    opacity: 0;
+    animation: stepIn 0.5s ease forwards;
+  }
+
+  .flow-step:nth-child(1) { animation-delay: 0.6s; }
+  .flow-step:nth-child(2) { animation-delay: 0.75s; }
+  .flow-step:nth-child(3) { animation-delay: 0.9s; }
+  .flow-step:nth-child(4) { animation-delay: 1.05s; }
+  .flow-step:nth-child(5) { animation-delay: 1.2s; }
+  .flow-step:nth-child(6) { animation-delay: 1.35s; }
+  .flow-step:nth-child(7) { animation-delay: 1.5s; }
+  .flow-step:nth-child(8) { animation-delay: 1.65s; }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .step-pill {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 20px;
+    padding: 6px 14px;
+    white-space: nowrap;
+    cursor: default;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+  }
+
+  .step-pill:hover {
+    background: var(--green-50);
+    color: var(--green-800);
+    border-color: var(--green-100);
+    transform: scale(1.05);
+  }
+
+  .step-arrow {
+    width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-arrow svg { width: 14px; height: 14px; color: var(--gray-200); }
+
+  /* Footer note */
+  .page-note {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-400);
+    position: relative;
+    z-index: 1;
+    font-weight: 300;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     PROBLEM SECTION
+════════════════════════════════════════ -->
+<section class="prob-section">
+
+  <div class="prob-header">
+    <p class="page-eyebrow" style="margin-bottom:10px;">The problem</p>
+    <h2 class="prob-title">Your procurement is draining<br><em>money, time, and control.</em></h2>
+    <p class="prob-subtitle">Hidden overspend, manual bottlenecks, and zero visibility — three problems quietly draining your business every day.</p>
+  </div>
+
+  <div class="prob-grid">
+
+    <!-- ── Card 1: Cost Leakage ── -->
+    <div class="prob-card pcard-red" id="pc1">
+      <div class="prob-visual" id="scatter-vis">
+        <!-- Animated scatter chart -->
+        <svg class="scatter-svg" viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg">
+          <!-- Grid lines -->
+          <line x1="40" y1="10" x2="40" y2="130" stroke="#F1EFE8" stroke-width="1"/>
+          <line x1="40" y1="130" x2="250" y2="130" stroke="#F1EFE8" stroke-width="1"/>
+          <line x1="40" y1="90" x2="250" y2="90" stroke="#F1EFE8" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="40" y1="55" x2="250" y2="55" stroke="#F1EFE8" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <line x1="40" y1="20" x2="250" y2="20" stroke="#F1EFE8" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <!-- Y axis labels -->
+          <text x="34" y="134" text-anchor="end" font-size="9" fill="#9B9890">0</text>
+          <text x="34" y="94" text-anchor="end" font-size="9" fill="#9B9890">100</text>
+          <text x="34" y="59" text-anchor="end" font-size="9" fill="#9B9890">200</text>
+          <text x="34" y="24" text-anchor="end" font-size="9" fill="#9B9890">300</text>
+          <!-- X axis labels -->
+          <text x="80"  y="144" text-anchor="middle" font-size="9" fill="#9B9890">Quote</text>
+          <text x="150" y="144" text-anchor="middle" font-size="9" fill="#9B9890">PO</text>
+          <text x="220" y="144" text-anchor="middle" font-size="9" fill="#9B9890">Invoice</text>
+          <!-- Axis label -->
+          <text x="145" y="157" text-anchor="middle" font-size="8" fill="#C0B8AF" letter-spacing="0.06em">PROCUREMENT STAGE</text>
+          <text x="12" y="75" text-anchor="middle" font-size="8" fill="#C0B8AF" letter-spacing="0.06em" transform="rotate(-90 12 75)">COST ($)</text>
+
+          <!-- Expected cost line (faint) -->
+          <line x1="70" y1="112" x2="230" y2="112" stroke="#DDD9D0" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <!-- Dots: appear one by one via animation -->
+          <!-- Quote dots -->
+          <circle class="sdot" cx="72" cy="112" r="5" fill="#E24B4A" opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay: 0.3s;">
+            <title>$100</title>
+          </circle>
+          <text class="slabel" x="84" y="109" font-size="9" fill="#A32D2D" font-weight="600" opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay: 0.5s;">$100</text>
+
+          <!-- PO dots -->
+          <circle class="sdot" cx="148" cy="91" r="5.5" fill="#E24B4A" opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay: 0.9s;"/>
+          <text class="slabel" x="160" y="88" font-size="9" fill="#A32D2D" font-weight="600" opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay: 1.1s;">$150</text>
+
+          <!-- Invoice dots — the big outlier -->
+          <circle class="sdot sdot-big" cx="220" cy="30" r="8" fill="#E24B4A" opacity="0" style="animation: dotPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; animation-delay: 1.5s;"/>
+          <text class="slabel slabel-big" x="200" y="22" font-size="10" fill="#A32D2D" font-weight="700" opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay: 1.8s;">$280+</text>
+
+          <!-- Cost leakage annotation -->
+          <g opacity="0" style="animation: dotPop 0.4s ease forwards; animation-delay:2.1s;">
+            <rect x="142" y="7" width="76" height="16" rx="4" fill="#FCEBEB"/>
+            <text x="180" y="18" text-anchor="middle" font-size="8" fill="#A32D2D" font-weight="600" letter-spacing="0.06em">COST LEAKAGE</text>
+          </g>
+          <!-- Arrow from annotation to dot -->
+          <line x1="213" y1="23" x2="218" y2="36" stroke="#E24B4A" stroke-width="1" stroke-dasharray="2,2" opacity="0" style="animation: dotPop 0.3s ease forwards; animation-delay:2.3s;"/>
+        </svg>
+      </div>
+      <div class="prob-body">
+        <span class="prob-tag tag-red">Cost leakage</span>
+        <h3 class="prob-card-title">Overpaying. Every single order.</h3>
+        <p class="prob-card-desc">Costs silently balloon from quote to invoice. No one sees it happening until it's too late.</p>
+      </div>
+    </div>
+
+    <!-- ── Card 2: Manual Bottleneck ── -->
+    <div class="prob-card pcard-amber" id="pc2">
+      <div class="prob-visual" id="flow-vis">
+        <div class="flow-anim">
+          <!-- Nodes -->
+          <div class="fnode fnode-ok" id="fn-req">
+            <svg viewBox="0 0 22 22" fill="none" stroke="#854F0B" stroke-width="1.8"><rect x="3" y="4" width="16" height="14" rx="2"/><line x1="7" y1="9" x2="15" y2="9"/><line x1="7" y1="13" x2="11" y2="13"/></svg>
+            <span>Req</span>
+          </div>
+
+          <div class="fconnector">
+            <div class="fline fline-flow" id="fl1"></div>
+            <div class="fpacket" id="fp1"></div>
+          </div>
+
+          <!-- Bottleneck node -->
+          <div class="fnode fnode-block" id="fn-bot">
+            <svg class="spin-cog" viewBox="0 0 22 22" fill="none" stroke="#EF9F27" stroke-width="1.6"><circle cx="11" cy="11" r="3.5"/><path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.9 4.9l1.4 1.4M15.7 15.7l1.4 1.4M4.9 17.1l1.4-1.4M15.7 6.3l1.4-1.4"/></svg>
+            <span>Stuck</span>
+          </div>
+
+          <div class="fconnector fconnector-blocked">
+            <div class="fline fline-blocked"></div>
+            <div class="fpacket fpacket-stalled" id="fp2"></div>
+          </div>
+
+          <div class="fnode fnode-wait" id="fn-appr">
+            <svg viewBox="0 0 22 22" fill="none" stroke="#BA7517" stroke-width="1.8"><circle cx="11" cy="8" r="3"/><path d="M5 19c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+            <span>Approval</span>
+          </div>
+
+          <div class="fconnector fconnector-blocked">
+            <div class="fline fline-blocked"></div>
+            <div class="fpacket fpacket-stalled" id="fp3" style="animation-delay:0.5s;"></div>
+          </div>
+
+          <div class="fnode fnode-wait" id="fn-po">
+            <svg viewBox="0 0 22 22" fill="none" stroke="#BA7517" stroke-width="1.8"><path d="M6 3h10a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/><line x1="8" y1="8" x2="14" y2="8"/><line x1="8" y1="12" x2="14" y2="12"/></svg>
+            <span>PO</span>
+          </div>
+        </div>
+        <!-- Labels -->
+        <div class="flow-labels">
+          <span class="flow-lbl lbl-amber">BOTTLENECKS</span>
+          <span class="flow-lbl lbl-amber" style="margin-left:8px;">SCATTERED DATA</span>
+          <span class="flow-lbl lbl-amber" style="margin-left:8px;">DELAY</span>
+        </div>
+      </div>
+      <div class="prob-body">
+        <span class="prob-tag tag-amber">Manual work</span>
+        <h3 class="prob-card-title">Drowning in manual work.</h3>
+        <p class="prob-card-desc">Every step waits for someone to chase, email, or re-enter data. Hours lost. Daily.</p>
+      </div>
+    </div>
+
+    <!-- ── Card 3: Visibility Gap ── -->
+    <div class="prob-card pcard-blue" id="pc3">
+      <div class="prob-visual" id="radar-vis">
+        <div class="radar-wrap">
+          <!-- Radar rings -->
+          <svg class="radar-svg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+            <!-- Rings -->
+            <circle cx="100" cy="90" r="70" fill="none" stroke="#EAF2FF" stroke-width="1.5"/>
+            <circle cx="100" cy="90" r="48" fill="none" stroke="#EAF2FF" stroke-width="1.5"/>
+            <circle cx="100" cy="90" r="26" fill="none" stroke="#EAF2FF" stroke-width="1.5"/>
+            <!-- Spokes -->
+            <line x1="100" y1="20" x2="100" y2="160" stroke="#EAF2FF" stroke-width="1"/>
+            <line x1="30"  y1="90" x2="170" y2="90"  stroke="#EAF2FF" stroke-width="1"/>
+            <line x1="50"  y1="40" x2="150" y2="140" stroke="#EAF2FF" stroke-width="0.8"/>
+            <line x1="150" y1="40" x2="50"  y2="140" stroke="#EAF2FF" stroke-width="0.8"/>
+
+            <!-- Blind spots (filled red arcs) -->
+            <path d="M100,90 L130,30 A70,70 0 0,1 168,110 Z" fill="rgba(226,75,74,0.10)" stroke="none" class="blind-pulse"/>
+            <path d="M100,90 L55,145 A70,70 0 0,1 32,68 Z" fill="rgba(226,75,74,0.08)" stroke="none" class="blind-pulse" style="animation-delay:0.6s;"/>
+
+            <!-- Visible zone (green area) -->
+            <path id="radar-area" d="M100,90 L100,42 A48,48 0 0,1 141,114 L100,90Z" fill="rgba(29,158,117,0.15)" stroke="rgba(29,158,117,0.4)" stroke-width="1.5" opacity="0">
+              <animate attributeName="opacity" from="0" to="1" dur="0.6s" begin="0.8s" fill="freeze"/>
+            </path>
+
+            <!-- Radar sweep line -->
+            <line id="radar-sweep" x1="100" y1="90" x2="100" y2="22" stroke="#378ADD" stroke-width="2" stroke-linecap="round" opacity="0.7">
+              <animateTransform attributeName="transform" type="rotate" from="0 100 90" to="360 100 90" dur="3s" repeatCount="indefinite"/>
+            </line>
+
+            <!-- Ping dots that appear on sweep -->
+            <circle cx="118" cy="52" r="3" fill="#378ADD" opacity="0">
+              <animate attributeName="opacity" values="0;1;0" dur="3s" begin="0.2s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="3;5;3" dur="3s" begin="0.2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="140" cy="88" r="2.5" fill="#378ADD" opacity="0">
+              <animate attributeName="opacity" values="0;0.8;0" dur="3s" begin="1.1s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="72" cy="68" r="3.5" fill="#E24B4A" opacity="0">
+              <animate attributeName="opacity" values="0;0.9;0" dur="3s" begin="2.1s" repeatCount="indefinite"/>
+              <animate attributeName="r" values="3.5;6;3.5" dur="3s" begin="2.1s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- ERP label -->
+            <rect x="80" y="48" width="26" height="14" rx="4" fill="#EAF2FF"/>
+            <text x="93" y="58" text-anchor="middle" font-size="8" fill="#185FA5" font-weight="600">ERP</text>
+
+            <!-- Blind zone label -->
+            <text x="148" y="65" font-size="8" fill="#E24B4A" font-weight="600" opacity="0.7">BLIND</text>
+            <text x="148" y="74" font-size="8" fill="#E24B4A" opacity="0.7">ZONE</text>
+          </svg>
+        </div>
+      </div>
+      <div class="prob-body">
+        <span class="prob-tag tag-blue">Visibility gap</span>
+        <h3 class="prob-card-title">Flying blind.</h3>
+        <p class="prob-card-desc">Lack of transparency hides costly spend spikes and late deliveries. FactWise gives real-time visibility into every PO, approval, and supplier.</p>
+      </div>
+    </div>
+
+  </div><!-- /prob-grid -->
+</section>
+
+<style>
+/* ── Problem section ── */
+.prob-section {
+  width: 100%;
+  max-width: 1060px;
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.prob-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.prob-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 3.6vw, 40px);
+  font-weight: 400;
+  color: var(--gray-900);
+  line-height: 1.18;
+  letter-spacing: -0.4px;
+  margin-bottom: 14px;
+}
+
+.prob-title em { font-style: italic; color: #E24B4A; }
+
+.prob-subtitle {
+  font-size: 15px;
+  color: var(--gray-400);
+  font-weight: 300;
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* 3-column grid */
+.prob-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .prob-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+}
+
+/* Base card */
+.prob-card {
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  transition: transform 0.38s cubic-bezier(0.23,1,0.32,1), box-shadow 0.38s ease;
+  opacity: 0;
+  animation: cardIn 0.7s cubic-bezier(0.23,1,0.32,1) forwards;
+}
+
+.prob-card:nth-child(1) { animation-delay: 0.08s; }
+.prob-card:nth-child(2) { animation-delay: 0.2s; }
+.prob-card:nth-child(3) { animation-delay: 0.32s; }
+
+.prob-card:hover {
+  transform: translateY(-6px) scale(1.013);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Color tops */
+.pcard-red  { border-top: 3px solid #E24B4A; }
+.pcard-amber{ border-top: 3px solid #EF9F27; }
+.pcard-blue { border-top: 3px solid #378ADD; }
+
+/* Visual area */
+.prob-visual {
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px 8px;
+  position: relative;
+}
+
+.pcard-red   .prob-visual { background: #FFFAF9; }
+.pcard-amber .prob-visual { background: #FFFCF5; }
+.pcard-blue  .prob-visual { background: #F6FAFF; }
+
+/* Scatter SVG */
+.scatter-svg { width: 100%; height: 100%; overflow: visible; }
+
+@keyframes dotPop {
+  from { opacity:0; transform: scale(0.4); }
+  to   { opacity:1; transform: scale(1); }
+}
+
+/* ── Flow animation (card 2) ── */
+.flow-anim {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: center;
+  width: 100%;
+}
+
+.fnode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.fnode svg { width: 36px; height: 36px; }
+
+.fnode span {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--gray-400);
+}
+
+.fnode-ok   svg { stroke: #854F0B; }
+.fnode-block svg { stroke: #EF9F27; }
+.fnode-wait  svg { stroke: #BA7517; opacity: 0.55; }
+
+.fnode-ok {
+  background: #FEF5E7;
+  border-radius: 12px;
+  padding: 10px;
+  border: 1.5px solid #FAD99A;
+}
+.fnode-block {
+  background: #FFF3DC;
+  border-radius: 50%;
+  padding: 10px;
+  border: 2px solid #EF9F27;
+  box-shadow: 0 0 0 0 rgba(239,159,39,0.4);
+  animation: blockPulse 1.6s ease-in-out infinite;
+}
+.fnode-wait {
+  background: #F7F6F3;
+  border-radius: 12px;
+  padding: 10px;
+  border: 1.5px solid #DDD9D0;
+}
+
+@keyframes blockPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(239,159,39,0.35); }
+  50%      { box-shadow: 0 0 0 8px rgba(239,159,39,0); }
+}
+
+/* Spinning cog */
+.spin-cog { animation: spinCog 4s linear infinite; }
+@keyframes spinCog { to { transform: rotate(360deg); } }
+
+/* Connector lines */
+.fconnector {
+  width: 28px;
+  height: 3px;
+  position: relative;
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+
+.fline {
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+}
+
+.fline-flow    { background: linear-gradient(90deg, #EF9F27, #FAD99A); }
+.fline-blocked { background: #F1EFE8; }
+
+/* Moving packet on normal connector */
+.fpacket {
+  width: 8px;
+  height: 8px;
+  background: #EF9F27;
+  border-radius: 50%;
+  position: absolute;
+  top: -3px;
+  left: -4px;
+  animation: packetFlow 1.4s ease-in-out infinite;
+}
+
+@keyframes packetFlow {
+  0%   { left: -4px; opacity:1; }
+  80%  { left: calc(100% - 4px); opacity:1; }
+  100% { left: calc(100% - 4px); opacity:0; }
+}
+
+/* Stalled packet */
+.fpacket-stalled {
+  width: 7px;
+  height: 7px;
+  background: #DDD9D0;
+  border-radius: 50%;
+  position: absolute;
+  top: -2.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: stalledBob 1.2s ease-in-out infinite;
+}
+
+@keyframes stalledBob {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-3px); }
+}
+
+.fconnector-blocked { opacity: 0.7; }
+
+/* Flow labels row */
+.flow-labels {
+  position: absolute;
+  bottom: 10px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+}
+
+.flow-lbl {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lbl-amber { color: #EF9F27; }
+.lbl-blue  { color: #378ADD; }
+.lbl-red   { color: #E24B4A; }
+
+/* ── Radar (card 3) ── */
+.radar-wrap { width: 100%; display: flex; align-items: center; justify-content: center; }
+.radar-svg  { width: 180px; height: 160px; }
+
+.blind-pulse { animation: blindFade 2.4s ease-in-out infinite; }
+@keyframes blindFade {
+  0%,100% { opacity:1; }
+  50%     { opacity:0.4; }
+}
+
+/* Card body (text part) */
+.prob-body {
+  padding: 18px 20px 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.prob-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  align-self: flex-start;
+}
+
+.tag-red   { background: #FCEBEB; color: #A32D2D; }
+.tag-amber { background: var(--amber-50); color: var(--amber-800); }
+.tag-blue  { background: var(--blue-50);  color: var(--blue-800); }
+
+.prob-card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--gray-900);
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+}
+
+.prob-card-desc {
+  font-size: 13px;
+  color: var(--gray-400);
+  line-height: 1.65;
+  font-weight: 300;
+}
+</style>
+
+<header class="page-header">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1" opacity=".5"/><rect x="3" y="13" width="8" height="8" rx="1" opacity=".5"/><rect x="13" y="13" width="8" height="8" rx="1" opacity=".25"/></svg>
+    </div>
+    <span class="brand-name">FactWise</span>
+  </div>
+  <p class="page-eyebrow">Platform solutions</p>
+  <h1 class="page-title">Everything in your<br><em>procurement lifecycle</em></h1>
+  <p class="page-subtitle">A complete end-to-end quoting, sourcing, and procurement solution that modernises how suppliers and internal stakeholders work together.</p>
+</header>
+
+<div class="cards-grid">
+
+  <!-- Card 1: Source to Contract -->
+  <div class="card card-blue" onclick="void(0)">
+    <div class="card-bar"></div>
+    <div class="card-header">
+      <div class="card-meta">
+        <span class="card-badge badge-blue">Source to contract</span>
+      </div>
+      <div class="card-icon icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h18v4H3z"/><path d="M3 10h11"/><path d="M3 14h7"/><path d="M17 13l-4 4 2 2 6-6-4 0z"/>
+        </svg>
+      </div>
+      <h2 class="card-title">Quote to order</h2>
+      <p class="card-desc">Turn every customer inquiry into a winning quote. Intelligent sourcing, automated negotiations, and true landed cost analytics — from BOM to customer quote in record time.</p>
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-features">
+      <div class="feature">
+        <span class="feature-dot dot-blue">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        BOM &amp; cost intelligence
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-blue">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Automated vendor sourcing &amp; negotiations
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-blue">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        One-click customer quote generation
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="card-btn btn-blue">
+        Explore solution
+        <span class="btn-arrow">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12L12 2M12 2H6M12 2v6"/></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card 2: Procure to Pay — Featured -->
+  <div class="card card-green featured" onclick="void(0)">
+    <div class="card-bar"></div>
+    <div class="card-header">
+      <div class="card-meta">
+        <span class="card-badge badge-green">Procure to pay</span>
+        <span class="popular-pill">⚡ Most popular</span>
+      </div>
+      <div class="card-icon icon-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+        </svg>
+      </div>
+      <h2 class="card-title">Requisition to PO</h2>
+      <p class="card-desc">From internal request to approved purchase order — without the back and forth. Raise, approve, source, negotiate, and issue POs across your entire organisation in one seamless flow.</p>
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-features">
+      <div class="feature">
+        <span class="feature-dot dot-green">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Combine requisitions for bulk pricing
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-green">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Auto-filled target prices on every RFQ
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-green">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Multi-vendor POs in one click
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="card-btn btn-green">
+        Explore solution
+        <span class="btn-arrow">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12L12 2M12 2H6M12 2v6"/></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card 3: Invoice Automation -->
+  <div class="card card-amber" onclick="void(0)">
+    <div class="card-bar"></div>
+    <div class="card-header">
+      <div class="card-meta">
+        <span class="card-badge badge-amber">Invoice automation</span>
+      </div>
+      <div class="card-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+      </div>
+      <h2 class="card-title">Invoice to pay</h2>
+      <p class="card-desc">Every invoice verified. Every payment controlled. Quadruple validation across PO, GR, QC, and contract terms — so not a single rupee moves without full confidence.</p>
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-features">
+      <div class="feature">
+        <span class="feature-dot dot-amber">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        AI-powered invoice generation
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-amber">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Flexible GR, QC &amp; payment sequencing
+      </div>
+      <div class="feature">
+        <span class="feature-dot dot-amber">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg>
+        </span>
+        Always pay the right amount — automatically
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="card-btn btn-amber">
+        Explore solution
+        <span class="btn-arrow">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 12L12 2M12 2H6M12 2v6"/></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Quote to Order flow -->
+<div class="flow-section">
+  <p class="flow-label">Quote to order — end-to-end flow</p>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <span class="step-pill">Customer request</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">BOM &amp; RfQ creation</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">Vendor negotiations</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">Landed cost analytics</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">Quote creation</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">Customer submission</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill">Award decision</span>
+      <span class="step-arrow"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h8M8 4l3 3-3 3"/></svg></span>
+    </div>
+    <div class="flow-step">
+      <span class="step-pill" style="background:#E8F7F0; color:#085041; border-color:#B8E8D2;">Vendor POs issued</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     IMPLEMENTATION SECTION — REDESIGNED
+════════════════════════════════════════════ -->
+<section class="impl2-section" id="implSection">
+
+  <!-- Header -->
+  <div class="impl2-header">
+    <div class="impl2-eyebrow-row">
+      <span class="impl2-eyebrow">Implementation</span>
+    </div>
+    <h2 class="impl2-title">From Sign-Up to Savings.<br><em>Faster Than You Think.</em></h2>
+    <p class="impl2-sub">You're live in weeks, efficient in months, and saving within the year.</p>
+  </div>
+
+  <!-- Horizontal progress bar -->
+  <div class="impl2-progress-wrap">
+    <div class="impl2-progress-track">
+      <div class="impl2-progress-fill" id="implFill"></div>
+      <!-- Markers -->
+      <div class="impl2-marker" style="left:0%">
+        <div class="impl2-marker-dot imd-blue"></div>
+        <span class="impl2-marker-label">Day 1</span>
+      </div>
+      <div class="impl2-marker" style="left:33.3%">
+        <div class="impl2-marker-dot imd-blue"></div>
+        <span class="impl2-marker-label">Week 8</span>
+      </div>
+      <div class="impl2-marker" style="left:66.6%">
+        <div class="impl2-marker-dot imd-green"></div>
+        <span class="impl2-marker-label">Month 6</span>
+      </div>
+      <div class="impl2-marker" style="left:100%">
+        <div class="impl2-marker-dot imd-amber"></div>
+        <span class="impl2-marker-label">Month 12</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 cards side by side -->
+  <div class="impl2-grid">
+
+    <!-- ── Phase 1 ── -->
+    <div class="impl2-card i2c-blue" data-impl-card>
+      <!-- Animated visual -->
+      <div class="impl2-vis ivis-blue">
+        <!-- Setup animation: checklist items appearing -->
+        <div class="setup-anim">
+          <div class="setup-row sr1"><div class="setup-check sc-done">
+            <svg viewBox="0 0 14 14" fill="none" stroke="#185FA5" stroke-width="2.2" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3"/></svg>
+          </div><div class="setup-bar sb-full"></div></div>
+          <div class="setup-row sr2"><div class="setup-check sc-done">
+            <svg viewBox="0 0 14 14" fill="none" stroke="#185FA5" stroke-width="2.2" stroke-linecap="round"><polyline points="2,7 5.5,10.5 12,3"/></svg>
+          </div><div class="setup-bar sb-full" style="width:75%"></div></div>
+          <div class="setup-row sr3"><div class="setup-check sc-progress">
+            <div class="sc-ring"></div>
+          </div><div class="setup-bar sb-progress"></div></div>
+          <div class="setup-row sr4"><div class="setup-check sc-empty"></div><div class="setup-bar sb-empty" style="width:55%"></div></div>
+          <div class="setup-row sr5"><div class="setup-check sc-empty"></div><div class="setup-bar sb-empty" style="width:40%"></div></div>
+          <!-- Floating badge -->
+          <div class="setup-badge">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round"><path d="M10 3L5 8.5 2 5.5"/></svg>
+            Live in 8 weeks
+          </div>
+        </div>
+      </div>
+
+      <div class="impl2-body">
+        <div class="impl2-step-badge ibadge-blue">Weeks 2–8</div>
+        <h3 class="impl2-phase-title">Go Live. With Full Support.</h3>
+        <p class="impl2-phase-desc">Our team works alongside yours — configuring workflows, migrating your item catalogue, setting up approval chains, and training every user.</p>
+
+        <div class="impl2-bullets">
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-blue"></span>Workflow configuration
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-blue"></span>Item catalogue migration
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-blue"></span>Approval chain setup
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-blue"></span>Full user training
+          </div>
+        </div>
+
+        <div class="impl2-stat">
+          <span class="impl2-stat-num istat-blue" data-target="8">0</span>
+          <div class="impl2-stat-right">
+            <span class="impl2-stat-unit">weeks</span>
+            <span class="impl2-stat-desc">to go live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Phase 2 ── -->
+    <div class="impl2-card i2c-green" data-impl-card>
+      <div class="impl2-vis ivis-green">
+        <!-- Speed animation: before/after bars -->
+        <div class="speed-anim">
+          <div class="speed-row">
+            <span class="speed-label">RFQ turnaround</span>
+            <div class="speed-bars">
+              <div class="speed-bar-wrap">
+                <span class="speed-before">Before</span>
+                <div class="speed-track">
+                  <div class="speed-fill sf-before" style="--w:90%"></div>
+                </div>
+                <span class="speed-val sv-red">3 days</span>
+              </div>
+              <div class="speed-bar-wrap">
+                <span class="speed-after">After</span>
+                <div class="speed-track">
+                  <div class="speed-fill sf-after" style="--w:28%"></div>
+                </div>
+                <span class="speed-val sv-green">2 hrs</span>
+              </div>
+            </div>
+          </div>
+          <div class="speed-row" style="margin-top:14px;">
+            <span class="speed-label">Approval cycle</span>
+            <div class="speed-bars">
+              <div class="speed-bar-wrap">
+                <span class="speed-before">Before</span>
+                <div class="speed-track">
+                  <div class="speed-fill sf-before" style="--w:80%"></div>
+                </div>
+                <span class="speed-val sv-red">5 days</span>
+              </div>
+              <div class="speed-bar-wrap">
+                <span class="speed-after">After</span>
+                <div class="speed-track">
+                  <div class="speed-fill sf-after" style="--w:18%"></div>
+                </div>
+                <span class="speed-val sv-green">4 hrs</span>
+              </div>
+            </div>
+          </div>
+          <!-- Floating badge -->
+          <div class="speed-badge">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#0F6E56" stroke-width="1.8" stroke-linecap="round"><path d="M6 2v4l3 2"/><circle cx="6" cy="6" r="5"/></svg>
+            80% faster
+          </div>
+        </div>
+      </div>
+
+      <div class="impl2-body">
+        <div class="impl2-step-badge ibadge-green">Months 3–6</div>
+        <h3 class="impl2-phase-title">Replace Manual Work. Gain Speed.</h3>
+        <p class="impl2-phase-desc">RFQs that took days now take hours. Vendor follow-ups are automated. Approvals move without chasing. Your team focuses on decisions that move the needle.</p>
+
+        <div class="impl2-bullets">
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-green"></span>Automated RFQ dispatch
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-green"></span>Vendor follow-up automation
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-green"></span>Zero-chase approvals
+          </div>
+        </div>
+
+        <div class="impl2-stat">
+          <span class="impl2-stat-num istat-green" data-target="80">0</span><span class="impl2-stat-unit istat-green" style="font-size:22px; margin-left:1px;">%</span>
+          <div class="impl2-stat-right">
+            <span class="impl2-stat-unit">less time</span>
+            <span class="impl2-stat-desc">on repetitive tasks</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Phase 3 ── -->
+    <div class="impl2-card i2c-amber" data-impl-card>
+      <div class="impl2-vis ivis-amber">
+        <!-- Savings chart: rising bars -->
+        <div class="savings-anim">
+          <div class="savings-chart">
+            <div class="savings-bar-group">
+              <div class="sbar-wrap">
+                <div class="sbar sbar1"></div>
+                <span class="sbar-label">Q1</span>
+              </div>
+              <div class="sbar-wrap">
+                <div class="sbar sbar2"></div>
+                <span class="sbar-label">Q2</span>
+              </div>
+              <div class="sbar-wrap">
+                <div class="sbar sbar3"></div>
+                <span class="sbar-label">Q3</span>
+              </div>
+              <div class="sbar-wrap">
+                <div class="sbar sbar4"></div>
+                <span class="sbar-label">Q4</span>
+                <div class="sbar-tooltip">↑ 15%</div>
+              </div>
+            </div>
+            <div class="savings-baseline"></div>
+          </div>
+          <!-- Trend line SVG -->
+          <svg class="savings-trend" viewBox="0 0 160 70" preserveAspectRatio="none">
+            <polyline class="trend-line" points="10,58 50,44 90,30 140,12" fill="none" stroke="#EF9F27" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="200" stroke-dashoffset="200">
+              <animate attributeName="stroke-dashoffset" from="200" to="0" dur="1.4s" begin="0.5s" fill="freeze"/>
+            </polyline>
+            <circle cx="140" cy="12" r="4" fill="#EF9F27" opacity="0">
+              <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="1.8s" fill="freeze"/>
+            </circle>
+          </svg>
+          <!-- Floating badge -->
+          <div class="savings-badge">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#854F0B" stroke-width="1.8" stroke-linecap="round"><path d="M6 2v2m0 4v2M3 6h6"/><circle cx="6" cy="6" r="5"/></svg>
+            Margins going up
+          </div>
+        </div>
+      </div>
+
+      <div class="impl2-body">
+        <div class="impl2-step-badge ibadge-amber">Months 6–12</div>
+        <h3 class="impl2-phase-title">Unlock Savings. Compound Intelligence.</h3>
+        <p class="impl2-phase-desc">With months of procurement history, the intelligence compounds. You know what you paid, what's fair, and where to push back. Costs come down. Margins go up.</p>
+
+        <div class="impl2-bullets">
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-amber"></span>Price benchmarking & history
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-amber"></span>Sharper vendor negotiations
+          </div>
+          <div class="impl2-bullet">
+            <span class="ibullet-dot ibullet-amber"></span>Margin improvement tracking
+          </div>
+        </div>
+
+        <div class="impl2-stat">
+          <span class="impl2-stat-num istat-amber" data-target="15">0</span><span class="impl2-stat-unit istat-amber" style="font-size:22px; margin-left:1px;">%</span>
+          <div class="impl2-stat-right">
+            <span class="impl2-stat-unit">avg cost</span>
+            <span class="impl2-stat-desc">reduction in year 1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /impl2-grid -->
+
+</section>
+
+<p class="page-note">FactWise — Confidential &amp; Proprietary &nbsp;·&nbsp; Begin saving in &lt; 2 weeks</p>
+
+<style>
+/* ═══ IMPLEMENTATION V2 ═══ */
+.impl2-section {
+  margin-top: 100px;
+  width: 100%;
+  max-width: 1060px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.impl2-header { text-align: center; margin-bottom: 48px; }
+.impl2-eyebrow-row { margin-bottom: 12px; }
+.impl2-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+.impl2-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 3.8vw, 44px);
+  font-weight: 400;
+  color: var(--gray-900);
+  line-height: 1.14;
+  letter-spacing: -0.5px;
+  margin-bottom: 14px;
+}
+.impl2-title em { font-style: italic; color: var(--gray-400); }
+.impl2-sub {
+  font-size: 15px;
+  color: var(--gray-400);
+  font-weight: 300;
+  line-height: 1.65;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+/* Progress bar */
+.impl2-progress-wrap {
+  padding: 0 24px;
+  margin-bottom: 36px;
+}
+.impl2-progress-track {
+  height: 4px;
+  background: var(--gray-100);
+  border-radius: 4px;
+  position: relative;
+}
+.impl2-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue-400), var(--green-400), var(--amber-400));
+  border-radius: 4px;
+  transition: width 2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.impl2-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.impl2-marker-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px var(--gray-200);
+  transition: box-shadow 0.4s ease;
+}
+.imd-blue  { background: var(--blue-400); }
+.imd-green { background: var(--green-400); }
+.imd-amber { background: var(--amber-400); }
+.impl2-marker-label {
+  position: absolute;
+  top: 18px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gray-400);
+  white-space: nowrap;
+}
+
+/* Grid */
+.impl2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .impl2-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+}
+
+/* Card base */
+.impl2-card {
+  background: #fff;
+  border-radius: 22px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.23,1,0.32,1),
+              box-shadow 0.35s ease;
+}
+.impl2-card.i2-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.impl2-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-5px) scale(1.01);
+}
+
+/* Card color accents */
+.i2c-blue  { border-top: 3px solid var(--blue-400); }
+.i2c-green { border-top: 3px solid var(--green-400); }
+.i2c-amber { border-top: 3px solid var(--amber-400); }
+
+/* Visual zone */
+.impl2-vis {
+  height: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 20px 20px 12px;
+}
+.ivis-blue  { background: #F4F8FF; }
+.ivis-green { background: #F2FAF6; }
+.ivis-amber { background: #FFFAF0; }
+
+/* ── Setup animation (Phase 1) ── */
+.setup-anim { width: 100%; display: flex; flex-direction: column; gap: 10px; position: relative; }
+.setup-row { display: flex; align-items: center; gap: 10px; }
+.setup-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sc-done     { background: var(--blue-50); border: 1.5px solid var(--blue-100); }
+.sc-progress { background: var(--blue-50); border: 1.5px solid var(--blue-400); }
+.sc-empty    { background: var(--gray-50); border: 1.5px solid var(--gray-200); }
+.sc-ring {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--blue-400);
+  border-top-color: transparent;
+  animation: spinCog 0.9s linear infinite;
+}
+.setup-check svg { width: 11px; height: 11px; }
+.setup-bar { height: 8px; border-radius: 4px; }
+.sb-full     { background: var(--blue-100); flex: 1; }
+.sb-progress { background: linear-gradient(90deg, var(--blue-100) 60%, var(--gray-100) 60%); flex: 1;
+               background-size: 200% 100%; animation: progressAnim 2s ease infinite; }
+.sb-empty    { background: var(--gray-100); flex: 1; }
+
+@keyframes progressAnim {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+.sr1 { animation: rowIn 0.4s ease forwards; animation-delay: 0.1s; opacity: 0; }
+.sr2 { animation: rowIn 0.4s ease forwards; animation-delay: 0.35s; opacity: 0; }
+.sr3 { animation: rowIn 0.4s ease forwards; animation-delay: 0.6s; opacity: 0; }
+.sr4 { animation: rowIn 0.4s ease forwards; animation-delay: 0.85s; opacity: 0; }
+.sr5 { animation: rowIn 0.4s ease forwards; animation-delay: 1.1s; opacity: 0; }
+
+@keyframes rowIn {
+  from { opacity:0; transform: translateX(-10px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+.setup-badge {
+  position: absolute; right: 0; bottom: -4px;
+  background: var(--blue-600);
+  color: white; font-size: 10px; font-weight: 600;
+  padding: 5px 10px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+  animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation-delay: 1.4s; opacity: 0;
+}
+.setup-badge svg { width: 11px; height: 11px; stroke: white; }
+
+@keyframes badgePop {
+  from { opacity:0; transform: scale(0.7); }
+  to   { opacity:1; transform: scale(1); }
+}
+
+/* ── Speed animation (Phase 2) ── */
+.speed-anim { width: 100%; position: relative; }
+.speed-row  { display: flex; flex-direction: column; gap: 4px; }
+.speed-label { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; color: var(--gray-400); text-transform: uppercase; margin-bottom: 4px; }
+.speed-bars  { display: flex; flex-direction: column; gap: 5px; }
+.speed-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.speed-before, .speed-after { font-size: 9px; font-weight: 500; width: 28px; flex-shrink: 0; }
+.speed-before { color: #E24B4A; }
+.speed-after  { color: var(--green-600); }
+.speed-track  { flex: 1; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+.speed-fill   { height: 100%; border-radius: 4px; width: 0%; transition: width 1.2s cubic-bezier(0.23,1,0.32,1); }
+.sf-before    { background: linear-gradient(90deg, #F09595, #E24B4A); transition-delay: 0.3s; }
+.sf-after     { background: linear-gradient(90deg, #5DCAA5, var(--green-400)); transition-delay: 0.8s; }
+.speed-val { font-size: 10px; font-weight: 700; width: 30px; flex-shrink: 0; }
+.sv-red   { color: #A32D2D; }
+.sv-green { color: var(--green-600); }
+
+.speed-badge {
+  position: absolute; right: 0; bottom: -8px;
+  background: var(--green-600);
+  color: white; font-size: 10px; font-weight: 600;
+  padding: 5px 10px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+  animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation-delay: 1.6s; opacity: 0;
+}
+.speed-badge svg { width: 11px; height: 11px; stroke: white; }
+
+/* ── Savings animation (Phase 3) ── */
+.savings-anim { width: 100%; position: relative; height: 130px; }
+.savings-chart { position: absolute; inset: 0; display: flex; align-items: flex-end; padding-bottom: 22px; }
+.savings-bar-group { display: flex; align-items: flex-end; gap: 12px; width: 100%; padding: 0 10px; }
+.sbar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; }
+.sbar { width: 100%; border-radius: 5px 5px 0 0; }
+.sbar1 { height: 0px; background: var(--amber-100); animation: barUp 0.5s ease forwards 0.2s; --h: 32px; }
+.sbar2 { height: 0px; background: var(--amber-100); animation: barUp 0.5s ease forwards 0.45s; --h: 50px; }
+.sbar3 { height: 0px; background: var(--amber-100); animation: barUp 0.5s ease forwards 0.7s; --h: 68px; }
+.sbar4 { height: 0px; background: var(--amber-400); animation: barUp 0.5s ease forwards 0.95s; --h: 88px; }
+@keyframes barUp { to { height: var(--h); } }
+.sbar-label { font-size: 9px; color: var(--gray-400); font-weight: 500; }
+.sbar-tooltip {
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  background: var(--amber-800); color: white;
+  font-size: 9px; font-weight: 700; padding: 3px 6px; border-radius: 4px;
+  white-space: nowrap; opacity: 0;
+  animation: badgePop 0.4s ease forwards 1.5s;
+}
+.savings-baseline {
+  position: absolute; bottom: 22px; left: 0; right: 0;
+  height: 1.5px; background: var(--gray-200);
+}
+.savings-trend {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.savings-badge {
+  position: absolute; right: 0; top: 4px;
+  background: var(--amber-600);
+  color: white; font-size: 10px; font-weight: 600;
+  padding: 5px 10px; border-radius: 20px;
+  display: flex; align-items: center; gap: 5px;
+  animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  animation-delay: 1.8s; opacity: 0;
+}
+.savings-badge svg { width: 11px; height: 11px; stroke: white; }
+
+/* ── Card body ── */
+.impl2-body { padding: 22px 22px 24px; flex: 1; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--gray-100); }
+
+.impl2-step-badge {
+  display: inline-block; align-self: flex-start;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 4px 12px; border-radius: 20px;
+}
+.ibadge-blue  { background: var(--blue-50);  color: var(--blue-800); }
+.ibadge-green { background: var(--green-50); color: var(--green-800); }
+.ibadge-amber { background: var(--amber-50); color: var(--amber-800); }
+
+.impl2-phase-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px; font-weight: 400;
+  color: var(--gray-900); letter-spacing: -0.2px; line-height: 1.25;
+}
+.impl2-phase-desc {
+  font-size: 13px; color: var(--gray-400);
+  line-height: 1.68; font-weight: 300;
+}
+
+.impl2-bullets { display: flex; flex-direction: column; gap: 7px; margin: 4px 0; }
+.impl2-bullet {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--gray-700);
+  transition: transform 0.2s ease;
+}
+.impl2-card:hover .impl2-bullet { transform: translateX(2px); }
+.ibullet-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.ibullet-blue  { background: var(--blue-400); }
+.ibullet-green { background: var(--green-400); }
+.ibullet-amber { background: var(--amber-400); }
+
+/* Stat row */
+.impl2-stat {
+  display: flex; align-items: baseline; gap: 8px;
+  padding-top: 14px; border-top: 1px solid var(--gray-100);
+  margin-top: auto;
+}
+.impl2-stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 40px; font-weight: 400; line-height: 1; letter-spacing: -1.5px;
+}
+.istat-blue  { color: var(--blue-600); }
+.istat-green { color: var(--green-600); }
+.istat-amber { color: var(--amber-600); }
+.impl2-stat-right { display: flex; flex-direction: column; }
+.impl2-stat-unit { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+.impl2-stat-desc { font-size: 11px; color: var(--gray-400); font-weight: 300; }
+</style>
+
+<script>
+/* ── Impl V2: scroll reveal + counter + speed bars ── */
+(function(){
+  const cards    = document.querySelectorAll('[data-impl-card]');
+  const fill     = document.getElementById('implFill');
+  const counters = document.querySelectorAll('.impl2-stat-num');
+  const sBars    = document.querySelectorAll('.speed-fill');
+  let done = false;
+
+  function animCounter(el) {
+    const t = parseInt(el.dataset.target, 10);
+    const dur = 1500, s = performance.now();
+    (function tick(now) {
+      const p = Math.min((now - s) / dur, 1);
+      el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * t);
+      if (p < 1) requestAnimationFrame(tick);
+    })(s);
+  }
+
+  function run() {
+    const sec = document.getElementById('implSection');
+    if (!sec) return;
+    if (sec.getBoundingClientRect().top > window.innerHeight * 0.88) return;
+    cards.forEach((c, i) => setTimeout(() => c.classList.add('i2-visible'), i * 140));
+    if (fill) setTimeout(() => fill.style.width = '100%', 200);
+    if (!done) {
+      done = true;
+      setTimeout(() => {
+        counters.forEach(c => animCounter(c));
+        sBars.forEach(b => { b.style.width = b.style.getPropertyValue('--w') || b.dataset.w || '50%'; });
+        /* manually set the CSS var-driven widths */
+        document.querySelectorAll('.sf-before').forEach(el => el.style.width = el.parentElement.querySelector ? '90%' : '80%');
+      }, 400);
+      /* Set speed bar widths from inline style --w */
+      setTimeout(() => {
+        document.querySelectorAll('.speed-fill').forEach(el => {
+          const w = el.style.getPropertyValue('--w');
+          if (w) el.style.width = w;
+        });
+      }, 420);
+    }
+    window.removeEventListener('scroll', run);
+  }
+
+  window.addEventListener('scroll', run);
+  run();
+})();
+</script>
+
+<script>
+  // Tilt effect on card hover
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width  - 0.5;
+      const y = (e.clientY - rect.top)  / rect.height - 0.5;
+      card.style.transform = `translateY(-6px) scale(1.012) rotateY(${x * 5}deg) rotateX(${-y * 5}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+</script>
+</body>
+</html>

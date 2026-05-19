@@ -516,7 +516,7 @@ export default function CustomFormulaAnimation() {
                 initial={{ scale: 0.94, opacity: 0, y: 16 }} animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.94, opacity: 0, y: 16 }}
                 transition={{ type: "spring", stiffness: 280, damping: 26 }}
-                className="w-full max-w-lg bg-white rounded-2xl shadow-[0_32px_80px_rgba(15,23,42,0.28),0_8px_24px_rgba(15,23,42,0.12)] overflow-hidden max-h-[90vh] overflow-y-auto"
+                className="w-full max-w-lg bg-white rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
               >
                 {/* Modal header */}
                 <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-linear-to-r from-white to-blue-50/40">
@@ -683,7 +683,7 @@ export default function CustomFormulaAnimation() {
             <motion.div key="toast"
               initial={{ opacity: 0, y: 24, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8 }} transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.4 }}
-              className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl shadow-2xl border border-emerald-200 whitespace-nowrap">
+              className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 bg-white rounded-2xl border border-emerald-200 whitespace-nowrap">
               <div className="w-7 h-7 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
               </div>
@@ -697,7 +697,7 @@ export default function CustomFormulaAnimation() {
 
         {/* Caption bar — inside the dashboard */}
         <div
-          className="shrink-0 mx-4 mb-3 flex items-center gap-2.5 px-4 py-2.5 rounded-xl border pointer-events-none"
+          className="shrink-0 mx-4 mb-3 flex items-center gap-3 px-5 py-3.5 rounded-xl border pointer-events-none"
           style={{
             background: "#f0f9ff",
             borderColor: "#bae6fd",
@@ -710,7 +710,7 @@ export default function CustomFormulaAnimation() {
             className="shrink-0 w-2 h-2 rounded-full animate-pulse"
             style={{ background: "#0891b2", boxShadow: "0 0 8px rgba(8,145,178,0.5)" }}
           />
-          <p className="text-[10.5px] font-medium leading-snug">{caption}</p>
+          <p className="text-[12px] font-semibold leading-relaxed tracking-wide m-0">{caption}</p>
         </div>
 
       </div>{/* end dashboard shell */}

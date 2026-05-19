@@ -1,152 +1,255 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Zap, Calculator, FileCheck, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import ScrollStack, { ScrollStackItem } from '@/components/ui/ScrollStack';
 
-const FEATURES = [
-    {
-        title: "Automate Sourcing at Scale",
-        description: "Run multi-round bidding events with 1000+ items and 500+ vendors in one click. FW Autobot auto-negotiates on your behalf, reducing cycle time by 50% while preserving full history.",
-        icon: Zap,
-        color: "blue",
-        label: "Strategic Sourcing"
-    },
-    {
-        title: "Identify True Cost (TCO)",
-        description: "Go beyond unit price. Automatically calculate fully landed costs including duties, taxes, and freight to identify the cheapest vendor with 100% precision.",
-        icon: Calculator,
-        color: "indigo",
-        label: "Pricing Intelligence"
-    },
-    {
-        title: "1-Click Order Execution",
-        description: "Generate POs across multiple vendors instantly from awarded bids. Track every amendment, delivery schedule, and invoice with a complete digital audit trail.",
-        icon: FileCheck,
-        color: "blue",
-        label: "PO Management"
-    }
+const problems = [
+  {
+    number: '01',
+    dotColor: '#ef4444', // Red dot 🔴
+    label: 'BOM COMPLEXITY',
+    title: "Building a BOM shouldn't take days.",
+    description: 'Multi-level BOMs with hundreds of components, alternate parts, and multiple finished goods — built manually, line by line, with no version control and no price visibility. By the time it\'s ready, the opportunity may already be gone.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3666ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="9" height="9" rx="1" /><rect x="13" y="2" width="9" height="9" rx="1" />
+        <rect x="2" y="13" width="9" height="9" rx="1" /><path d="M18 13v8M14 17h8" />
+      </svg>
+    ),
+  },
+  {
+    number: '02',
+    dotColor: '#f97316', // Orange dot 🟠
+    label: 'PRICING GUESSWORK',
+    title: 'No one knows what anything should cost.',
+    description: 'Without visibility into past PO prices, contract rates, and market prices, every target price is a guess. And a wrong target means a wrong quote — either you overprice and lose the deal, or underprice and lose the margin.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3666ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    ),
+  },
+  {
+    number: '03',
+    dotColor: '#eab308', // Yellow dot 🟡
+    label: 'VENDOR COMMUNICATION',
+    title: 'Sourcing runs on emails nobody tracks.',
+    description: 'RFQs sent over email, follow-ups that go unanswered, responses scattered across inboxes — by the time all vendor bids are in, days have passed and half the data is missing.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3666ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+      </svg>
+    ),
+  },
+  {
+    number: '04',
+    dotColor: '#3b82f6', // Blue dot 🔵
+    label: 'HIDDEN COSTS',
+    title: 'The cheapest bid is rarely the cheapest purchase.',
+    description: 'Unit price comparisons miss duties, freight, insurance, and packaging. Without true landed cost visibility, teams award on the wrong number — and the margin gap shows up only after the PO is issued.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3666ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+        <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+        <line x1="1" y1="1" x2="23" y2="23" />
+      </svg>
+    ),
+  },
+  {
+    number: '05',
+    dotColor: '#64748b', // Gray/White dot ⚪
+    label: 'MANUAL QUOTING',
+    title: 'Customer quotes built on gut feel.',
+    description: 'Pulling numbers from emails, applying markups in spreadsheets, rolling up BOM costs manually — one error and the margin is gone. One delay and the deal is gone.',
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3666ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" /><line x1="9" y1="13" x2="15" y2="13" /><line x1="9" y1="17" x2="15" y2="17" />
+      </svg>
+    ),
+  },
 ];
 
 export default function SolutionsFeatures() {
-    return (
-        <section className="relative py-24 overflow-hidden">
-            {/* Gradient Background */}
-            <div className="absolute inset-0 hero-gradient" />
-            
-            {/* Noise Overlay */}
-            <div className="absolute inset-0 noise opacity-[0.03]" />
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#f8fafc',
+        fontFamily: 'var(--font-inter), sans-serif',
+      }}
+    >
+      {/* ── LEFT — static sticky hero ── */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: '80px 60px 60px 80px',
+          background: '#f8fafc',
+          borderRight: '1px solid rgba(0,0,0,0.06)',
+        }}
+      >
+        {/* Badge */}
+        <span
+          style={{
+            display: 'inline-block',
+            background: 'rgba(54,102,255,0.08)',
+            color: '#3666ff',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            padding: '6px 14px',
+            borderRadius: '20px',
+            marginBottom: '28px',
+            border: '1px solid rgba(54,102,255,0.15)',
+            width: 'fit-content',
+          }}
+        >
+          The Industry Challenge
+        </span>
 
-            {/* Background elements to match landing page feel */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-50 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-50 rounded-full blur-[100px]" />
-            </div>
+        {/* Headline */}
+        <h2
+          style={{
+            fontSize: 'clamp(32px, 3.5vw, 52px)',
+            fontWeight: 800,
+            lineHeight: 1.08,
+            color: '#0f172a',
+            letterSpacing: '-1.5px',
+            fontFamily: 'var(--font-display), Georgia, serif',
+            marginBottom: '24px',
+          }}
+        >
+          Where Most<br />
+          Manufacturers<br />
+          Lose{' '}
+          <span style={{ color: '#3666ff' }}>
+            Time — and<br />Money.
+          </span>
+        </h2>
 
-            <div className="relative max-w-7xl mx-auto px-6">
-                {/* Header section matching landing page typography */}
-                <div className="max-w-3xl mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <div
-                            className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
-                            style={{ fontFamily: 'var(--font-inter)' }}
-                        >
-                            Quote-to-Order Solution
-                        </div>
-                        <h2
-                            className="text-3xl md:text-5xl font-bold tracking-tight text-[#1A1D2E] mb-6 leading-[1.1]"
-                            style={{ fontFamily: 'var(--font-display)' }}
-                        >
-                            Master your entire <span className="text-[#3666ff]">Quote-to-Order</span> lifecycle
-                        </h2>
-                        <p
-                            className="text-lg text-slate-500 font-medium max-w-2xl"
-                            style={{ fontFamily: 'var(--font-inter)' }}
-                        >
-                            While many teams focus on unit price, the true value is lost in the friction between quoting and ordering.
-                            Unify your data, automate your negotiations, and execute with absolute precision.
-                        </p>
-                    </motion.div>
+        {/* Sub-text */}
+        <p
+          style={{
+            fontSize: '15px',
+            lineHeight: 1.75,
+            color: '#64748b',
+            maxWidth: '360px',
+          }}
+        >
+          From broken quoting processes to hidden supply chain costs, discover
+          the critical blind spots draining your margins and how to eliminate them.
+        </p>
+      </div>
+
+      {/* ── RIGHT — ScrollStack ── */}
+      <div style={{ height: '100vh', overflow: 'hidden', position: 'relative' }}>
+        <ScrollStack
+          itemDistance={120}
+          itemScale={0.04}
+          itemStackDistance={25}
+          stackPosition="15%"
+          scaleEndPosition="8%"
+          baseScale={0.82}
+        >
+          {problems.map((p) => (
+            <ScrollStackItem key={p.number}>
+              {/* Card */}
+              <div
+                style={{
+                  background: 'white',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)',
+                  minHeight: '280px',
+                  padding: '40px',
+                }}
+              >
+                {/* Top row: icon + big number */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                  <div
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      background: 'rgba(54,102,255,0.08)',
+                      borderRadius: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {p.icon}
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '52px',
+                      fontWeight: 800,
+                      color: 'rgba(0,0,0,0.05)',
+                      lineHeight: 1,
+                      fontFamily: 'var(--font-display), Georgia, serif',
+                      letterSpacing: '-2px',
+                      userSelect: 'none',
+                    }}
+                  >
+                    {p.number}
+                  </span>
                 </div>
 
-                {/* Features Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {FEATURES_LIST.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                            whileHover={{ y: -8 }}
-                            className="group relative flex flex-col h-full"
-                        >
-                            {/* Card Body */}
-                            <div className="relative h-full bg-white border border-slate-200 rounded-[32px] p-8 md:p-10 transition-all duration-500 flex flex-col shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] group-hover:shadow-[0_20px_40px_-12px_rgba(54,102,255,0.15)] group-hover:border-blue-100 overflow-hidden">
-                                
-                                {/* Hover Textured Background */}
-                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30" />
-                                    <div className="absolute inset-0 noise opacity-[0.02]" />
-                                </div>
-
-                                <div className="relative z-10 flex flex-col h-full">
-                                    <div className="size-14 rounded-2xl bg-slate-50 flex items-center justify-center mb-8 group-hover:bg-blue-600 group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-blue-200">
-                                        <feature.icon className="size-6 text-blue-600 group-hover:text-white transition-colors duration-500" />
-                                    </div>
-
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                                        <span className="text-[11px] font-bold text-blue-600 uppercase tracking-widest" style={{ fontFamily: 'var(--font-inter)' }}>{feature.label}</span>
-                                    </div>
-
-                                    <h3 className="text-2xl font-bold text-[#1A1D2E] mb-4 leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
-                                        {feature.title}
-                                    </h3>
-
-                                    <p className="text-slate-500 leading-relaxed mb-8 flex-grow" style={{ fontFamily: 'var(--font-inter)' }}>
-                                        {feature.description}
-                                    </p>
-
-                                    <div className="mt-auto">
-                                        <Link href="/platform" className="inline-flex items-center gap-2 text-sm font-bold text-[#1A1D2E] hover:text-blue-600 transition-colors group/link" style={{ fontFamily: 'var(--font-inter)' }}>
-                                            Explore Module
-                                            <ArrowRight className="size-4 group-hover/link:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                {/* Label row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <span
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: p.dotColor,
+                      flexShrink: 0,
+                      display: 'inline-block',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.5px',
+                      color: '#3666ff',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {p.label}
+                  </span>
                 </div>
-            </div>
-        </section>
-    );
+
+                {/* Title */}
+                <h3
+                  style={{
+                    fontSize: '26px',
+                    fontWeight: 800,
+                    color: '#1A1D2E',
+                    margin: '0 0 14px',
+                    lineHeight: 1.15,
+                    letterSpacing: '-0.5px',
+                    fontFamily: 'var(--font-display), Georgia, serif',
+                  }}
+                >
+                  {p.title}
+                </h3>
+
+                {/* Description */}
+                <p style={{ fontSize: '14.5px', lineHeight: 1.75, color: '#64748b' }}>
+                  {p.description}
+                </p>
+              </div>
+            </ScrollStackItem>
+          ))}
+        </ScrollStack>
+      </div>
+    </div>
+  );
 }
-
-const FEATURES_LIST = [
-    {
-        title: "Unify Your Quoting Intelligence",
-        description: "Eliminate fragmented data silos. Ensure every vendor negotiation and quote normalization follows an intelligent, automated workflow that captures institutional knowledge.",
-        icon: Zap,
-        label: "Quoting Logic"
-    },
-    {
-        title: "Accelerate the Award-to-Order Cycle",
-        description: "Eliminate the manual drag of follow-ups. Synchronize multi-round bidding with instant order execution to ensure material availability without derailing production timelines.",
-        icon: Calculator,
-        label: "Velocity"
-    },
-    {
-        title: "100% Visibility and Audit Readiness",
-        description: "Manage complex assemblies and multi-entity RFQs with structured templates, automated landed-cost comparisons, and a complete digital history of every decision.",
-        icon: FileCheck,
-        label: "Governance"
-    }
-];

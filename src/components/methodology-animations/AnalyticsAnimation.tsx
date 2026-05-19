@@ -615,36 +615,80 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
                         <div className="flex-1 min-h-0 relative">
                           <svg className="w-full h-full overflow-visible" viewBox={`0 0 ${CHART_VB_W} ${CHART_VB_H}`} preserveAspectRatio="none">
                             <defs>
-                              <linearGradient id="fillBS" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25"/>
+                              <linearGradient id="fillBS4" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.22"/>
                                 <stop offset="100%" stopColor="#6366f1" stopOpacity="0"/>
                               </linearGradient>
+                              {/* Clip rect that slides from left to right to reveal lines */}
+                              <clipPath id="revealClip4">
+                                <rect
+                                  x="0" y={-2} width={CHART_VB_W} height={CHART_VB_H + 4}
+                                  style={{
+                                    transformOrigin: "0 0",
+                                    animation: chartIn
+                                      ? "revealChart 1.4s cubic-bezier(0.4,0,0.2,1) forwards"
+                                      : "none",
+                                    transform: chartIn ? undefined : "scaleX(0)",
+                                  }}
+                                />
+                              </clipPath>
                             </defs>
-                            <g className="stroke-slate-100/50 stroke-1">
-                              {[0, 0.25, 0.5, 0.75, 1].map(p => (
-                                <line key={p} x1="0" x2={CHART_VB_W} y1={p * CHART_VB_H} y2={p * CHART_VB_H}/>
-                              ))}
-                            </g>
-                            <path className={cn("fill-none stroke-[1.5] transition-all duration-1000", chartIn ? "stroke-dashoffset-0" : "stroke-dashoffset-100")} 
-                                  d={skChart.line} stroke="#06b6d4" strokeOpacity="0.6" style={{ strokeDasharray: 200, strokeDashoffset: chartIn ? 0 : 200 }} />
-                            <path className={cn("transition-opacity duration-1000", chartIn ? "opacity-100" : "opacity-0")} d={bsChart.fill} fill="url(#fillBS)" />
-                            <path className={cn("fill-none stroke-[1.5] transition-all duration-1000", chartIn ? "stroke-dashoffset-0" : "stroke-dashoffset-100")} 
-                                  d={bsChart.line} stroke="#6366f1" style={{ strokeDasharray: 200, strokeDashoffset: chartIn ? 0 : 200 }} />
+                            {/* Grid lines */}
+                            {[0, 0.25, 0.5, 0.75, 1].map(p => (
+                              <line key={p} x1="0" x2={CHART_VB_W} y1={p * CHART_VB_H} y2={p * CHART_VB_H}
+                                stroke="#e2e8f0" strokeWidth="0.4"/>
+                            ))}
+                            {/* Fill area — fades in with opacity */}
+                            <path
+                              d={bsChart.fill}
+                              fill="url(#fillBS4)"
+                              clipPath="url(#revealClip4)"
+                              style={{ opacity: chartIn ? 1 : 0, transition: "opacity 0.6s ease 0.3s" }}
+                            />
+                            {/* SKF line */}
+                            <path
+                              d={skChart.line}
+                              fill="none"
+                              stroke="#06b6d4"
+                              strokeWidth="0.7"
+                              strokeOpacity="0.85"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              clipPath="url(#revealClip4)"
+                            />
+                            {/* Bharat Steel line */}
+                            <path
+                              d={bsChart.line}
+                              fill="none"
+                              stroke="#6366f1"
+                              strokeWidth="0.9"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              clipPath="url(#revealClip4)"
+                            />
                           </svg>
                         </div>
                         {/* Y-Axis HTML Labels */}
-                        <div className="absolute right-2 top-3 bottom-6 flex flex-col justify-between text-[8px] font-mono font-black text-slate-400 select-none h-[calc(100%-36px)] text-right">
+                        <div className="absolute right-2 top-3 bottom-6 flex flex-col justify-between text-[8px] font-medium text-slate-400 select-none h-[calc(100%-36px)] text-right">
                           <span>$145</span>
                           <span>$138</span>
                           <span>$131</span>
                           <span>$125</span>
                           <span>$120</span>
                         </div>
+                        {/* Y-Axis Title */}
+                        <div className="absolute right-2 top-[-2px] text-[7.5px] font-semibold text-slate-500 select-none">
+                          Price
+                        </div>
                         {/* X-Axis HTML Labels */}
-                        <div className="absolute left-3 right-8 bottom-1 flex justify-between text-[8px] font-mono font-black text-slate-400 select-none">
+                        <div className="absolute left-3 right-8 bottom-3.5 flex justify-between text-[8px] font-medium text-slate-400 select-none">
                           {MONTHS.map((m, i) => (
                             <span key={i} className="w-4 text-center">{m}</span>
                           ))}
+                        </div>
+                        {/* X-Axis Title */}
+                        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 text-[7.5px] font-semibold text-slate-500 select-none">
+                          Month
                         </div>
                       </div>
                     </motion.div>
@@ -923,7 +967,7 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
                   }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_#818cf8] shrink-0 mt-[3px] animate-pulse" />
-                  <p className="text-[10px] font-semibold text-slate-600 leading-relaxed tracking-wide m-0">
+                  <p className="text-[12px] font-semibold text-slate-600 leading-relaxed tracking-wide m-0">
                     {captions[phase]}
                   </p>
                 </motion.div>
@@ -953,6 +997,10 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
         }
         .animate-slideIn {
           animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes revealChart {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
         }
       `}</style>
     </div>

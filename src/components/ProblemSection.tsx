@@ -198,8 +198,8 @@ const InefficiencyAnimation = () => {
 
         {/* Friction Sparks */}
         {[...Array(12)].map((_, i) => {
-          const targetX = 145 + (Math.sin(i * 30) * 40);
-          const targetY = 140 + (Math.cos(i * 30) * 40);
+          const dx = Math.sin(i * 30) * 40;
+          const dy = Math.cos(i * 30) * 40;
 
           return (
             <motion.circle
@@ -209,8 +209,8 @@ const InefficiencyAnimation = () => {
               cx={145}
               cy={140}
               animate={{
-                cx: [145, targetX],
-                cy: [140, targetY],
+                x: [0, dx],
+                y: [0, dy],
                 opacity: [0, 1, 0],
               }}
               transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.1 }}
@@ -279,8 +279,8 @@ const ZeroVisibilityAnimation = () => {
             <motion.circle
               cx={80} cy={80} r="65" fill="white"
               animate={{
-                cx: [80, 200, 200, 80, 80],
-                cy: [80, 80, 210, 210, 80]
+                x: [0, 120, 120, 0, 0],
+                y: [0, 0, 130, 130, 0]
               }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -298,8 +298,7 @@ const ZeroVisibilityAnimation = () => {
               key={i} r="0.8" fill="#1A1D2E" fillOpacity="0.12"
               cx={initialX}
               cy={initialY}
-              initial={{ cx: initialX, cy: initialY }}
-              animate={{ opacity: [0.1, 0.4, 0.1], cy: [initialY, initialY - 30] }}
+              animate={{ opacity: [0.1, 0.4, 0.1], y: [0, -30] }}
               transition={{ duration: duration, repeat: Infinity }}
             />
           );
@@ -335,8 +334,8 @@ const ZeroVisibilityAnimation = () => {
         <motion.circle
           cx={80} cy={80} r="66" stroke="#06b6d4" strokeWidth="1" strokeOpacity="0.15" fill="none"
           animate={{
-            cx: [80, 200, 200, 80, 80],
-            cy: [80, 80, 210, 210, 80]
+            x: [0, 120, 120, 0, 0],
+            y: [0, 0, 130, 130, 0]
           }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
         />

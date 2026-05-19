@@ -2,26 +2,65 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { StaggerTestimonials, TestimonialItem } from '@/components/ui/stagger-testimonials';
 
-const TESTIMONIALS = [
+const TESTIMONIALS: TestimonialItem[] = [
   {
-    quote: "It's great to be working directly with seniors and have the space to play around and find ways to make the product better. People care about you and not just the work you do.",
-    author: "Sahil",
-    role: "Software Developer — Backend",
-    initials: "SH"
+    tempId: 0,
+    testimonial: "It's great to be working directly with seniors and have the space to play around and find ways to make the product better. More importantly, people care about you and not just the work you do, and having all of that is the best feeling.",
+    by: 'Sahil',
+    role: 'Software Developer — Backend',
+    initials: 'SA',
   },
   {
-    quote: "The autonomy is real. I've owned end-to-end features from spec to ship in my first quarter, with the kind of mentorship and feedback that genuinely accelerates how you think.",
-    author: "Priya",
-    role: "Product Manager",
-    initials: "PR"
+    tempId: 1,
+    testimonial: "Growth-mindset culture as experienced here is important, and not an easy find. Through technical discussions, I felt encouraged to speak honestly and directly. My experience with FactWise helped me become a better engineer & leader.",
+    by: 'Nagesh',
+    role: 'Product Manager',
+    initials: 'NA',
   },
   {
-    quote: "It's the kind of place where design is taken seriously and shipped quickly. We argue, we sketch, we prototype on a real codebase — and customers feel it.",
-    author: "Aakash",
-    role: "Senior Product Designer",
-    initials: "AK"
-  }
+    tempId: 2,
+    testimonial: "I work with professionals I can learn from who push me to take on new and challenging opportunities. At FactWise, every employee's voice is heard, and their feedback is valued. I like how there is recognition for every contribution we make.",
+    by: 'Devanshi',
+    role: 'Product Manager',
+    initials: 'DE',
+  },
+  {
+    tempId: 3,
+    testimonial: "I get to work with some of the most brilliant people at FactWise and learn from them. I have the freedom to fail, learn, and grow and there is an honest, transparent, and empathic leadership and culture here.",
+    by: 'Darshan',
+    role: 'Product Manager',
+    initials: 'DA',
+  },
+  {
+    tempId: 4,
+    testimonial: "I enjoy the creative freedom that I am encouraged to have here at FactWise. It is a dynamically evolving environment where I can get to test new things, which has personally helped me improve my work and grow as an individual.",
+    by: 'Ayaan',
+    role: 'Software Developer — Frontend',
+    initials: 'AY',
+  },
+  {
+    tempId: 5,
+    testimonial: "The work culture at FactWise is nurturing. I have always been pushed to grow professionally and personally. The founder truly believes in individual growth for the firm to grow.",
+    by: 'Drushti',
+    role: 'Human Resources',
+    initials: 'DR',
+  },
+  {
+    tempId: 6,
+    testimonial: "The learnings have been fantastic since day one. This is a startup where everyone helps you bring out the best in yourself and achieve your goals as well as the goals of the team.",
+    by: 'Usamah Kamil',
+    role: 'Software Developer — Frontend',
+    initials: 'UK',
+  },
+  {
+    tempId: 7,
+    testimonial: "I love that every day is a new challenge. I joined FactWise at a time when I chose to become a parent and balancing both had me concerned, however the team and founder have been incredibly supportive to both of my journeys.",
+    by: 'Jetal',
+    role: 'Analyst',
+    initials: 'JE',
+  },
 ];
 
 export const CareersTestimonials = () => {
@@ -32,9 +71,10 @@ export const CareersTestimonials = () => {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+        {/* Header */}
+        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="max-w-2xl">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -42,47 +82,41 @@ export const CareersTestimonials = () => {
             >
               From the Team
             </motion.div>
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-6xl font-bold text-white tracking-tighter"
             >
-              What people <span className="text-[#3666ff] font-instrument italic font-medium">actually say</span> about working here.
+              What people{' '}
+              <span className="text-[#3666ff] font-instrument italic font-medium">actually say</span>{' '}
+              about working here.
             </motion.h2>
           </div>
+
+          {/* Instruction hint */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="text-white/30 text-sm max-w-[180px] text-right hidden md:block"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Click a card or use the arrows to explore
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t, index) => (
-            <motion.article
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="group bg-white/5 border border-white/10 p-10 rounded-[40px] hover:bg-white/10 hover:border-blue-500/50 transition-all duration-500 flex flex-col justify-between min-h-[400px]"
-            >
-              <div>
-                <span className="text-6xl font-instrument text-[#3666ff] opacity-50 block mb-4">"</span>
-                <p className="text-white/90 text-xl leading-relaxed font-light">
-                  {t.quote}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-4 pt-8 border-t border-white/10 mt-8">
-                <div className="size-12 rounded-full bg-gradient-to-br from-[#3666ff] to-blue-400 flex items-center justify-center text-white font-bold shadow-lg">
-                  {t.initials}
-                </div>
-                <div>
-                  <h4 className="text-white font-bold text-lg">{t.author}</h4>
-                  <p className="text-white/50 text-sm">{t.role}</p>
-                </div>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+        {/* Stagger Testimonials */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <StaggerTestimonials testimonials={TESTIMONIALS} />
+        </motion.div>
       </div>
     </section>
   );

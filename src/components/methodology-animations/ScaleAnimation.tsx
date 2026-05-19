@@ -70,23 +70,19 @@ const ROOT: BOMNode = {
 };
 
 const L1: BOMNode[] = [
-  { id: "m01", level: 1, sku: "ASSY-M01", name: "Motor",       qty: 1, parts: 48, x: 14, y: 33, parent: "root" },
-  { id: "g02", level: 1, sku: "ASSY-G02", name: "Gearbox",     qty: 1, parts: 62, x: 38, y: 33, parent: "root", focus: true },
-  { id: "c03", level: 1, sku: "ASSY-C03", name: "Cooling",     qty: 1, parts: 28, x: 62, y: 33, parent: "root" },
-  { id: "p04", level: 1, sku: "ASSY-P04", name: "Power Elec.", qty: 1, parts: 38, x: 86, y: 33, parent: "root" },
+  { id: "m01", level: 1, sku: "ASSY-M01", name: "Motor", qty: 1, parts: 48, x: 25, y: 33, parent: "root", focus: true },
+  { id: "g02", level: 1, sku: "ASSY-G02", name: "Gearbox", qty: 1, parts: 62, x: 75, y: 33, parent: "root", focus: true },
 ];
 
 const L2: BOMNode[] = [
-  { id: "g21", level: 2, sku: "ITM-G21", name: "Gear Housing",      qty: 1, x: 12, y: 58, parent: "g02" },
-  { id: "g22", level: 2, sku: "SUB-G22", name: "Drive Shaft Assy",  qty: 1, parts: 9, x: 32, y: 58, parent: "g02", focus: true },
-  { id: "g23", level: 2, sku: "ITM-G23", name: "Bearing Set 32mm",  qty: 4, x: 52, y: 58, parent: "g02" },
-  { id: "g24", level: 2, sku: "ITM-G24", name: "Seal & Gasket Kit", qty: 1, x: 72, y: 58, parent: "g02" },
+  { id: "g21", level: 2, sku: "ITM-G21", name: "Gear Housing", qty: 1, x: 10, y: 58, parent: "m01", focus: true },
+  { id: "g22", level: 2, sku: "SUB-G22", name: "Drive Shaft Assy", qty: 1, parts: 9, x: 40, y: 58, parent: "m01" },
+  { id: "g23", level: 2, sku: "ITM-G23", name: "Bearing Set 32mm", qty: 4, x: 75, y: 58, parent: "g02", focus: true },
 ];
 
 const L3: BOMNode[] = [
-  { id: "s31", level: 3, sku: "PRT-S31", name: "Forged Shaft",    qty: 1, x: 14, y: 83, parent: "g22" },
-  { id: "s32", level: 3, sku: "PRT-S32", name: "Spline Coupling", qty: 2, x: 32, y: 83, parent: "g22" },
-  { id: "s33", level: 3, sku: "PRT-S33", name: "Retainer Ring",   qty: 2, x: 50, y: 83, parent: "g22" },
+  { id: "s31", level: 3, sku: "PRT-S31", name: "Forged Shaft", qty: 1, x: 10, y: 83, parent: "g21" },
+  { id: "s32", level: 3, sku: "PRT-S32", name: "Spline Coupling", qty: 2, x: 60, y: 83, parent: "g23" },
 ];
 
 const ALT: BOMNode[] = [];
@@ -97,9 +93,9 @@ const NODE_BY_ID: Record<string, BOMNode> =
 
 interface Req { id: string; plant: string; lines: number; qty: number; color: string; x0: number; y0: number; }
 const REQS: Req[] = [
-  { id: "REQ-2417", plant: "Mumbai", lines: 18, qty: 1000, color: "#3666ff", x0: 4,  y0: 4   },
-  { id: "REQ-2418", plant: "Pune",   lines: 22, qty: 1500, color: "#00b884", x0: 4,  y0: 60  },
-  { id: "REQ-2421", plant: "Delhi",  lines: 14, qty: 800,  color: "#f59e0b", x0: 4,  y0: 116 },
+  { id: "REQ-2417", plant: "Mumbai", lines: 18, qty: 1000, color: "#3666ff", x0: 4, y0: 4 },
+  { id: "REQ-2418", plant: "Pune", lines: 22, qty: 1500, color: "#00b884", x0: 4, y0: 60 },
+  { id: "REQ-2421", plant: "Delhi", lines: 14, qty: 800, color: "#f59e0b", x0: 4, y0: 116 },
 ];
 
 /* ============ SCOPED CSS (prefix `bs-`) ============
@@ -478,22 +474,16 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
         for (let i = 1; i <= L3.length; i++) { if (cancelRef.current) return; setL3n(i); await sleep(300); }
         await sleep(1100);
 
-        // 5 VOLUME
+        // 5 COMBINE
         setPhase(5); onPhaseChange?.(5);
-        setLit((s) => ({ ...s, vol: true }));
-        for (let i = 1; i <= 3; i++) { if (cancelRef.current) return; setVolStep(i); await sleep(450); }
-        await sleep(1900);
-
-        // 6 COMBINE
-        setPhase(6); onPhaseChange?.(6);
         setLit((s) => ({ ...s, comb: true }));
         await sleep(1100);
         setCombined(true);
         await sleep(2600);
 
-        // 7 FINALE
-        setPhase(7); onPhaseChange?.(7);
-        for (let i = 1; i <= 4; i++) { if (cancelRef.current) return; setFinChips(i); await sleep(180); }
+        // 6 FINALE
+        setPhase(6); onPhaseChange?.(6);
+        for (let i = 1; i <= 3; i++) { if (cancelRef.current) return; setFinChips(i); await sleep(180); }
         await sleep(4200);
       }
     }
@@ -502,52 +492,50 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
   }, [speedMul, onPhaseChange]);
 
   // === Stat targets (kept for potential future use) ===
-  const levelsT  = phase >= 4 ? 3 : phase >= 3 ? 2 : phase >= 2 ? 1 : 0;
+  const levelsT = phase >= 4 ? 3 : phase >= 3 ? 2 : phase >= 2 ? 1 : 0;
   void levelsT;
 
   const captions: Record<number, string> = {
-    1: "One finished product. 247 parts. 5 levels of BOM hierarchy.",
+    1: "One finished product. 247 parts. 4 levels of BOM hierarchy.",
     2: "Click → explode into top-level sub-assemblies.",
     3: "Drill into any sub-BOM. Children fan out below.",
     4: "n-level sub-BOMs — no depth limit, full traceability.",
-    5: "Same BOM × 1,000 units. Bulk import, instant scale.",
-    6: "Combine requisitions across plants. Better pricing leverage.",
-    7: "Same effort. Any scale. 40% faster setup, every time.",
+    5: "Better pricing leverage.",
+    6: "Same effort. Any scale. 40% faster setup, every time.",
   };
 
   const stageTitle =
     phase === 1 ? "Finished Product" :
-    phase === 2 ? "Level 1 — Sub-Assemblies" :
-    phase === 3 ? "Level 2 — Sub-BOM" :
-    phase === 4 ? "Level 3 — Sub-Sub-BOM" :
-    phase === 5 ? "Volume × Scale" :
-    phase === 6 ? "Combined RFQ" :
-    phase === 7 ? "Optimized" : "BOM Explorer";
+      phase === 2 ? "Level 1 — Sub-Assemblies" :
+        phase === 3 ? "Level 2 — Sub-BOM" :
+          phase === 4 ? "Level 3 — Sub-Sub-BOM" :
+            phase === 5 ? "RFQ" :
+              phase === 6 ? "Optimized" : "BOM Explorer";
 
   const stageLevel =
     phase === 2 ? "L1" :
-    phase === 3 ? "L1 › L2" :
-    phase === 4 ? "L1 › L2 › L3" : null;
+      phase === 3 ? "L1 › L2" :
+        phase === 4 ? "L1 › L2 › L3" : null;
 
   // Edges to draw, with the "shown" flag derived from phase counters.
   interface Edge { key: string; from: BOMNode; to: BOMNode; level: string; shown: boolean; }
   const edges: Edge[] = [
-    ...L1.map((n, i) => ({ key: "e-root-" + n.id, from: ROOT,                  to: n, level: "lvl1", shown: phase >= 2 && l1n  > i })),
-    ...L2.map((n, i) => ({ key: "e-g02-"  + n.id, from: NODE_BY_ID[n.parent!], to: n, level: "lvl2", shown: phase >= 3 && l2n  > i })),
-    ...L3.map((n, i) => ({ key: "e-g22-"  + n.id, from: NODE_BY_ID[n.parent!], to: n, level: "lvl3", shown: phase >= 4 && l3n  > i })),
+    ...L1.map((n, i) => ({ key: "e-root-" + n.id, from: ROOT, to: n, level: "lvl1", shown: phase >= 2 && l1n > i })),
+    ...L2.map((n, i) => ({ key: "e-g02-" + n.id, from: NODE_BY_ID[n.parent!], to: n, level: "lvl2", shown: phase >= 3 && l2n > i })),
+    ...L3.map((n, i) => ({ key: "e-g22-" + n.id, from: NODE_BY_ID[n.parent!], to: n, level: "lvl3", shown: phase >= 4 && l3n > i })),
   ];
 
   const graphTransform = phase === 4 ? "scale(1.04) translateY(-3%)" : "scale(1)";
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 relative overflow-hidden">
-      
+
       {/* Dynamic Inject Style element */}
       <style dangerouslySetInnerHTML={{ __html: BS_STYLE }} />
 
       {/* Main Dashboard Frame */}
       <div className="relative w-full max-w-[691px] bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_50px_rgba(15,23,42,0.12)] border border-slate-200/70 z-10 overflow-hidden flex flex-col" style={{ height: 577 }}>
-        
+
         {/* Browser Chrome Header */}
         <div className="flex items-center justify-between px-4 bg-slate-50/90 backdrop-blur-md border-b border-slate-100 shrink-0" style={{ height: 32 }}>
           <div className="flex gap-1.5">
@@ -590,7 +578,7 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                     {stageLevel && <span className="bs-levelBadge">{stageLevel}</span>}
                   </h4>
                   <div className="bs-dots">
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
                       <div key={i} className={"bs-pd " + (phase === i ? "on" : phase > i ? "done" : "")} />
                     ))}
                   </div>
@@ -606,41 +594,39 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                   graphTransform={graphTransform}
                 />
 
-                <SceneVolume active={phase === 5} step={volStep} />
+                <SceneCombine active={phase === 5} combined={combined} />
 
-                <SceneCombine active={phase === 6} combined={combined} />
-
-                <SceneFinale active={phase === 7} chips={finChips} />
+                <SceneFinale active={phase === 6} chips={finChips} />
               </div>
 
-            <AnimatePresence mode="wait">
-              {captions[phase] && (
-                <motion.div
-                  key={phase}
-                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -4, scale: 0.97 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl shrink-0"
-                  style={{
-                    background: "rgba(248,250,255,0.95)",
-                    border: "1px solid rgba(99,102,241,0.18)",
-                    boxShadow: "0 2px 16px -4px rgba(99,102,241,0.14), 0 1px 3px rgba(15,23,42,0.05)",
-                  }}
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_#818cf8] shrink-0 animate-pulse" />
-                  <p className="text-[10.5px] font-semibold text-slate-600 leading-relaxed tracking-wide m-0">
-                    {captions[phase]}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              <AnimatePresence mode="wait">
+                {captions[phase] && (
+                  <motion.div
+                    key={phase}
+                    initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center gap-3 px-5 py-3.5 rounded-xl shrink-0"
+                    style={{
+                      background: "rgba(248,250,255,0.95)",
+                      border: "1px solid rgba(99,102,241,0.25)",
+                      boxShadow: "0 4px 24px -6px rgba(99,102,241,0.25), 0 1px 4px rgba(15,23,42,0.05)",
+                    }}
+                  >
+                    <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_#818cf8] shrink-0 animate-pulse" />
+                    <p className="text-[12px] font-semibold text-slate-800 leading-relaxed tracking-wide m-0">
+                      {captions[phase]}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className="bs-pills">
-                <BSPill icon={<Layers   className="w-3.5 h-3.5" />} label="Multi-Level BOM"        lit={lit.multi} />
-                <BSPill icon={<GitFork  className="w-3.5 h-3.5" />} label="n-Level Sub-BOMs"       lit={lit.sub} />
-                <BSPill icon={<Plus     className="w-3.5 h-3.5" />} label="Alternate Items / Line" lit={lit.alt} />
-                <BSPill icon={<Workflow className="w-3.5 h-3.5" />} label="Multi-Req Combining"    lit={lit.comb} />
+                <BSPill icon={<Layers className="w-3.5 h-3.5" />} label="Multi-Level BOM" lit={lit.multi} />
+                <BSPill icon={<GitFork className="w-3.5 h-3.5" />} label="n-Level Sub-BOMs" lit={lit.sub} />
+                <BSPill icon={<Plus className="w-3.5 h-3.5" />} label="Alternate Items / Line" lit={lit.alt} />
+                <BSPill icon={<Workflow className="w-3.5 h-3.5" />} label="Multi-Req Combining" lit={lit.comb} />
               </div>
             </div>
           </div>
@@ -672,14 +658,14 @@ function SceneHero({ active }: { active: boolean }) {
           <div className="bs-heroTitle">{ROOT.name}</div>
           <div className="bs-heroMeta">Tier-1 OEM · Production unit</div>
           <div className="bs-heroStats">
-            <div className="hs"><div className="v">5</div><div className="l">Levels</div></div>
+            <div className="hs"><div className="v">4</div><div className="l">Levels</div></div>
             <div className="hs"><div className="v">{ROOT.parts}</div><div className="l">Parts</div></div>
             <div className="hs"><div className="v">18</div><div className="l">Vendors</div></div>
           </div>
         </div>
-        <div className={"bs-q " + (active ? "in" : "")} style={{ left: "12%",  top: "22%",    animationDelay: "0s"  }}>?</div>
-        <div className={"bs-q " + (active ? "in" : "")} style={{ right: "12%", top: "18%",    animationDelay: ".3s" }}>?</div>
-        <div className={"bs-q " + (active ? "in" : "")} style={{ left: "10%",  bottom: "20%", animationDelay: ".6s" }}>?</div>
+        <div className={"bs-q " + (active ? "in" : "")} style={{ left: "12%", top: "22%", animationDelay: "0s" }}>?</div>
+        <div className={"bs-q " + (active ? "in" : "")} style={{ right: "12%", top: "18%", animationDelay: ".3s" }}>?</div>
+        <div className={"bs-q " + (active ? "in" : "")} style={{ left: "10%", bottom: "20%", animationDelay: ".6s" }}>?</div>
         <div className={"bs-q " + (active ? "in" : "")} style={{ right: "14%", bottom: "24%", animationDelay: ".9s" }}>?</div>
       </div>
     </div>
@@ -718,8 +704,6 @@ function SceneGraph({ active, phase, l1n, l2n, l3n, altn, edges, graphTransform 
     return false;
   };
   const isDim = (n: BOMNode): boolean => {
-    if (phase >= 3 && n.level === 1 && !n.focus) return true;
-    if (phase >= 4 && n.level === 2 && !n.focus && !n.altFocus) return true;
     return false;
   };
 
@@ -727,14 +711,23 @@ function SceneGraph({ active, phase, l1n, l2n, l3n, altn, edges, graphTransform 
   function edgePathPx(p: BOMNode, c: BOMNode): string {
     const { w, h } = dims;
     // node y offset: bottom of parent node, top of child node (approx 3% of height)
-    const exitPx  = h * 0.03;
+    const exitPx = h * 0.03;
     const entryPx = h * 0.03;
     const px = (p.x / 100) * w;
     const py = (p.y / 100) * h + exitPx;
     const cx = (c.x / 100) * w;
     const cy = (c.y / 100) * h - entryPx;
     const midY = (py + cy) / 2;
-    return `M ${px} ${py} C ${px} ${midY}, ${cx} ${midY}, ${cx} ${cy}`;
+
+    const r = 8;
+    if (Math.abs(px - cx) < 2) {
+      return `M ${px} ${py} L ${cx} ${cy}`;
+    }
+    const dir = cx > px ? 1 : -1;
+    const rX = Math.min(r, Math.abs(cx - px) / 2);
+    const rY = Math.min(r, Math.abs(midY - py) / 2);
+
+    return `M ${px} ${py} L ${px} ${midY - rY} Q ${px} ${midY} ${px + dir * rX} ${midY} L ${cx - dir * rX} ${midY} Q ${cx} ${midY} ${cx} ${midY + rY} L ${cx} ${cy}`;
   }
 
   return (
@@ -794,57 +787,7 @@ function SceneGraph({ active, phase, l1n, l2n, l3n, altn, edges, graphTransform 
   );
 }
 
-/* ============ MINI TREE (module-level — must NOT be inside another component) ============ */
-function MiniTree({ scale = 1, blur = 0 }: { scale?: number; blur?: number }) {
-  return (
-    <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"
-      style={{ width: "100%", height: "60%", filter: blur ? `blur(${blur}px)` : "none",
-        transform: `scale(${scale})`, transformOrigin: "center" }}>
-      <rect x="350" y="20" width="300" height="140" rx="30" fill="white" stroke="rgba(54,102,255,0.4)" strokeWidth="10" />
-      <text x="500" y="100" textAnchor="middle" fontSize="50" fontWeight="800" fill="#3666ff">EV-RX-7</text>
-      <text x="500" y="140" textAnchor="middle" fontSize="35" fill="#475569">Drivetrain</text>
-      {[140, 360, 580, 800].map((x, i) => (
-        <g key={i}>
-          <path d={`M 500 160 C 500 280, ${x + 80} 280, ${x + 80} 360`} stroke="#cbd5e1" strokeWidth="5" fill="none" />
-          <rect x={x} y="360" width="160" height="100" rx="20" fill="white" stroke="rgba(15,23,42,0.15)" strokeWidth="10" />
-          <text x={x + 80} y="420" textAnchor="middle" fontSize="30" fontWeight="700" fill="#0b1322">
-            {["Motor", "Gearbox", "Cooling", "Power"][i]}
-          </text>
-        </g>
-      ))}
-    </svg>
-  );
-}
 
-/* ============ SCENE: VOLUME ============ */
-function SceneVolume({ active, step }: { active: boolean; step: number }) {
-  const counter = useCount(active ? 247000 : 0, active, 1400);
-
-  return (
-    <div className={"bs-scene " + (active ? "on" : "")}>
-      <div className="bs-volStage">
-        <div className="bs-volClone" style={{ zIndex: 4 }}>
-          <MiniTree />
-        </div>
-
-        <div className={"bs-volBadge " + (step >= 1 ? "in" : "")}>
-          <div className="v">× 1,000</div>
-          <div className="l">Units</div>
-        </div>
-
-        <div className="bs-volTotal" style={{
-          opacity: step >= 2 ? 1 : 0,
-          transform: step >= 2 ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(6px)",
-        }}>
-          <div className="bs-volTotalInner">
-            <div className="v">{counter.toLocaleString()}</div>
-            <div className="l">line items</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* ============ SCENE: COMBINE ============ */
 function SceneCombine({ active, combined }: { active: boolean; combined: boolean }) {
@@ -854,7 +797,7 @@ function SceneCombine({ active, combined }: { active: boolean; combined: boolean
         {REQS.map((it, i) => (
           <div key={it.id} className="bs-reqCard" style={{
             left: combined ? "50%" : "24px",
-            top:  combined ? "50%" : `calc(50% + ${(i - 1) * 58 - 22}px)`,
+            top: combined ? "50%" : `calc(50% + ${(i - 1) * 58 - 22}px)`,
             transform: combined
               ? `translate(-50%, calc(-50% - 6px)) scale(0.7)`
               : "translate(0,0) scale(1)",
@@ -874,8 +817,8 @@ function SceneCombine({ active, combined }: { active: boolean; combined: boolean
         ))}
         {REQS.map((it, i) => (
           <div key={"ml-" + it.id} className={"bs-mergeLine " + (combined ? "in" : "")} style={{
-            left: 164, 
-            top: `calc(50% + ${(i - 1) * 58}px)`, 
+            left: 164,
+            top: `calc(50% + ${(i - 1) * 58}px)`,
             width: 100,
             transform: `rotate(${(i - 1) * -14}deg)`,
             transitionDelay: `${100 + i * 70}ms`,
@@ -885,9 +828,9 @@ function SceneCombine({ active, combined }: { active: boolean; combined: boolean
           right: 24, top: "50%",
           transform: combined ? "translateY(-50%) scale(1)" : "translateY(-50%) scale(0.85)",
         }}>
-          <span className="coTag">COMBINED RFQ</span>
+          <span className="coTag">RFQ</span>
           <h5>RFQ-EVT-9043 · 3 plants</h5>
-          <div className="coMeta">54 lines · 3,300 units · 124 vendors</div>
+          <div className="coMeta">54 lines · 3,300 units · 100 vendors</div>
           <div className="coStats">
             <div className="coStat"><div className="v">−12%</div><div className="l">Quoted price</div></div>
             <div className="coStat"><div className="v">3×</div><div className="l">Vendor leverage</div></div>
@@ -918,7 +861,6 @@ function SceneFinale({ active, chips }: { active: boolean; chips: number }) {
           <div className={"bs-fchip " + (chips >= 1 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>n-level BOMs</div>
           <div className={"bs-fchip " + (chips >= 2 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>Alternates ready</div>
           <div className={"bs-fchip " + (chips >= 3 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>Bulk imports</div>
-          <div className={"bs-fchip " + (chips >= 4 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>Multi-req combining</div>
         </div>
       </div>
     </div>
