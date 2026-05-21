@@ -4,17 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import RfqAnalyticsAnimation from './RfqAnalyticsAnimation';
 import QuoteGenAnimation from './QuoteGenAnimation';
+import BomCostAnimation from './BomCostAnimation';
 import {
     Zap,
     BarChart3,
-    CheckCircle2,
     Plus,
     MousePointer2,
     Package,
     CircleDollarSign,
     Check,
     FileText,
-    TrendingUp,
     RefreshCw,
     Search,
     ChevronRight,
@@ -62,9 +61,6 @@ const APPROVAL_STEPS = [
 ];
 
 export default function QuoteToOrderFlow() {
-    // Section 3.1 states
-    const [activeRevision, setActiveRevision] = useState<'v2.1' | 'v1.2'>('v2.1');
-
     // Section 3.2 Sourcing Animation States (based on Phase2AutomationAnimation)
     const [sourcingPhase, setSourcingPhase] = useState<number>(1);
     const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
@@ -212,6 +208,41 @@ export default function QuoteToOrderFlow() {
     };
 
 
+    // Section 3.1 BOM phase (reported back by BomCostAnimation)
+    const [isBomAuto, setIsBomAuto]       = useState<boolean>(true);
+    const [bomMenuStep, setBomMenuStep]   = useState<number | null>(null);
+    const [bomPhase, setBomPhase]         = useState<number>(1);
+
+    // Click handler — pauses autoplay and jumps the dashboard
+    const setBomManual = (n: number) => {
+        setIsBomAuto(false);
+        setBomMenuStep(n);
+    };
+
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const handleGoToStep = (e: Event) => {
+            const step = (e as CustomEvent).detail.step;
+            if (step === 1) {
+                setBomManual(1);
+            } else if (step === 2) {
+                setPhaseManual(1);
+            } else if (step === 3) {
+                setAnalyticsManual(1);
+            } else if (step === 4) {
+                setQuoteManual(1);
+            }
+        };
+
+        window.addEventListener('go-to-solution-step', handleGoToStep);
+        return () => window.removeEventListener('go-to-solution-step', handleGoToStep);
+    }, []);
+
+    // Highlight helpers for the left list
+    const isBomStepActive = (n: number) => bomPhase === n;
+    const isBomStepDone   = (n: number) => bomPhase > n;
+
     // Section 3.3 states
     const [analyticsPhase, setAnalyticsPhase] = useState<number>(0);
     const [isAnalyticsAuto, setIsAnalyticsAuto] = useState<boolean>(true);
@@ -222,17 +253,17 @@ export default function QuoteToOrderFlow() {
         setIsAnalyticsAuto(false);
         setAnalyticsMenuStep(menuPhase);
         if (menuPhase === 1) setAnalyticsPhase(1);
-        else if (menuPhase === 2) setAnalyticsPhase(4);
-        else if (menuPhase === 3) setAnalyticsPhase(7);
+        else if (menuPhase === 2) setAnalyticsPhase(3);
+        else if (menuPhase === 3) setAnalyticsPhase(4);
         else if (menuPhase === 4) setAnalyticsPhase(8);
     };
 
     // Maps internal animation phases (0-8) to the 4 left-menu items
     // Phase 0        → nothing active
     // Phase 1-2      → menu item 1 "Supplier Bids Arrive"
-    // Phase 3-6      → menu item 2 "Logistics Costs Applied"
-    // Phase 7        → menu item 3 "Normalize to One Currency"
-    // Phase 8        → menu item 4 "Lock Optimal Bid"
+    // Phase 3        → menu item 2 "Normalize to One Currency"
+    // Phase 4-6      → menu item 3 "Logistics Costs Applied"
+    // Phase 7-8      → menu item 4 "Lock Optimal Bid"
     const isMenuStepActive = (itemPhase: number) => {
         // In manual mode, use the explicitly selected menu step
         if (!isAnalyticsAuto && analyticsMenuStep !== null) {
@@ -240,9 +271,9 @@ export default function QuoteToOrderFlow() {
         }
         // In auto mode, derive from animation phase
         if (itemPhase === 1) return analyticsPhase >= 1 && analyticsPhase <= 2;
-        if (itemPhase === 2) return analyticsPhase >= 3 && analyticsPhase <= 6;
-        if (itemPhase === 3) return analyticsPhase === 7;
-        if (itemPhase === 4) return analyticsPhase === 8;
+        if (itemPhase === 2) return analyticsPhase === 3;
+        if (itemPhase === 3) return analyticsPhase >= 4 && analyticsPhase <= 6;
+        if (itemPhase === 4) return analyticsPhase >= 7 && analyticsPhase <= 8;
         return false;
     };
 
@@ -253,8 +284,8 @@ export default function QuoteToOrderFlow() {
         }
         // In auto mode, derive from animation phase
         if (itemPhase === 1) return analyticsPhase > 2;
-        if (itemPhase === 2) return analyticsPhase > 6;
-        if (itemPhase === 3) return analyticsPhase > 7;
+        if (itemPhase === 2) return analyticsPhase > 3;
+        if (itemPhase === 3) return analyticsPhase > 6;
         if (itemPhase === 4) return analyticsPhase > 8;
         return false;
     };
@@ -285,19 +316,29 @@ export default function QuoteToOrderFlow() {
         return false;
     };
 
+    const isQuoteMenuStepDone = (itemPhase: number) => {
+        if (!isQuoteAuto && quoteMenuStep !== null) {
+            return itemPhase < quoteMenuStep;
+        }
+        if (itemPhase === 1) return quotePhaseAnim > 4;
+        if (itemPhase === 2) return quotePhaseAnim > 5;
+        if (itemPhase === 3) return quotePhaseAnim > 6;
+        return false;
+    };
+
     return (
         <section className="py-24 relative overflow-hidden bg-white">
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="mx-auto max-w-[1240px] xl:max-w-[1360px] 2xl:max-w-[1440px] px-6 relative z-10">
                 {/* Unified Main Header */}
                 <div className="mb-24">
-                    <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+                    <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-6" style={{ fontFamily: 'var(--font-inter)' }}>
                         The FactWise Ecosystem
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-bold text-[#1A1D2E] mb-6 tracking-tight leading-[1.1] max-w-4xl" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h2 className="text-[36px] md:text-[48px] font-semibold text-[#0D1117] mb-6 tracking-[-0.03em] leading-[1.1] max-w-4xl" style={{ fontFamily: 'var(--font-display)' }}>
                         Four core capabilities that <br />
                         <span className="text-[#3666ff]">change everything</span> about procurement.
                     </h2>
-                    <p className="text-base md:text-lg text-slate-500 font-medium max-w-2xl leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-[17px] md:text-[18px] text-slate-400 font-normal max-w-2xl leading-[1.65]" style={{ fontFamily: 'var(--font-inter)' }}>
                         Built specifically for complex manufacturing and high-volume direct spend.
                         A complete end-to-end lifecycle that replaces fragmented silos with intelligent automation.
                     </p>
@@ -314,155 +355,94 @@ export default function QuoteToOrderFlow() {
                         transition={{ duration: 0.6 }}
                         className="lg:col-span-6 space-y-6 text-left"
                     >
-                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                             <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff] animate-ping" />
-                            Section 3.1 — BOM & Cost Intelligence
+                            BOM & Cost Intelligence
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-[#1A1D2E] tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                        <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                             You can't price what you <br />
                             <span className="text-[#3666ff]">don't fully understand.</span>
                         </h3>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Building a multi-level BOM manually takes days. Tracking alternate parts, managing revisions, understanding what each component should cost — most teams are doing this across spreadsheets with no version control and no price visibility.
+                        <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
+                            Multi-level BOMs take days to build by hand. Alternates, revisions, should-cost — most teams chase all of it across spreadsheets, with no version control and no price visibility.
                         </p>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            FactWise lets you upload complex multi-level BOMs across multiple finished goods — with alternates per line — in a single import. The moment your BOM is live, see exactly what each part should cost — distributor prices, past PO rates, historical quotes, and contract prices — all at the line item level before a single RFQ goes out.
+                        <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
+                            Upload a complex multi-level BOM in one import — alternates per line included. The moment it's live, every part shows its true cost: <span className="font-semibold text-slate-700">distributor, past PO, quote, and contract</span> — at the line level, before a single RFQ goes out.
                         </p>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            As your BOM evolves, every revision is tracked. Compare versions side by side to see exactly what changed, what it costs, and why. Walk into every sourcing event knowing your numbers — not guessing them.
-                        </p>
+
+                        {/* Animated feature list — synced to BomCostAnimation phases */}
+                        <div className="flex flex-col gap-2 mt-8 text-left">
+                            {[
+                                { step: 1, title: "BOM Upload & Auto-Parse" },
+                                { step: 2, title: "Multi-Level BOM with Alternates" },
+                                { step: 3, title: "Line-Level Cost Intelligence" },
+                                { step: 4, title: "Revision Tracking & Diff View" },
+                            ].map((item) => (
+                                <div
+                                    key={item.step}
+                                    onClick={() => setBomManual(item.step)}
+                                    className={`relative flex items-center justify-between w-full rounded-2xl py-3.5 px-4 transition-all duration-400 group cursor-pointer overflow-hidden ${
+                                        isBomStepActive(item.step)
+                                            ? 'bg-white border border-[#3666ff]/80 shadow-[0_8px_30px_rgba(54,102,255,0.12)] scale-[1.02] z-10'
+                                            : 'bg-transparent border border-transparent hover:bg-white/60 opacity-80 hover:opacity-100'
+                                    }`}
+                                >
+                                    {isBomStepActive(item.step) && (
+                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-transparent pointer-events-none" />
+                                    )}
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className={`size-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-400 ${
+                                            isBomStepActive(item.step)
+                                                ? 'border-[#3666ff] bg-[#3666ff] text-white shadow-[0_0_12px_rgba(54,102,255,0.4)]'
+                                                : isBomStepDone(item.step)
+                                                ? 'border-[#00b884] bg-[#00b884] text-white'
+                                                : 'border-slate-200 bg-slate-50 text-slate-400 group-hover:border-[#3666ff]/50 group-hover:text-[#3666ff]'
+                                        }`}>
+                                            <Check className="size-3.5" strokeWidth={3} />
+                                        </div>
+                                        <span className={`text-[13.5px] font-bold tracking-tight ${
+                                            isBomStepActive(item.step) ? 'text-[#3666ff]'
+                                            : isBomStepDone(item.step) ? 'text-slate-700'
+                                            : 'text-slate-500'
+                                        }`}>
+                                            {item.title}
+                                        </span>
+                                    </div>
+                                    {isBomStepActive(item.step) && (
+                                        <span className="relative z-10 text-[9px] font-black text-emerald-600 bg-emerald-50/80 border border-emerald-100 px-2.5 py-1 rounded-full font-mono uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                                            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                            Active
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* Graphic Right */}
-                    <div className="lg:col-span-6 relative">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.96 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="relative rounded-3xl bg-white border border-slate-200 p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.04)] overflow-hidden group"
-                        >
-                            {/* Browser bar */}
-                            <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                                <div className="flex gap-1.5">
-                                    <div className="size-2.5 rounded-full bg-slate-200" />
-                                    <div className="size-2.5 rounded-full bg-slate-200" />
-                                    <div className="size-2.5 rounded-full bg-slate-200" />
-                                </div>
-                                <div className="text-[9px] font-mono text-slate-400 bg-white border border-slate-100 rounded px-4 py-0.5 shadow-xs">
-                                    factwise.io / bom / controller-v2.1
-                                </div>
-                                <div className="h-3.5 w-12 bg-slate-100 rounded" />
-                            </div>
-
-                            {/* Core Workspace */}
-                            <div className="p-5 space-y-4 bg-white text-left">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <span className="text-[9px] font-mono text-slate-400 font-bold uppercase tracking-wider">Active Workspace</span>
-                                        <h4 className="text-xs font-bold text-slate-800">Industrial Controller PCB</h4>
-                                    </div>
-                                    <div className="flex gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
-                                        <button
-                                            onClick={() => setActiveRevision('v2.1')}
-                                            className={`px-2 py-1 text-[8.5px] font-black rounded transition-all cursor-pointer ${activeRevision === 'v2.1' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-400'}`}
-                                        >
-                                            v2.1 (Active)
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveRevision('v1.2')}
-                                            className={`px-2 py-1 text-[8.5px] font-black rounded transition-all cursor-pointer ${activeRevision === 'v1.2' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-400'}`}
-                                        >
-                                            v1.2
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* BOM List */}
-                                <div className="border border-slate-100 rounded-xl overflow-hidden shadow-xs">
-                                    <div className="grid grid-cols-12 bg-slate-50/50 p-2.5 text-[8.5px] font-bold text-slate-400 uppercase border-b border-slate-100 font-mono tracking-wider">
-                                        <div className="col-span-5">Component</div>
-                                        <div className="col-span-3 text-right">Alternate Parts</div>
-                                        <div className="col-span-4 text-right">Target Should-Cost</div>
-                                    </div>
-                                    <div className="divide-y divide-slate-100 text-[10px]">
-                                        {/* Line 1 */}
-                                        <div className="grid grid-cols-12 p-3 items-center hover:bg-slate-50/50 transition-colors">
-                                            <div className="col-span-5 flex flex-col">
-                                                <span className="font-bold text-slate-800">STM32F407VGT6 · MCU</span>
-                                                <span className="text-[8px] text-slate-400 font-mono">STM · LQFP-100</span>
-                                            </div>
-                                            <div className="col-span-3 text-right">
-                                                <span className="inline-flex items-center px-1.5 py-0.2 bg-blue-50 border border-blue-100 rounded text-blue-600 text-[8px] font-bold uppercase">
-                                                    GD32, STM32F405
-                                                </span>
-                                            </div>
-                                            <div className="col-span-4 text-right">
-                                                <span className="font-bold text-slate-800 font-mono">$7.85</span>
-                                                <span className="text-[7.5px] text-slate-400 block -mt-0.5">Feeds: Contract / Dist</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Line 2 */}
-                                        <div className="grid grid-cols-12 p-3 items-center hover:bg-slate-50/50 transition-colors">
-                                            <div className="col-span-5 flex flex-col">
-                                                <span className="font-bold text-slate-800">PCB Multi-layer Board</span>
-                                                <span className="text-[8px] text-slate-400 font-mono">100x80mm · FR4</span>
-                                            </div>
-                                            <div className="col-span-3 text-right">
-                                                <span className="text-slate-400 italic text-[9px]">None</span>
-                                            </div>
-                                            <div className="col-span-4 text-right">
-                                                <span className="font-bold text-slate-800 font-mono">$2.92</span>
-                                                <span className="text-[7.5px] text-slate-400 block -mt-0.5">Feeds: Historical PO</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Line 3 */}
-                                        <div className="grid grid-cols-12 p-3 items-center hover:bg-slate-50/50 transition-colors">
-                                            <div className="col-span-5 flex flex-col">
-                                                <span className="font-bold text-slate-800">Capacitor Array 10uF</span>
-                                                <span className="text-[8px] text-slate-400 font-mono">SMD-0805 · Samsung</span>
-                                            </div>
-                                            <div className="col-span-3 text-right">
-                                                <span className="inline-flex items-center px-1.5 py-0.2 bg-blue-50 border border-blue-100 rounded text-blue-600 text-[8px] font-bold uppercase">
-                                                    Murata, Yageo
-                                                </span>
-                                            </div>
-                                            <div className="col-span-4 text-right">
-                                                <span className="font-bold text-slate-800 font-mono">$0.45</span>
-                                                <span className="text-[7.5px] text-slate-400 block -mt-0.5">Feeds: Market Rate</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Floating intelligence alert */}
-                                <div className="bg-[#E6F5EC] border border-[#C9E8D7] rounded-xl p-3 flex justify-between items-center text-[10px] text-emerald-800 font-medium">
-                                    <div className="flex gap-2 items-center">
-                                        <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
-                                        <span><b>AI Cost Check:</b> Target Should-Cost calculated from 4 contract sources.</span>
-                                    </div>
-                                    <span className="font-bold text-emerald-700 shrink-0 ml-2">99.8% accurate</span>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Side decoration log */}
-                        <motion.div
-                            animate={{ y: [0, -6, 0] }}
-                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute -bottom-8 -right-6 bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xl z-20 hidden sm:flex items-center gap-3 max-w-[200px] text-left"
-                        >
-                            <div className="size-8 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                                <TrendingUp className="size-4 text-blue-600" />
-                            </div>
-                            <div>
-                                <div className="text-[9px] font-bold text-slate-800">Cost Savings v1 vs v2</div>
-                                <div className="text-[11px] font-black text-emerald-600 font-mono mt-0.5">- $3.71 / PCB unit</div>
-                            </div>
-                        </motion.div>
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="lg:col-span-6 relative flex items-center justify-center self-stretch"
+                    >
+                        <div className="w-full">
+                            <BomCostAnimation
+                                speed={1}
+                                isAuto={isBomAuto}
+                                controlledPhase={bomMenuStep}
+                                activeMenuStep={!isBomAuto ? bomMenuStep : null}
+                                onPhaseChange={(p) => setBomPhase(p)}
+                                onToggleAuto={() => {
+                                    setIsBomAuto(prev => {
+                                        if (!prev) setBomMenuStep(null);
+                                        return !prev;
+                                    });
+                                }}
+                            />
+                        </div>
+                    </motion.div>
                 </div>
 
                 {/* ============================================================================== */}
@@ -1431,15 +1411,15 @@ export default function QuoteToOrderFlow() {
                         transition={{ duration: 0.6 }}
                         className="lg:col-span-6 order-1 lg:order-2 space-y-6 text-left"
                     >
-                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                             <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff] animate-pulse" />
-                            Intelligent Sourcing & Vendor Communication
+                            Intelligent Sourcing
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-[#1A1D2E] tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                        <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                             Your team shouldn't be <br />
                             <span className="text-[#3666ff]">chasing vendors over email.</span>
                         </h3>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                        <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                             Setting up a sourcing event manually means building vendor lists from scratch, writing emails, following up repeatedly, and re-entering responses into a spreadsheet. FactWise automates routine tasks, combined requisitions, and bid analysis so your team focuses on decisions, not data entry.
                         </p>
 
@@ -1505,17 +1485,17 @@ export default function QuoteToOrderFlow() {
                         transition={{ duration: 0.6 }}
                         className="lg:col-span-6 space-y-6 text-left"
                     >
-                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                             <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff]" />
-                            Section 3.3 — RFQ Analytics
+                            RFQ Analytics
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-[#1A1D2E] tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
-                            The cheapest quote on paper is rarely the <span className="text-[#3666ff]">cheapest purchase in reality.</span>
+                        <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
+                            The Cheapest Bid On Paper Is Rarely The <span className="text-[#3666ff]">Cheapest Purchase In Reality.</span>
                         </h3>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                        <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                             Most teams award on unit price alone — missing duties, freight, insurance, and packaging that quietly erode margin. FactWise applies your landed cost formulas across every bid automatically, so every comparison reflects true cost, normalized to your currency.
                         </p>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
+                        <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                             See the best price per line item across all vendors in one view. Drill into competitive, non-competitive, and excluded bids per supplier — then award with complete confidence.
                         </p>
 
@@ -1523,8 +1503,8 @@ export default function QuoteToOrderFlow() {
                         <div className="flex flex-col gap-2 mt-8 mb-8 text-left">
                             {[
                                 { phase: 1, title: "Supplier Bids Arrive" },
-                                { phase: 2, title: "Logistics Costs Applied" },
-                                { phase: 3, title: "Normalize to One Currency" },
+                                { phase: 2, title: "Normalize to One Currency" },
+                                { phase: 3, title: "Logistics Costs Applied" },
                                 { phase: 4, title: "Lock Optimal Bid" }
                             ].map((item, index) => (
                                 <div
@@ -1585,27 +1565,6 @@ export default function QuoteToOrderFlow() {
                                 onToggleAuto={() => { setIsAnalyticsAuto(prev => { if (!prev) setAnalyticsMenuStep(null); return !prev; }); }}
                             />
 
-                            {/* Floating recommendation box - maps to phase 9 (Auto-recommendation) */}
-                            <AnimatePresence>
-                                {analyticsPhase === 9 && (
-                                    <motion.div
-                                        key="rec-box"
-                                        initial={{ opacity: 0, y: 16, scale: 0.92 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        transition={{ type: 'spring', stiffness: 280, damping: 20 }}
-                                        className="absolute -bottom-10 -left-6 bg-[#0B0F14] text-white p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.35)] z-20 max-w-[230px] text-left"
-                                    >
-                                        <div className="flex gap-2 items-center mb-1.5">
-                                            <Sparkles className="size-3 text-amber-400 animate-pulse" />
-                                            <span className="text-[8.5px] font-bold text-slate-400 uppercase tracking-widest font-mono">Best Award Rec</span>
-                                        </div>
-                                        <p className="text-[10px] text-slate-200 leading-snug">
-                                            Split order <b className="text-white">60/40</b> to <b className="text-emerald-400">Sahasra</b> + <b className="text-amber-400">Varroc</b>. De-risks single-supplier dependency.
-                                        </p>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
                         </motion.div>
                     </div>
                 </div>
@@ -1641,19 +1600,19 @@ export default function QuoteToOrderFlow() {
                         transition={{ duration: 0.6 }}
                         className="lg:col-span-6 space-y-6 text-left"
                     >
-                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+                        <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
                             <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff]" />
-                            Section 3.4 — Quote Generation & Analytics
+                            Quote Generation & Analytics
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-[#1A1D2E] tracking-tight leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+                        <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                             A Quote Built On Gut Feel Is <br />
                             <span className="text-[#3666ff]">A Margin You're Giving Away.</span>
                         </h3>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Manual spreadsheets cause margin errors and lost deals. FactWise generates one-click customer quotes directly from your best bids—automatically rolling up BOMs, applying landed costs, and pricing every line item.
+                        <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
+                            Manual spreadsheets cause margin errors and lost deals. FactWise generates one-click customer quotes directly from your best bids — automatically rolling up BOMs, applying landed costs, and pricing every line item.
                         </p>
-                        <p className="text-slate-500 text-sm leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Gain instant visibility into your margins. Analyze category spend, uncover hidden costs, and model volume pricing—empowering you to send sharper quotes faster than the competition.
+                        <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
+                            Gain instant visibility into your margins. Analyze category spend, uncover hidden costs, and model volume pricing — empowering you to send sharper quotes faster than the competition.
                         </p>
 
                         {/* Interactive Phases Grid */}
@@ -1681,14 +1640,14 @@ export default function QuoteToOrderFlow() {
                                         <div className={`size-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors duration-400 ${
                                             isQuoteMenuStepActive(item.phase)
                                                 ? 'border-[#3666ff] bg-[#3666ff] text-white shadow-[0_0_12px_rgba(54,102,255,0.4)]'
-                                                : (!isQuoteAuto && quoteMenuStep !== null && quoteMenuStep > item.phase) || (isQuoteAuto && item.phase < (isQuoteMenuStepActive(1)?1:isQuoteMenuStepActive(2)?2:isQuoteMenuStepActive(3)?3:isQuoteMenuStepActive(4)?4:0))
+                                                : isQuoteMenuStepDone(item.phase)
                                                 ? 'border-[#00b884] bg-[#00b884] text-white'
                                                 : 'border-slate-200 bg-slate-50 text-slate-400 group-hover:border-[#3666ff]/50 group-hover:text-[#3666ff]'
                                         }`}>
                                             <Check className="size-3.5" strokeWidth={3} />
                                         </div>
                                         <span className={`text-[13.5px] font-bold tracking-tight ${
-                                            isQuoteMenuStepActive(item.phase) ? 'text-[#3666ff]' : (!isQuoteAuto && quoteMenuStep !== null && quoteMenuStep > item.phase) || (isQuoteAuto && item.phase < (isQuoteMenuStepActive(1)?1:isQuoteMenuStepActive(2)?2:isQuoteMenuStepActive(3)?3:isQuoteMenuStepActive(4)?4:0)) ? 'text-slate-700' : 'text-slate-500'
+                                            isQuoteMenuStepActive(item.phase) ? 'text-[#3666ff]' : isQuoteMenuStepDone(item.phase) ? 'text-slate-700' : 'text-slate-500'
                                         }`}>
                                             {item.title}
                                         </span>

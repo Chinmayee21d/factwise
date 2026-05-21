@@ -273,7 +273,7 @@ function VendorCommWidget({ isHovered }: { isHovered: boolean }) {
                         <div>
                             <div className="font-bold text-slate-700 leading-tight">Negotiation Triggered</div>
                             <div className="text-slate-400 text-[7.5px] mt-0.5 leading-tight font-medium">
-                                Auto-reminders sent. Bid finalized with category templates.
+                                Auto-reminders sent. Bid finalized 
                             </div>
                         </div>
                     </div>
@@ -475,44 +475,36 @@ interface ProblemItem {
 
 const problems: ProblemItem[] = [
     {
-        id: "bom-complexity",
+        id: "bom-pricing",
         number: "01",
         emoji: "🔴",
-        title: "BOM Complexity",
-        subtitle: "Building a BOM shouldn't take days.",
-        description: "Multi-level BOMs built manually line-by-line across spreadsheets with zero version control. Opportunities vanish before you're ready."
-    },
-    {
-        id: "pricing-guesswork",
-        number: "02",
-        emoji: "🟠",
-        title: "Pricing Guesswork",
-        subtitle: "No one knows what anything should cost.",
-        description: "Without historical logs and live feeds, target rates are a wild guess. Wrong estimates mean immediate deals lost or massive margin slips."
+        title: "BOM & Pricing Complexity",
+        subtitle: "You can't price what you don't fully understand.",
+        description: "Multi-level BOMs built manually with no version control or price visibility. Without access to historical PO rates, target prices are guesses — leading to lost deals or erased margins before you even quote."
     },
     {
         id: "vendor-comm",
-        number: "03",
+        number: "02",
         emoji: "🟡",
         title: "Vendor Communication",
         subtitle: "Sourcing runs on emails nobody tracks.",
-        description: "RFQs scattered in cluttered inboxes and manual tracking sheets. Weeks drain away while critical alternates data goes missing."
+        description: "RFQs sent over email, follow-ups that go unanswered, responses scattered across inboxes — by the time all vendor bids are in, days have passed and half the data is missing."
     },
     {
         id: "hidden-costs",
-        number: "04",
+        number: "03",
         emoji: "🔵",
         title: "Hidden Costs",
-        subtitle: "The cheapest bid is rarely the cheapest purchase.",
-        description: "Unit bid comparisons ignore customs, heavy freight, and packaging fees. This leaks critical net margin once POs are placed."
+        subtitle: "The cheapest bid is not always the cheapest purchase.",
+        description: "Unit price comparisons miss duties, freight, insurance, and packaging. Without true landed cost visibility, teams award on the wrong number — and the margin gap shows up only after the PO is issued."
     },
     {
         id: "manual-quoting",
-        number: "05",
+        number: "04",
         emoji: "🟣",
         title: "Manual Quoting",
         subtitle: "Customer quotes built on gut feel.",
-        description: "Scraping costs from emails and compiling markups manually. One simple formula typo and the entire order margin is erased."
+        description: "Pulling numbers from emails, applying markups in spreadsheets, rolling up BOM costs manually — one error and the margin is gone. One delay and the deal is gone."
     }
 ];
 
@@ -521,17 +513,31 @@ export default function ProblemSection() {
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
     const scrollToSolution = (problemId: string) => {
-        const problemToSolutionMap: Record<string, string> = {
-            "bom-complexity": "section-3-1",
-            "pricing-guesswork": "section-3-1",
-            "vendor-comm": "section-3-2",
-            "hidden-costs": "section-3-3",
-            "manual-quoting": "section-3-4"
+        const problemToSolutionMap: Record<string, { id: string; step: number }> = {
+            "bom-pricing": { id: "section-3-1", step: 1 },
+            "vendor-comm": { id: "section-3-2", step: 2 },
+            "hidden-costs": { id: "section-3-3", step: 3 },
+            "manual-quoting": { id: "section-3-4", step: 4 }
         };
-        const targetId = problemToSolutionMap[problemId] || 'solutions-dashboard';
-        const el = document.getElementById(targetId);
+        const target = problemToSolutionMap[problemId];
+        if (!target) return;
+
+        // 1. Dispatch custom event to select the corresponding step
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('go-to-solution-step', { detail: { step: target.step } }));
+        }
+
+        // 2. Perform smooth scroll safely with ScrollSmoother compatibility
+        const el = document.getElementById(target.id);
         if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const smoother = (window as any).gsap?.plugins?.ScrollSmoother?.get?.() || (window as any).ScrollSmoother?.get?.();
+            if (smoother) {
+                smoother.scrollTo(el, true, "top 80px");
+            } else {
+                const yOffset = -80;
+                const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
         }
     };
 
@@ -549,10 +555,12 @@ export default function ProblemSection() {
 
     const renderWidget = (problemId: string, isHovered: boolean) => {
         switch (problemId) {
-            case "bom-complexity":
-                return <BOMComplexityWidget isHovered={isHovered} />;
-            case "pricing-guesswork":
-                return <PricingGuessworkWidget isHovered={isHovered} />;
+            case "bom-pricing":
+                return isHovered ? (
+                    <PricingGuessworkWidget isHovered={isHovered} />
+                ) : (
+                    <BOMComplexityWidget isHovered={isHovered} />
+                );
             case "vendor-comm":
                 return <VendorCommWidget isHovered={isHovered} />;
             case "hidden-costs":
@@ -576,7 +584,7 @@ export default function ProblemSection() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="text-left max-w-3xl">
                         <div
-                            className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/50 px-4 py-1.5 text-[10px] font-bold text-[#3666ff] uppercase tracking-[0.2em] mb-6"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/50 px-4 py-1.5 text-[11px] font-semibold text-[#3666ff] uppercase tracking-[0.12em] mb-6"
                             style={{ fontFamily: 'var(--font-inter)' }}
                         >
                             <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff] animate-pulse" />
@@ -584,15 +592,15 @@ export default function ProblemSection() {
                         </div>
 
                         <h2
-                            className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 leading-[1.1]"
+                            className="text-[36px] md:text-[48px] font-semibold text-slate-900 mb-6 leading-[1.1] tracking-[-0.03em]"
                             style={{ fontFamily: 'var(--font-display)' }}
                         >
                             Where Most Manufacturers <br />
-                            <span className="text-[#3666ff]">Lose Time — and Money.</span>
+                            <span className="text-[#3666ff]">Lose Time and Money.</span>
                         </h2>
 
-                        <p className="text-base md:text-lg text-slate-500 max-w-2xl font-medium leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Legacy spreadsheets and fragmented email chains create blind spots at every step. Here is why the traditional procurement cycle leaks margin.
+                        <p className="text-[17px] md:text-[18px] text-slate-400 max-w-2xl font-normal leading-[1.65]" style={{ fontFamily: 'var(--font-inter)' }}>
+                            Legacy spreadsheets and fragmented email chains create blind spots at every step. Here's why the traditional procurement cycle leaks margin.
                         </p>
                     </div>
 
@@ -649,12 +657,12 @@ export default function ProblemSection() {
                             {/* Card Content Top Section */}
                             <div className="flex flex-col gap-3 relative z-10 text-left">
                                 {/* Heading Block */}
-                                <h3 className="text-[15px] sm:text-[16px] font-semibold tracking-tight text-slate-800 leading-snug">
+                                <h3 className="text-[16px] font-semibold tracking-[-0.015em] text-slate-800 leading-snug" style={{ fontFamily: 'var(--font-display)' }}>
                                     {prob.subtitle}
                                 </h3>
 
                                 {/* Body Description */}
-                                <p className="text-[11.5px] sm:text-[12.5px] text-slate-500 leading-relaxed font-normal">
+                                <p className="text-[13px] text-slate-400 leading-relaxed font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                                     {prob.description}
                                 </p>
                             </div>

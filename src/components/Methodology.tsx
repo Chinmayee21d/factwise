@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, BarChart3, Zap, Scale, Calculator } from 'lucide-react';
+import { CheckCircle2, BarChart3, Users, Scale, Calculator } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import dynamic from 'next/dynamic';
 import gsap from 'gsap';
@@ -14,7 +14,7 @@ import { useGSAP } from '@gsap/react';
 const ScaleAnimation          = dynamic(() => import('./methodology-animations/ScaleAnimation'),          { ssr: false });
 const CustomFormulaAnimation  = dynamic(() => import('./methodology-animations/CustomFormulaAnimation'),  { ssr: false });
 const AnalyticsAnimation      = dynamic(() => import('./methodology-animations/AnalyticsAnimation'),      { ssr: false });
-const IntegrationAnimation    = dynamic(() => import('./methodology-animations/IntegrationAnimation'),    { ssr: false });
+const CollaborationAnimation  = dynamic(() => import('./methodology-animations/CollaborationAnimation'),  { ssr: false });
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -65,16 +65,16 @@ const pages = [
   },
   {
     id: 4,
-    title: "Integrate Seamlessly",
-    description: "Connect seamlessly to your ERP, vendor platforms, and component distributors via open APIs. Requisitions, contracts, POs, and records flow automatically across your entire ecosystem with zero middleware and no hidden costs.",
+    title: "Collaborate Seamlessly",
+    description: "Procurement doesn't happen in one team. FactWise connects every stakeholder in one place — each team works in their own module, with their own permissions, but everything stays connected. And vendors aren't outside the process — they bid, negotiate, and track payments on the same platform.",
     details: [
-      "Plug In. Go Live. Start Saving.",
-      "Connects via open APIs to your entire ecosystem.",
-      "POs, quotes, requisitions, and contracts flow automatically.",
-      "Live in 2–4 weeks. Built to last forever."
+      "Every Team. Every Vendor. One Platform.",
+      "Each module, each role, each permission — kept in context.",
+      "Vendors bid, raise invoices, and track payments inside.",
+      "No handoff emails. No spreadsheet versions. Real-time."
     ],
-    icon: <Zap className="w-6 h-6 text-blue-500" />,
-    Animation: IntegrationAnimation,
+    icon: <Users className="w-6 h-6 text-blue-500" />,
+    Animation: CollaborationAnimation,
     color: '#8b5cf6'
   }
 ];

@@ -238,9 +238,9 @@ export default function SolutionsHero() {
       <div style={{
         position:'relative', zIndex:5,
         maxWidth:1440, margin:'0 auto',
-        padding:'5% 56px 80px',
-        display:'grid', gridTemplateColumns:'1.15fr 0.85fr',
-        gap:40, alignItems:'center',
+        padding:'130px 56px 80px',
+        display:'grid', gridTemplateColumns:'1.1fr 0.9fr',
+        gap:60, alignItems:'start',
         minHeight:'calc(100vh - 90px)',
       }}>
 
@@ -248,28 +248,28 @@ export default function SolutionsHero() {
         <motion.div
           initial={{ opacity:0, y:20 }}
           animate={{ opacity:1, y:0 }}
-          style={{ maxWidth:620, marginTop:'10%' }}
+          style={{ maxWidth:600 }}
         >
           {/* Eyebrow */}
           <div style={{
             display:'inline-flex', alignItems:'center', gap:8,
-            padding:'6px 14px', borderRadius:100,
-            background:'rgba(79,139,255,0.08)', border:'1px solid rgba(79,139,255,0.2)',
-            fontSize:12, fontWeight:500, color:'#a8c1ff',
-            marginBottom:28, letterSpacing:'0.02em',
+            padding:'5px 14px', borderRadius:100,
+            background:'rgba(79,139,255,0.07)', border:'1px solid rgba(79,139,255,0.18)',
+            fontSize:11, fontWeight:600, color:'#8baee8',
+            marginBottom:32, letterSpacing:'0.1em', textTransform:'uppercase',
+            fontFamily:'var(--font-inter)',
           }}>
-            <ShieldCheck style={{ width:13, height:13 }}/>
-            Inquiry-to-Quote · End-to-end automation
             <span style={{
-              width:6, height:6, borderRadius:'50%', background:'#4f8bff',
-              boxShadow:'0 0 10px #4f8bff', display:'inline-block',
+              width:5, height:5, borderRadius:'50%', background:'#4f8bff',
+              boxShadow:'0 0 8px #4f8bff', display:'inline-block',
               animation:'fw-pulse 2s infinite',
             }}/>
+            Inquiry-to-Quote · End-to-end automation
           </div>
 
           <h1 style={{
-            fontSize:'clamp(34px, 4vw, 56px)', fontWeight:700,
-            lineHeight:1.05, letterSpacing:'-0.035em', marginBottom:24,
+            fontSize:'clamp(30px, 2.8vw, 46px)', fontWeight:600,
+            lineHeight:1.1, letterSpacing:'-0.035em', marginBottom:24,
             fontFamily:'var(--font-display)',
           }}>
             From customer inquiry to{' '}
@@ -284,8 +284,8 @@ export default function SolutionsHero() {
 
           {/* Subhead */}
           <p style={{
-            fontSize:17, lineHeight:1.6, color:'#a8b3c7',
-            marginBottom:36, maxWidth:520, fontFamily:'var(--font-inter)',
+            fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
+            marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
           }}>
             Quoting takes too long. Costs are hard to calculate. By the time the quote reaches your customer, the margin is under pressure. FactWise automates every step — so you move faster, price smarter, and win more business.
           </p>
@@ -328,13 +328,13 @@ export default function SolutionsHero() {
           initial={{ opacity:0, y:20 }}
           animate={{ opacity:1, y:0 }}
           transition={{ duration:0.8, delay:0.35, ease:[0.16,1,0.3,1] }}
-          style={{ position:'relative', height:540 }}
+          style={{ position:'relative', height:520 }}
         >
           {/* Main dashboard frame */}
           <div style={{
             position:'absolute',
-            left:60, top:0,
-            width:'calc(100% + 60px)',   /* bleeds off right edge like original */
+            left:40, top:0,
+            width:'calc(100% + 56px)',
             height:520,
             borderRadius:'16px 0 0 16px',
             border:'1px solid rgba(120,150,220,0.18)',
@@ -346,8 +346,8 @@ export default function SolutionsHero() {
           </div>
 
           {/* Float card 1 — RFQ Bids (top-left) */}
-          <FloatCard delay={0.5} yAmt={12} dur={6} style={{ top:40, left:-10, width:248 }}>
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+          <FloatCard delay={0.5} yAmt={12} dur={6} style={{ top:40, left:-45, width:248, padding:'10px 14px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
               <div>
                 <div style={{ fontSize:11, fontWeight:700, color:'#1A1D2E' }}>RFQ-9821 · Bids in</div>
                 <div style={{ fontSize:9, color:'#94a3b8', marginTop:2 }}>5 of 7 vendors responded</div>
@@ -366,7 +366,7 @@ export default function SolutionsHero() {
             ].map((v,i)=>(
               <div key={v.name} style={{
                 display:'flex', justifyContent:'space-between', alignItems:'center',
-                padding:'5px 0', fontSize:10,
+                padding:'3px 0', fontSize:10,
                 borderBottom: i<3 ? '1px solid #f8fafc' : 'none',
               }}>
                 <span style={{ display:'flex', alignItems:'center', gap:7, color:'#475569' }}>
@@ -447,24 +447,7 @@ export default function SolutionsHero() {
       <style>{`@keyframes fw-pulse{0%,100%{opacity:1}50%{opacity:0.35}}`}</style>
     </section>
 
-    {/* Stats Section below Hero */}
-    <div style={{ background:'white', borderBottom:'1px solid #f1f5f9', padding:'48px 0', position:'relative', zIndex:10 }}>
-      <div style={{ maxWidth:1440, margin:'0 auto', padding:'0 56px', display:'flex', gap:80, justifyContent:'center' }}>
-        {[
-          {num:'73%',     label:'Faster quote turnaround'},
-          {num:'12%',     label:'Avg. margin recovered'},
-          {num:'1-click', label:'Quote generation'},
-        ].map(s=>(
-          <div key={s.label} style={{ textAlign:'center' }}>
-            <div style={{
-              fontSize:36, fontWeight:800, letterSpacing:'-0.02em',
-              color:'#1A1D2E', fontFamily:'var(--font-display)'
-            }}>{s.num}</div>
-            <div style={{ fontSize:12, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', marginTop:6, fontWeight:600, fontFamily:'var(--font-inter)' }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
+
     </>
   )
 }

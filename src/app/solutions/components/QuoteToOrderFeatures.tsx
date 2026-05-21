@@ -7,7 +7,6 @@ import {
   useMotionTemplate,
   useSpring,
 } from "framer-motion";
-import Link from "next/link";
 import {
   CircleDollarSign,
   Bell,
@@ -15,7 +14,6 @@ import {
   MessageSquare,
   Share2,
   Lock,
-  ArrowUpRight,
 } from "lucide-react";
 
 /* ─── Feature data ─── */
@@ -91,8 +89,8 @@ function FeatureCard({
   const smoothX = useSpring(mouseX, { stiffness: 200, damping: 30 });
   const smoothY = useSpring(mouseY, { stiffness: 200, damping: 30 });
 
-  const glowBackground = useMotionTemplate`radial-gradient(420px circle at ${smoothX}px ${smoothY}px, rgba(54,102,255,0.04), transparent 60%)`;
-  const borderGlow = useMotionTemplate`radial-gradient(220px circle at ${smoothX}px ${smoothY}px, rgba(54,102,255,0.25), transparent 70%)`;
+  const glowBackground = useMotionTemplate`radial-gradient(420px circle at ${smoothX}px ${smoothY}px, rgba(54,102,255,0.02), transparent 60%)`;
+  const borderGlow = useMotionTemplate`radial-gradient(220px circle at ${smoothX}px ${smoothY}px, rgba(54,102,255,0.12), transparent 70%)`;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -183,18 +181,12 @@ function FeatureCard({
         </span>
       </div>
 
-      {/* Title with hover-expand underline */}
+      {/* Title */}
       <h3
-        className="relative z-10 text-[17px] font-bold text-[#1A1D2E] mb-3 leading-snug tracking-tight"
+        className="relative z-10 text-[17px] font-semibold text-[#0D1117] mb-3 leading-snug tracking-[-0.01em]"
         style={{ fontFamily: "var(--font-display)" }}
       >
-        <span className="relative inline">
-          {title}
-          <span
-            aria-hidden
-            className="absolute left-0 -bottom-0.5 h-[1.5px] w-full bg-[#3666ff]/70 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"
-          />
-        </span>
+        {title}
       </h3>
 
       <p
@@ -205,8 +197,8 @@ function FeatureCard({
       </p>
 
       {/* Footer */}
-      <div className="relative z-10 mt-8">
-        {comingSoon ? (
+      {comingSoon && (
+        <div className="relative z-10 mt-8">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
             <span className="relative flex size-1.5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-slate-300 opacity-75 animate-ping" />
@@ -214,32 +206,8 @@ function FeatureCard({
             </span>
             Coming soon
           </span>
-        ) : (
-          <Link
-            href={href}
-            className="group/link inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#3666ff] transition-all duration-300"
-            style={{ fontFamily: "var(--font-inter)" }}
-          >
-            <span className="relative">
-              Learn more
-              <span
-                aria-hidden
-                className="absolute left-0 -bottom-0.5 h-px w-full bg-[#3666ff] origin-left scale-x-0 group-hover/link:scale-x-100 transition-transform duration-300"
-              />
-            </span>
-            <span className="relative inline-flex items-center justify-center size-5 rounded-full bg-[#3666ff]/0 group-hover/link:bg-[#3666ff] transition-all duration-300 overflow-hidden">
-              <ArrowUpRight
-                className="size-3 text-[#3666ff] group-hover/link:text-white absolute transition-all duration-300 group-hover/link:translate-x-3 group-hover/link:-translate-y-3 opacity-100 group-hover/link:opacity-0"
-                strokeWidth={2.5}
-              />
-              <ArrowUpRight
-                className="size-3 text-white absolute -translate-x-3 translate-y-3 opacity-0 group-hover/link:translate-x-0 group-hover/link:translate-y-0 group-hover/link:opacity-100 transition-all duration-300"
-                strokeWidth={2.5}
-              />
-            </span>
-          </Link>
-        )}
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -264,7 +232,7 @@ export default function QuoteToOrderFeatures() {
       />
 
       {/* Header */}
-      <div className="relative max-w-7xl mx-auto px-6 mb-16">
+      <div className="relative mx-auto max-w-[1240px] xl:max-w-[1360px] 2xl:max-w-[1440px] px-6 mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -278,7 +246,7 @@ export default function QuoteToOrderFeatures() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.05 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6 shadow-[0_1px_2px_rgba(54,102,255,0.08)]"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-blue-100 text-[#3666ff] text-[11px] font-semibold uppercase tracking-[0.12em] mb-6 shadow-[0_1px_2px_rgba(54,102,255,0.08)]"
             >
               <span className="relative flex size-1.5">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-[#3666ff] opacity-75 animate-ping" />
@@ -288,27 +256,17 @@ export default function QuoteToOrderFeatures() {
             </motion.div>
 
             <h2
-              className="text-3xl md:text-5xl font-bold text-[#1A1D2E] mb-5 tracking-tight leading-[1.1] max-w-2xl"
+              className="text-[36px] md:text-[48px] font-semibold text-[#0D1117] mb-5 tracking-[-0.03em] leading-[1.1] max-w-2xl"
               style={{ fontFamily: "var(--font-display)" }}
             >
               Powerful Features.{" "}
-              <span className="relative inline-block">
-                <span className="relative z-10 bg-gradient-to-r from-[#3666ff] to-[#6b8cff] bg-clip-text text-transparent">
-                  Right Where You Need Them.
-                </span>
-                <motion.span
-                  aria-hidden
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute left-0 bottom-1 md:bottom-2 h-[6px] md:h-[8px] w-full bg-[#3666ff]/10 origin-left rounded-sm"
-                />
+              <span className="text-[#3666ff]">
+                Right Where You Need Them.
               </span>
             </h2>
 
             <p
-              className="text-base md:text-lg text-slate-500 max-w-2xl leading-relaxed"
+              className="text-[17px] md:text-[18px] text-slate-400 max-w-2xl leading-[1.65] font-normal"
               style={{ fontFamily: "var(--font-inter)" }}
             >
               Every tool your team needs to move faster and decide smarter —
@@ -344,7 +302,7 @@ export default function QuoteToOrderFeatures() {
       </div>
 
       {/* Grid — bordered cards with shared borders */}
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative mx-auto max-w-[1240px] xl:max-w-[1360px] 2xl:max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -358,15 +316,13 @@ export default function QuoteToOrderFeatures() {
         </motion.div>
 
         {/* Subtle bottom hint line */}
-        <div
+        {/* <div
           aria-hidden
           className="mt-10 flex items-center justify-center gap-3 text-[10px] font-mono text-slate-400 uppercase tracking-[0.2em]"
           style={{ fontFamily: "var(--font-inter)" }}
         >
-          <span className="h-px w-12 bg-slate-200" />
-          <span>Built for procurement teams</span>
-          <span className="h-px w-12 bg-slate-200" />
-        </div>
+          
+        </div> */}
       </div>
     </section>
   );

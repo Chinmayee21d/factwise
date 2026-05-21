@@ -13,7 +13,11 @@ interface RfqAnalyticsAnimationProps {
 }
 
 interface BidDetail {
+  /** Per-piece quote in INR-equivalent — used for all maths once normalised. */
   q: number;
+  /** Per-piece quote in the vendor's native currency — shown before normalisation. */
+  qNative: number;
+  /** Duty, freight, insurance in INR (per piece). */
   d: number;
   f: number;
   i: number;
@@ -67,41 +71,62 @@ const RA_LI = [
   { id: 'L2' as const, name: 'Stator Winding', qty: 200 },
 ];
 
+// FX rates used to convert native quotes → INR. Surfaced in the breadcrumb so
+// the conversion isn't a black box for the reader.
+const FX_USD_INR = 83.0;
+const FX_EUR_INR = 90.5;
+
 const RA_BIDS: Record<string, Bidder> = {
   A: {
     fx: 'INR', flag: 'IN', name: 'Sahasra Electronics',
-    L1: { q: 1240, d: 0, f: 60, i: 18 },
-    L2: { q: 920, d: 0, f: 45, i: 14 },
+    // Domestic vendor — native = INR, so qNative === q. Minimal landed add-ons.
+    L1: { q: 1240, qNative: 1240, d: 0, f: 60, i: 18 },
+    L2: { q: 920,  qNative: 920,  d: 0, f: 45, i: 14 },
   },
   B: {
     fx: 'USD', flag: 'CN', name: 'Pearl River Mfg',
-    L1: { q: 1180, d: 248, f: 325, i: 62 },
-    L2: { q: 880, d: 186, f: 240, i: 48 },
+    // Native USD quote × FX 83 ≈ INR. Heavy duty/freight/insurance burden.
+    L1: { q: 1180, qNative: 14.22, d: 248, f: 325, i: 62 },
+    L2: { q:  880, qNative: 10.60, d: 186, f: 240, i: 48 },
   },
   C: {
     fx: 'EUR', flag: 'DE', name: 'EuroDrive GmbH',
-    L1: { q: 1290, d: 148, f: 210, i: 44 },
-    L2: { q: 960, d: 112, f: 158, i: 34 },
+    // Native EUR quote × FX 90.5 ≈ INR. Moderate landed add-ons.
+    L1: { q: 1290, qNative: 14.25, d: 148, f: 210, i: 44 },
+    L2: { q:  960, qNative: 10.61, d: 112, f: 158, i: 34 },
   },
 };
 
 const RA_KEYS = ['A', 'B', 'C'];
 
+/** Sum of per-piece INR-equivalent quotes across all line items. */
 const raSumQuote = (k: string) => RA_LI.reduce((s, li) => {
   const bid = RA_BIDS[k][li.id] as BidDetail;
   return s + bid.q;
 }, 0);
 
-const raInr = (n: number) => '₹' + n.toLocaleString('en-IN');
+/** Sum of per-piece native-currency quotes across all line items. */
+const raSumNativeQuote = (k: string) => RA_LI.reduce((s, li) => {
+  const bid = RA_BIDS[k][li.id] as BidDetail;
+  return s + bid.qNative;
+}, 0);
 
+const raInr = (n: number) => '₹' + Math.round(n).toLocaleString('en-IN');
+
+/**
+ * Money formatter that respects whether we are *before* or *after* INR
+ * normalisation. Small native unit prices (e.g. $14.22) keep two decimals so
+ * the per-piece quote looks like a real quote slip; larger aggregates (totals
+ * × 200) round to whole units so they stay legible.
+ */
 const raFormatPrice = (n: number, k: string, showNativeFirst: boolean) => {
   if (showNativeFirst) {
     const bid = RA_BIDS[k];
-    if (bid.fx === 'INR') return '₹' + n.toLocaleString('en-IN');
-    if (bid.fx === 'USD') return '$' + n.toLocaleString('en-US');
-    if (bid.fx === 'EUR') return '€' + n.toLocaleString('en-EU');
+    if (bid.fx === 'INR') return '₹' + Math.round(n).toLocaleString('en-IN');
+    if (bid.fx === 'USD') return '$' + (n >= 100 ? Math.round(n).toLocaleString('en-US') : n.toFixed(2));
+    if (bid.fx === 'EUR') return '€' + (n >= 100 ? Math.round(n).toLocaleString('en-DE') : n.toFixed(2));
   }
-  return '₹' + n.toLocaleString('en-IN');
+  return '₹' + Math.round(n).toLocaleString('en-IN');
 };
 
 /* ============ STYLE ============ */
@@ -231,6 +256,8 @@ export default function RfqAnalyticsAnimation({
   const cancelRef = useRef(false);
   const bodyRef = useRef<HTMLDivElement>(null);
   const prevMenuStepRef = useRef<number>(0);
+  const onPhaseChangeRef = useRef(onPhaseChange);
+  useEffect(() => { onPhaseChangeRef.current = onPhaseChange; });
 
   // Auto-scroll
   useEffect(() => {
@@ -265,11 +292,11 @@ export default function RfqAnalyticsAnimation({
       while (!cancelRef.current) {
         setLocalPhase(0); setLocalPopulated(0); setLocalLayers(0);
         setLocalShowTrue(false); setLocalWinner(null); setLocalScanCol(0);
-        onPhaseChange?.(0);
+        onPhaseChangeRef.current?.(0);
         await sleep(900);
 
         if (cancelRef.current) return;
-        setLocalPhase(1); onPhaseChange?.(1);
+        setLocalPhase(1); onPhaseChangeRef.current?.(1);
         for (let i = 1; i <= RA_LI.length; i++) {
           if (cancelRef.current) return;
           setLocalPopulated(i); await sleep(350);
@@ -277,22 +304,22 @@ export default function RfqAnalyticsAnimation({
         await sleep(500);
 
         if (cancelRef.current) return;
-        setLocalPhase(2); setLocalWinner('B'); onPhaseChange?.(2);
+        setLocalPhase(2); setLocalWinner('B'); onPhaseChangeRef.current?.(2);
         await sleep(2200);
 
         if (cancelRef.current) return;
-        setLocalPhase(3); onPhaseChange?.(3); await sleep(900);
+        setLocalPhase(3); onPhaseChangeRef.current?.(3); await sleep(900);
 
         for (let l = 1; l <= 3; l++) {
           if (cancelRef.current) return;
-          setLocalLayers(l); setLocalPhase(3 + l); onPhaseChange?.(3 + l); await sleep(1000);
+          setLocalLayers(l); setLocalPhase(3 + l); onPhaseChangeRef.current?.(3 + l); await sleep(1000);
         }
 
         if (cancelRef.current) return;
-        setLocalShowTrue(true); setLocalPhase(7); onPhaseChange?.(7); await sleep(1700);
+        setLocalShowTrue(true); setLocalPhase(7); onPhaseChangeRef.current?.(7); await sleep(1700);
 
         if (cancelRef.current) return;
-        setLocalPhase(8); onPhaseChange?.(8);
+        setLocalPhase(8); onPhaseChangeRef.current?.(8);
         setLocalScanCol(3); await sleep(850);
         if (cancelRef.current) return;
         setLocalScanCol(2); await sleep(850);
@@ -340,9 +367,9 @@ export default function RfqAnalyticsAnimation({
   const getActiveMenuStep = (): number => {
     if (!isAuto && activeMenuStep !== null) return activeMenuStep;
     if (activePhase >= 1 && activePhase <= 2) return 1;
-    if (activePhase >= 3 && activePhase <= 6) return 2;
-    if (activePhase === 7) return 3;
-    if (activePhase >= 8) return 4;
+    if (activePhase === 3) return 2;
+    if (activePhase >= 4 && activePhase <= 6) return 3;
+    if (activePhase >= 7 && activePhase <= 8) return 4;
     return 0;
   };
 
@@ -353,9 +380,9 @@ export default function RfqAnalyticsAnimation({
       case 1:
         return 'Your suppliers submit bids in their native currencies — INR from domestic vendors, USD and EUR from overseas. At face value the overseas quotes look competitive. But comparing raw unit prices across different currencies is how teams consistently overpay — the full cost of a bid only becomes clear once every add-on is accounted for.';
       case 2:
-        return 'FactWise layers each foreign bid with its real landed costs — import duty classified by HSN code, freight charges along the actual shipping corridor, and marine insurance. Domestic suppliers carry zero duty and minimal freight. Every cost component is itemised on the same line so you can see exactly what is driving each vendor\'s true price.';
+        return 'FactWise instantly normalises all quotes to a single currency (INR) using live mid-market treasury rates. With raw bids on equal footing, Pearl River ($14.22 USD → ₹1,180) appears to be the lowest quote, but this doesn\'t account for cross-border logistics overhead.';
       case 3:
-        return 'All bids are converted to a single currency using live mid-market treasury rates. The USD and EUR quotes are restated in INR so that every number in the comparison is on identical footing — no hidden currency advantage, no manual exchange-rate guesswork distorting the picture.';
+        return 'FactWise layers each foreign bid with its real landed costs — import duty classified by HSN code, freight charges along the actual shipping corridor, and marine insurance. Domestic suppliers carry zero duty and minimal freight. Every cost component is itemised on the same line so you can see exactly what is driving each vendor\'s true price.';
       case 4:
         return 'With every cost visible and every currency normalised, the true winner is clear. The vendor that appeared cheapest on paper is no longer the lowest once duty, freight, and insurance are added. FactWise locks the optimal bid automatically and surfaces the saving so you can award with complete confidence.';
       default:
@@ -371,13 +398,10 @@ export default function RfqAnalyticsAnimation({
       {/* Top Chrome Bar */}
       <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2 text-left">
-          <div className="size-6 rounded-lg bg-gradient-to-br from-purple-700 to-[#3666ff] text-white flex items-center justify-center shadow-[0_4px_10px_rgba(123,104,238,0.3)] shrink-0">
-            <RAI.BarChart s={13} />
-          </div>
           <div className="flex items-center gap-1.5 min-w-0">
             <span className="text-[12px] font-bold text-slate-800 tracking-tight shrink-0">Analytics Engine</span>
             <span className="text-slate-300 text-[10px]">/</span>
-            <span className="text-[11px] font-medium text-slate-500 truncate">RFQ-2026-0871 · Landed Cost</span>
+            <span className="text-[11px] font-medium text-slate-500 truncate"></span>
           </div>
         </div>
         <div className="flex items-center gap-2 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-full">
@@ -393,7 +417,7 @@ export default function RfqAnalyticsAnimation({
 
         {/* Breadcrumb */}
         {activePhase >= 1 && activePhase < 9 && (
-          <div className="h-6 flex items-center">
+          <div className="min-h-[1.5rem] flex items-center py-0.5">
             {activePhase >= 3 ? (
               <div className="ra-crumb">
                 <span>Landed =</span>
@@ -404,7 +428,7 @@ export default function RfqAnalyticsAnimation({
                 <span className={'ra-tok ' + (activeLayers >= 2 ? 'on violet' : '')}>Shipping</span>
                 <span className="plus">+</span>
                 <span className={'ra-tok ' + (activeLayers >= 3 ? 'on cyan' : '')}>Insurance</span>
-                <span className="norm">· normalized → INR</span>
+                <span className="norm">· → INR @ {FX_USD_INR}/{FX_EUR_INR}</span>
               </div>
             ) : (
               <div className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Baseline Ingestion Matrix</div>
@@ -454,26 +478,39 @@ export default function RfqAnalyticsAnimation({
                       if (RA_KEYS.indexOf(k) + 1 === activeScanCol) cls += ' scanning';
                     }
                     if (activePhase === 8 && activeScanCol === 4 && k === 'A') cls += ' awarded';
+                    // Add-ons (duty/freight/insurance) are quoted in INR. While no add-ons
+                    // are layered yet, show the quote in the vendor's native currency.
+                    // Once any add-on appears, normalise the quote to INR so we never mix
+                    // currencies on the same line.
+                    const showNative = activePhase <= 2;
+                    const baseDisplay = showNative
+                      ? raFormatPrice(c.qNative, k, true)
+                      : raFormatPrice(c.q, k, false);
                     const tot = c.q + (activeLayers >= 1 ? c.d : 0) + (activeLayers >= 2 ? c.f : 0) + (activeLayers >= 3 ? c.i : 0);
-                    const showNative = activePhase < 7;
                     return (
                       <div key={k} className={'ra-bid ' + cls}>
-                        <span className="line base">{raFormatPrice(c.q, k, showNative)}</span>
+                        <span className="line base">{baseDisplay}</span>
                         {activeLayers >= 1 && c.d > 0 && <span className="line duty"><span className="lbl">+D </span>{raInr(c.d)}</span>}
                         {activeLayers >= 2 && <span className="line frt"><span className="lbl">+F </span>{raInr(c.f)}</span>}
                         {activeLayers >= 3 && <span className="line ins"><span className="lbl">+I </span>{raInr(c.i)}</span>}
-                        {activeLayers > 0 && <div className="tot">{raFormatPrice(tot, k, showNative)}</div>}
+                        {activeLayers > 0 && <div className="tot">{raFormatPrice(tot, k, false)}</div>}
                       </div>
                     );
                   })}
                 </div>
               );
             })}
-
+ 
             {activePopulated >= RA_LI.length && (
               <div className="ra-totalRow border-t border-slate-200">
                 <div className="lbl text-slate-500 font-bold flex items-center gap-1.5 pl-3">
-                  <span className="truncate">{activeShowTrue ? 'True landed · qty 200' : 'Quote total · qty 200'}</span>
+                  <span className="truncate">
+                    {activePhase <= 2
+                      ? 'Quote total · qty 200 · native'
+                      : activeShowTrue
+                        ? 'True landed · qty 200 · INR'
+                        : 'Landed cost · qty 200 · INR'}
+                  </span>
                 </div>
                 {RA_KEYS.map((k) => {
                   const isWin = activeWinner === k;
@@ -482,8 +519,8 @@ export default function RfqAnalyticsAnimation({
                     if (RA_KEYS.indexOf(k) + 1 === activeScanCol) cls += ' scanning';
                   }
                   if (activePhase === 8 && activeScanCol === 4 && k === 'A') cls += ' awarded';
-                  const t = totalAtLayer(k);
-                  const showNative = activePhase < 7;
+                  const showNative = activePhase <= 2;
+                  const t = showNative ? raSumNativeQuote(k) : totalAtLayer(k);
                   return (
                     <div key={k} className={'ra-totalCell ' + cls}>
                       <div className="v">{raFormatPrice(t * 200, k, showNative)}</div>

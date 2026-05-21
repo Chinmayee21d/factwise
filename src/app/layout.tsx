@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 import "./globals.css";
 import { ScrollProgressIndicator } from "@/components/ui/ScrollProgressIndicator";
 
@@ -10,13 +10,10 @@ const inter = Inter({
   display: "swap",
 });
 
-import { Instrument_Serif } from "next/font/google";
-
-const instrumentSerif = Instrument_Serif({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-instrument",
-  weight: ["400"],
-  style: ["italic", "normal"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
@@ -34,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${geist.variable}`}>
       <body className={inter.className} suppressHydrationWarning>
         <div className="noise-bg" />
         <ScrollProgressIndicator />

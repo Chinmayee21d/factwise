@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ChevronDown, ChevronUp, Star, Quote } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import ScrollReveal from './ui/ScrollReveal';
 
 const testimonials = [
@@ -13,7 +13,6 @@ const testimonials = [
         company: "Syrma SGS",
         content: "Factwise has significantly improved procurement digitalization and automated quotation processes, enabling faster workflows, enhanced transparency, and data-driven decision-making. We like the platform's efficiency, seamless integration, and actionable insights.",
         color: "bg-blue-100 text-blue-700",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=250&auto=format&fit=crop",
         logo: "/image.png"
     },
     {
@@ -23,7 +22,6 @@ const testimonials = [
         company: "Global Enterprise",
         content: "The Factwise app is a great consolidation of features that provides the ability to send RFx's, assess pricing, allocation, PO & AP processing, etc. all in one app. It's an extremely efficient way to manage the materials buying process.",
         color: "bg-purple-100 text-purple-700",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=250&auto=format&fit=crop",
         logo: null
     },
     {
@@ -33,7 +31,6 @@ const testimonials = [
         company: "Spark Minda",
         content: "Factwise streamlines sourcing processes by automating non-value-adding activities, boosting efficiency and productivity. Their customizable GUI and dashboards empower users with tailored insights for smarter decision-making.",
         color: "bg-green-100 text-green-700",
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=250&auto=format&fit=crop",
         logo: "/sparkminda.png"
     },
     {
@@ -43,7 +40,6 @@ const testimonials = [
         company: "Driplex",
         content: "Our manufacturing company uses the traditional standard ERP system. With Factwise integrating with our ERP, our purchasing has become informed, organized, and effortless. The intuitive and sleek UI was a standout feature.",
         color: "bg-orange-100 text-orange-700",
-        avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=250&auto=format&fit=crop",
         logo: "/driplex.png"
     },
     {
@@ -53,7 +49,6 @@ const testimonials = [
         company: "Gem Corp",
         content: "FactWise excels in analytics — their AI innovation transforms analysis into a user-friendly experience. Breaking free from old formats, we've minimized Excel dependency, witnessing a data-driven revolution.",
         color: "bg-pink-100 text-pink-700",
-        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=250&auto=format&fit=crop",
         logo: "/GemCorpochem.png"
     },
     {
@@ -63,7 +58,6 @@ const testimonials = [
         company: "Prasol",
         content: "FactWise has enabled us to make data-driven decisions in procurement. This has increased the efficiency and compliance in the team and more importantly led to cost savings which is extremely important.",
         color: "bg-cyan-100 text-cyan-700",
-        avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=250&auto=format&fit=crop",
         logo: "/image copy.png"
     },
     {
@@ -73,7 +67,6 @@ const testimonials = [
         company: "Bridgepointe",
         content: "FactWise streamlined our quoting process, replacing manual tasks with efficient vendor and client interactions. Customizable and adaptable, it tailored to our complex workflow perfectly.",
         color: "bg-yellow-100 text-yellow-700",
-        avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?q=80&w=250&auto=format&fit=crop",
         logo: "/Bridgepointe.png"
     },
     {
@@ -83,7 +76,6 @@ const testimonials = [
         company: "Global Enterprise",
         content: "FactWise has done a great job at understanding the users. The thoughtfulness in the way it is created is impressive. Even the smallest details have been thought of to make sure the user experience is excellent.",
         color: "bg-teal-100 text-teal-700",
-        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=250&auto=format&fit=crop",
         logo: null
     },
     {
@@ -93,14 +85,12 @@ const testimonials = [
         company: "Amkette",
         content: "Amkette sought an automated solution for their complex sourcing operation, focusing on procurement and vendor analytics. Initially designed for manufacturing, Factwise adapted swiftly.",
         color: "bg-indigo-100 text-indigo-700",
-        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=250&auto=format&fit=crop",
         logo: "/Amkette.png"
     }
 ];
 
 export default function Testimonials() {
     const [showMore, setShowMore] = useState(false);
-    const sectionRef = useRef<HTMLElement>(null);
 
     const toggleShowMore = () => {
         setShowMore(!showMore);
@@ -108,7 +98,6 @@ export default function Testimonials() {
 
     return (
         <section
-            ref={sectionRef}
             className="relative py-12 px-4 md:px-10"
             id="testimonials"
             style={{ scrollMarginTop: '100px' }}
@@ -200,7 +189,6 @@ export default function Testimonials() {
                                         <div className="flex items-center mt-auto pt-3 border-t border-slate-50 relative z-10">
                                             <div className="flex items-center gap-3">
                                                 <Avatar className={`${isLarge ? "size-12" : "size-10"} rounded-xl border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50`}>
-                                                    {t.avatar && <AvatarImage src={t.avatar} className="object-cover rounded-xl" />}
                                                     <AvatarFallback className={`${t.color} font-bold rounded-xl`}>
                                                         <span className={isLarge ? "text-sm" : "text-xs"}>{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
                                                     </AvatarFallback>
@@ -284,7 +272,6 @@ export default function Testimonials() {
                                                         <div className="flex items-center mt-auto pt-4 border-t border-slate-50 relative z-10">
                                                             <div className="flex items-center gap-3">
                                                                 <Avatar className={`${isLarge ? "size-12" : "size-10"} rounded-xl border border-slate-100 ring-2 ring-white shadow-sm transition-all group-hover:ring-blue-50`}>
-                                                                    {t.avatar && <AvatarImage src={t.avatar} className="object-cover rounded-xl" />}
                                                                     <AvatarFallback className={`${t.color} font-bold rounded-xl`}>
                                                                         <span className={isLarge ? "text-sm" : "text-xs"}>{t.name.split(' ').map(n => n[0]).join('').toUpperCase()}</span>
                                                                     </AvatarFallback>

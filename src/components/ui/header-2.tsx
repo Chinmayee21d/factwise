@@ -26,12 +26,10 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 
 	const links = [
 		{
-			label: 'Platform',
+			label: 'Product',
 			href: '/platform',
 			subLinks: [
-				{ label: 'Strategic Sourcing', href: '/platform/sourcing' },
-				{ label: 'Purchase Orders', href: '/platform/purchase-orders' },
-				{ label: 'Pricing Intelligence', href: '/platform/pricing-intelligence' },
+				{ label: 'Inquiry to Quote', href: '/solutions' },
 			]
 		},
 		{
@@ -95,7 +93,7 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 					},
 				)}
 			>
-				<div className="flex items-center gap-3">
+				<a href="/" className="flex items-center gap-3 cursor-pointer">
 					<img
 						src={(scrolled || open || !mounted || theme === 'light') ? "/logo.png" : "/logowhite.png"}
 						alt="FactWise Logo"
@@ -105,7 +103,7 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 						"text-white": !scrolled && !open && mounted && theme === 'dark',
 						"text-black": scrolled || open || !mounted || theme === 'light',
 					})}>FactWise</span>
-				</div>
+				</a>
 
 				<div className="hidden items-center gap-1 md:flex">
 					{links.map((link, i) => (

@@ -72,7 +72,7 @@ const QGI = {
 /* ============ DATA ============ */
 const QG_SOURCES = [
   { id: 'S1', label: 'EVT-7741', vendor: 'Sahasra (Mumbai)',  color: '#3666ff', items: ['Pump Body', 'O-ring kit'], sub: 304000 },
-  { id: 'S2', label: 'EVT-7740', vendor: 'Tata Precision',    color: '#00b884', items: ['Shaft Assy', 'Bearings'],            sub: 142000 },
+  { id: 'S2', label: 'EVT-7740', vendor: 'Tata Precision',    color: '#00b884', items: ['Shaft Assy', 'Bearings'],            sub: 154000 },
 ];
 
 const QG_ROWS = [
@@ -83,9 +83,9 @@ const QG_ROWS = [
 ];
 
 const QG_CATS = [
-  { name: 'Mechanical',  pct: 54, color: '#00b884', amount: '₹2,46,400' },
-  { name: 'Electrical',  pct: 34, color: '#3666ff', amount: '₹1,54,880' },
-  { name: 'Duty + Tax',  pct: 12, color: '#f59e0b', amount: '₹54,720' },
+  { name: 'Mechanical',  pct: 54, color: '#00b884', amount: '₹3,14,518' },
+  { name: 'Electrical',  pct: 34, color: '#3666ff', amount: '₹1,98,030' },
+  { name: 'Duty + Tax',  pct: 12, color: '#f59e0b', amount: '₹69,892' },
 ];
 
 const QG_VOLUME = [
@@ -709,11 +709,11 @@ export default function QuoteGenAnimation({
                 <div style={{ display: 'flex', gap: 14, alignItems: 'baseline' }}>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Landed Total</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13, fontWeight: 800, color: '#0b1322' }}>₹4,57,960</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13, fontWeight: 800, color: '#0b1322' }}>₹5,82,440</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Gross Margin</div>
-                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13, fontWeight: 800, color: '#00b884' }}>22.4%</div>
+                    <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13, fontWeight: 800, color: '#00b884' }}>21.4%</div>
                   </div>
                 </div>
               </div>
@@ -778,8 +778,8 @@ export default function QuoteGenAnimation({
 
                     {/* KPI rows */}
                     <div style={{ marginTop: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <KPI label="Gross margin"  v="22.4%" trend="+1.8 pts"    good/>
-                      <KPI label="Add-ons stack" v="₹86k"  trend="freight+duty"/>
+                      <KPI label="Gross margin"  v="21.4%" trend="+1.8 pts"    good/>
+                      <KPI label="Add-ons stack" v="₹124k"  trend="freight+duty"/>
                       <KPI label="Send before"   v="3 days" trend="competitor SLA"/>
                     </div>
 
