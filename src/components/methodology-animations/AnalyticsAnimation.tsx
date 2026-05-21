@@ -186,7 +186,7 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
 
   useEffect(() => {
     cancelRef.current = false;
-    const speedMul = Math.max(0.3, Number(speed) || 1);
+    const speedMul = Math.max(0.3, (Number(speed) || 1) * 1.75);
     const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms / speedMul));
 
     async function loop() {
@@ -202,7 +202,6 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
         setFinaleChips(0);
         setLit({ bids: false, history: false, perf: false, spend: false, kpi: false });
         onPhaseChange?.(0);
-        await sleep(400);
 
         // 1. GUESS
         setPhase(1); onPhaseChange?.(1);
@@ -300,14 +299,7 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
         setAwardState(2); await sleep(1800);
         setAwardState(3); await sleep(1400);
 
-        // 9. FINALE
-        setPhase(9); onPhaseChange?.(9);
-        for (let i = 1; i <= 4; i++) {
-          if (cancelRef.current) return;
-          setFinaleChips(i);
-          await sleep(180);
-        }
-        await sleep(4800);
+        await sleep(3400);
       }
     }
 
@@ -325,7 +317,6 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
     6: "Live spend visibility. Surfacing category and operations distribution YTD.",
     7: "Margin protected. KPIs flip green. You see it before finance asks.",
     8: "Award Bharat Steel — 94% confidence, recommendation logged.",
-    9: "Stop guessing. Start knowing.",
   };
 
   /* ===== Q-mark positions for SCENE 1 ===== */
@@ -902,48 +893,6 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
                       </div>
                     </motion.div>
                   )}
-
-                  {/* SCENE 9 - FINALE */}
-                  {phase === 9 && (
-                    <motion.div 
-                      key="s9"
-                      initial={{ opacity: 0, scale: 0.97 }} 
-                      animate={{ opacity: 1, scale: 1 }} 
-                      exit={{ opacity: 0, scale: 0.97 }}
-                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 text-center px-4"
-                    >
-                      <div className="font-bold text-[30px] leading-tight bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent tracking-tight shrink-0 select-none">
-                        Stop guessing.
-                      </div>
-                      <div className="text-[16px] font-semibold text-slate-800 tracking-tight leading-none shrink-0 select-none">
-                        Start <span className="font-bold text-indigo-600">knowing</span>.
-                      </div>
-                      <p className="text-[10.5px] text-slate-500 font-normal leading-relaxed max-w-sm mt-1 shrink-0 select-none">
-                        Every decision backed by dynamic operational intelligence. Every parameter instantly audited and compared.
-                      </p>
-                      <div className="flex gap-2 justify-center flex-wrap mt-3.5 shrink-0 select-none">
-                        {[
-                          { text: "Real-Time Bids", ic: BarChart3 },
-                          { text: "Vendor Score", ic: Star },
-                          { text: "Spend Visibility", ic: PieChart },
-                          { text: "Margin Protected", ic: Shield },
-                        ].map((c, idx) => {
-                          const IC = c.ic;
-                          return (
-                            <div key={c.text} className={cn(
-                              "inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-100 rounded-full text-[9.5px] font-medium text-slate-700 shadow-2xs transition-all duration-300",
-                              finaleChips > idx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-                            )}>
-                              <IC className="w-3 h-3 text-indigo-500 shrink-0" />
-                              {c.text}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-
                 </AnimatePresence>
               </div>
 
@@ -974,13 +923,6 @@ export default function AnalyticsAnimation({ speed = 0.5, onPhaseChange }: { spe
               )}
             </AnimatePresence>
 
-            {/* Pills Deck */}
-            <div className="grid grid-cols-2 gap-2 shrink-0">
-              <PillDeck icon={BarChart3} label="Real-Time Bids" lit={lit.bids} />
-              <PillDeck icon={TrendingUp} label="Historical Pricing" lit={lit.history} />
-              <PillDeck icon={Star} label="Vendor Performance" lit={lit.perf} />
-              <PillDeck icon={PieChart} label="Spend Visibility" lit={lit.spend} />
-            </div>
 
           </div>
         </div>

@@ -447,44 +447,35 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
 
     async function loop() {
       while (!cancelRef.current) {
-        setPhase(0); setL1n(0); setL2n(0); setL3n(0); setAltn(0);
+        // Reset all state and immediately start — no blank idle frame
+        setL1n(0); setL2n(0); setL3n(0); setAltn(0);
         setVolStep(0); setCombined(false); setFinChips(0);
         setLit({ multi: false, sub: false, alt: false, vol: false, comb: false });
-        onPhaseChange?.(0);
-        await sleep(650);
+        onPhaseChange?.(2);
 
-        // 1 HERO
-        setPhase(1); onPhaseChange?.(1);
-        await sleep(2800);
-
-        // 2 L1
+        // 1 L1
         setPhase(2); onPhaseChange?.(2);
         setLit((s) => ({ ...s, multi: true }));
         for (let i = 1; i <= L1.length; i++) { if (cancelRef.current) return; setL1n(i); await sleep(350); }
         await sleep(1100);
 
-        // 3 L2 SUB-BOM
+        // 2 L2 SUB-BOM
         setPhase(3); onPhaseChange?.(3);
         setLit((s) => ({ ...s, sub: true }));
         for (let i = 1; i <= L2.length; i++) { if (cancelRef.current) return; setL2n(i); await sleep(300); }
         await sleep(1100);
 
-        // 4 L3 SUB-SUB-BOM
+        // 3 L3 SUB-SUB-BOM
         setPhase(4); onPhaseChange?.(4);
         for (let i = 1; i <= L3.length; i++) { if (cancelRef.current) return; setL3n(i); await sleep(300); }
         await sleep(1100);
 
-        // 5 COMBINE
+        // 4 COMBINE
         setPhase(5); onPhaseChange?.(5);
         setLit((s) => ({ ...s, comb: true }));
         await sleep(1100);
         setCombined(true);
-        await sleep(2600);
-
-        // 6 FINALE
-        setPhase(6); onPhaseChange?.(6);
-        for (let i = 1; i <= 3; i++) { if (cancelRef.current) return; setFinChips(i); await sleep(180); }
-        await sleep(4200);
+        await sleep(3200);
       }
     }
     void loop();
@@ -496,21 +487,17 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
   void levelsT;
 
   const captions: Record<number, string> = {
-    1: "One finished product. 247 parts. 4 levels of BOM hierarchy.",
-    2: "Click → explode into top-level sub-assemblies.",
+    2: "Exploding into top-level sub-assemblies.",
     3: "Drill into any sub-BOM. Children fan out below.",
     4: "n-level sub-BOMs — no depth limit, full traceability.",
-    5: "Better pricing leverage.",
-    6: "Same effort. Any scale. 40% faster setup, every time.",
+    5: "Better pricing leverage — multi-plant requisitions combined.",
   };
 
   const stageTitle =
-    phase === 1 ? "Finished Product" :
-      phase === 2 ? "Level 1 — Sub-Assemblies" :
-        phase === 3 ? "Level 2 — Sub-BOM" :
-          phase === 4 ? "Level 3 — Sub-Sub-BOM" :
-            phase === 5 ? "RFQ" :
-              phase === 6 ? "Optimized" : "BOM Explorer";
+    phase === 2 ? "Level 1 — Sub-Assemblies" :
+      phase === 3 ? "Level 2 — Sub-BOM" :
+        phase === 4 ? "Level 3 — Sub-Sub-BOM" :
+          phase === 5 ? "RFQ" : "BOM Explorer";
 
   const stageLevel =
     phase === 2 ? "L1" :
@@ -578,13 +565,11 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                     {stageLevel && <span className="bs-levelBadge">{stageLevel}</span>}
                   </h4>
                   <div className="bs-dots">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                    {[2, 3, 4, 5].map((i) => (
                       <div key={i} className={"bs-pd " + (phase === i ? "on" : phase > i ? "done" : "")} />
                     ))}
                   </div>
                 </div>
-
-                <SceneHero active={phase === 1} />
 
                 <SceneGraph
                   active={phase >= 2 && phase <= 4}
@@ -595,8 +580,6 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                 />
 
                 <SceneCombine active={phase === 5} combined={combined} />
-
-                <SceneFinale active={phase === 6} chips={finChips} />
               </div>
 
               <AnimatePresence mode="wait">
@@ -622,12 +605,6 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                 )}
               </AnimatePresence>
 
-              <div className="bs-pills">
-                <BSPill icon={<Layers className="w-3.5 h-3.5" />} label="Multi-Level BOM" lit={lit.multi} />
-                <BSPill icon={<GitFork className="w-3.5 h-3.5" />} label="n-Level Sub-BOMs" lit={lit.sub} />
-                <BSPill icon={<Plus className="w-3.5 h-3.5" />} label="Alternate Items / Line" lit={lit.alt} />
-                <BSPill icon={<Workflow className="w-3.5 h-3.5" />} label="Multi-Req Combining" lit={lit.comb} />
-              </div>
             </div>
           </div>
         </div>
@@ -844,6 +821,7 @@ function SceneCombine({ active, combined }: { active: boolean; combined: boolean
 /* ============ SCENE: FINALE ============ */
 function SceneFinale({ active, chips }: { active: boolean; chips: number }) {
   const v = useCount(40, active, 1300);
+  void chips;
   return (
     <div className={"bs-scene " + (active ? "on" : "")}>
       <div className="bs-finale">
@@ -856,11 +834,6 @@ function SceneFinale({ active, chips }: { active: boolean; chips: number }) {
           <div className="col before"><div className="v">480 min</div><div className="l">Manual</div></div>
           <div className="arrow"><ArrowRight className="w-3.5 h-3.5" strokeWidth={2.5} /></div>
           <div className="col after"><div className="v">48 min</div><div className="l">FactWise</div></div>
-        </div>
-        <div className="bs-fchips">
-          <div className={"bs-fchip " + (chips >= 1 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>n-level BOMs</div>
-          <div className={"bs-fchip " + (chips >= 2 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>Alternates ready</div>
-          <div className={"bs-fchip " + (chips >= 3 ? "in" : "")}><span className="ic"><Check className="w-3 h-3" strokeWidth={2.5} /></span>Bulk imports</div>
         </div>
       </div>
     </div>

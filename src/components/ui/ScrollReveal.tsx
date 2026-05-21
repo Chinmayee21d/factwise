@@ -28,7 +28,7 @@ export default function ScrollReveal({
   duration = 0.9,
   y = 30,
   stagger = 0.05,
-  once = false,
+  once = true,
   type = 'fade',
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);

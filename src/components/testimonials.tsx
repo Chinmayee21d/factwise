@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ChevronDown, ChevronUp, Star, Quote } from 'lucide-react';
 import ScrollReveal from './ui/ScrollReveal';
 
@@ -137,10 +137,10 @@ export default function Testimonials() {
                         </h2>
                     </ScrollReveal>
 
-                    <motion.p 
+                    <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false }}
+                        viewport={{ once: true, margin: '-80px' }}
                         transition={{ duration: 0.5, delay: 0.4 }}
                         className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium"
                     >

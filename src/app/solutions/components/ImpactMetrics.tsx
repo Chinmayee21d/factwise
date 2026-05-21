@@ -36,15 +36,15 @@ export default function ImpactMetrics() {
     <section className="py-32 bg-white relative overflow-hidden">
       {/* Background Glows */}
       <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full -z-10" />
-      
+
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-24">
-            <div 
-                className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
-                style={{ fontFamily: 'var(--font-inter)' }}
-            >
-                Measurable Value
-            </div>
+          <div
+            className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Measurable Value
+          </div>
           <h2 className="text-3xl md:text-5xl font-bold text-[#1A1D2E] mb-6 leading-[1.1]" style={{ fontFamily: 'var(--font-display)' }}>Real-World Impact</h2>
           <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-inter)' }}>
             FactWise isn&apos;t just software; it&apos;s a value-generation engine that transforms your baseline operations into competitive advantages.

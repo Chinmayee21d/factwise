@@ -1622,13 +1622,6 @@ export default function IntegrationAnimation({ speed = 0.5, onPhaseChange }: Int
                 {CAPTIONS[phase] ?? ""}
               </div>
 
-              {/* Bottom Feature pills status markers */}
-              <div className="in-pills">
-                <Pill icon={<II.Link s={13} />} label="Open APIs" lit={lit.api} />
-                <Pill icon={<II.PenSq s={13} />} label="Custom Fields" lit={lit.custom} />
-                <Pill icon={<II.Workflow s={13} />} label="Configurable Workflows" lit={lit.formula} />
-                <Pill icon={<II.Link s={13} />} label="Closed-Loop PO" lit={lit.fast} />
-              </div>
 
             </div>
           </div>
