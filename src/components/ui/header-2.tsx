@@ -30,6 +30,8 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 			href: '/platform',
 			subLinks: [
 				{ label: 'Inquiry to Quote', href: '/solutions' },
+				{ label: 'Requisitions to PO', href: '/requisitions-to-po' },
+				{ label: 'Invoice to Pay', href: '/invoice-to-pay' },
 			]
 		},
 		{
@@ -108,19 +110,34 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 				<div className="hidden items-center gap-1 md:flex">
 					{links.map((link, i) => (
 						<div key={i} className="relative group">
-							<a
-								className={buttonVariants({
-									variant: 'ghost',
-									className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium', {
-										'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
-										'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
-									})
-								})}
-								href={link.href}
-							>
-								{link.label}
-								{(link as any).subLinks && <ChevronDown size={14} className="group-hover:rotate-180 transition-transform opacity-50" />}
-							</a>
+							{link.subLinks ? (
+								<button
+									className={buttonVariants({
+										variant: 'ghost',
+										className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium cursor-pointer', {
+											'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
+											'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
+										})
+									})}
+									type="button"
+								>
+									{link.label}
+									<ChevronDown size={14} className="group-hover:rotate-180 transition-transform opacity-50" />
+								</button>
+							) : (
+								<a
+									className={buttonVariants({
+										variant: 'ghost',
+										className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium', {
+											'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
+											'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
+										})
+									})}
+									href={link.href}
+								>
+									{link.label}
+								</a>
+							)}
 
 							{(link as any).subLinks && (
 								<div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
@@ -166,7 +183,7 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 					<MenuToggleIcon open={open} className="size-5" duration={300} />
 				</Button>
 			</nav>
-
+ 
 			{/* Mobile Menu */}
 			<div
 				className={cn(
@@ -183,13 +200,19 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 					<div className="grid gap-y-4">
 						{links.map((link) => (
 							<div key={link.label} className="flex flex-col gap-2">
-								<a
-									className="text-2xl font-medium text-[#808080] hover:text-[#000000] transition-colors"
-									href={link.href}
-									onClick={() => setOpen(false)}
-								>
-									{link.label}
-								</a>
+								{link.subLinks ? (
+									<div className="text-2xl font-medium text-[#808080] flex items-center gap-2 py-1 select-none">
+										{link.label}
+									</div>
+								) : (
+									<a
+										className="text-2xl font-medium text-[#808080] hover:text-[#000000] transition-colors"
+										href={link.href}
+										onClick={() => setOpen(false)}
+									>
+										{link.label}
+									</a>
+								)}
 								{(link as any).subLinks && (
 									<div className="flex flex-col gap-2 ml-4 mb-4">
 										{(link as any).subLinks.map((sub: any) => (

@@ -36,9 +36,9 @@ interface VendorData {
 }
 
 const vendors: Record<string, VendorData> = {
-    Sahasra: {
-        name: "Sahasra",
-        code: "S",
+    VendorA: {
+        name: "Vendor A",
+        code: "A",
         colorClass: "bg-[#1F8F5C] text-white",
         bgClass: "bg-[#E6F5EC]",
         borderClass: "border-[#C9E8D7]",
@@ -51,9 +51,9 @@ const vendors: Record<string, VendorData> = {
         duty: 910,
         insurance: 280,
     },
-    Varroc: {
-        name: "Varroc",
-        code: "V",
+    VendorB: {
+        name: "Vendor B",
+        code: "B",
         colorClass: "bg-[#B8860B] text-white",
         bgClass: "bg-[#FFF4D6]",
         borderClass: "border-[#F0E0AF]",
@@ -66,9 +66,9 @@ const vendors: Record<string, VendorData> = {
         duty: 950,
         insurance: 300,
     },
-    Acme: {
-        name: "Acme",
-        code: "A",
+    VendorC: {
+        name: "Vendor C",
+        code: "C",
         colorClass: "bg-[#2B59FF] text-white",
         bgClass: "bg-[#EEF2FF]",
         borderClass: "border-[#DCE3FF]",
@@ -81,9 +81,9 @@ const vendors: Record<string, VendorData> = {
         duty: 1020,
         insurance: 320,
     },
-    Tricolite: {
-        name: "Tricolite",
-        code: "T",
+    VendorD: {
+        name: "Vendor D",
+        code: "D",
         colorClass: "bg-[#7B3FA8] text-white",
         bgClass: "bg-[#F3E8FF]",
         borderClass: "border-[#E9D5FF]",
@@ -100,12 +100,12 @@ const vendors: Record<string, VendorData> = {
 
 export default function EcoSystemFeatures() {
     // Sourcing state variables
-    const [selectedVendor, setSelectedVendor] = useState<string>("Sahasra")
+    const [selectedVendor, setSelectedVendor] = useState<string>("VendorA")
     const [viewMode, setViewMode] = useState<"perItem" | "allItems">("perItem")
     const [markup, setMarkup] = useState<number>(34) // markup % from 10% to 60%
 
     // Dynamic computations
-    const activeVendor = vendors[selectedVendor] || vendors.Sahasra
+    const activeVendor = vendors[selectedVendor] || vendors.VendorA
     const assemblyOverhead = 8528
     const baseCost = activeVendor.landedBomCost + assemblyOverhead
     const markupAmount = Math.round(baseCost * (markup / 100))
@@ -205,7 +205,7 @@ export default function EcoSystemFeatures() {
                                     <span className="text-slate-700 font-semibold">Q-20418</span>
                                 </div>
                                 <h3 className="text-xs md:text-sm font-bold text-[#1A1D2E] tracking-tight mt-0.5">
-                                    Industrial PCB · Acme Manufacturing
+                                    Industrial PCB · VendorC Manufacturing
                                 </h3>
                             </div>
                             <div className="flex items-center gap-1.5 text-[9px]">
@@ -300,7 +300,7 @@ export default function EcoSystemFeatures() {
                                                 </td>
                                                 {Object.keys(vendors).map(vKey => {
                                                     const v = vendors[vKey]
-                                                    const isBest = vKey === "Sahasra"
+                                                    const isBest = vKey === "VendorA"
                                                     const displayVal = viewMode === "perItem" ? `$${v.mcuBid.toFixed(2)}` : `$${(v.mcuBid * 500).toLocaleString()}`
                                                     return (
                                                         <td 
@@ -317,7 +317,7 @@ export default function EcoSystemFeatures() {
                                                                 {displayVal}
                                                             </span>
                                                             <span className="text-[7.5px] text-slate-400 block -mt-0.5">
-                                                                {isBest ? "−1.9%" : vKey === "Varroc" ? "+1.3%" : vKey === "Acme" ? "+5.3%" : "+6.9%"}
+                                                                {isBest ? "−1.9%" : vKey === "VendorB" ? "+1.3%" : vKey === "VendorC" ? "+5.3%" : "+6.9%"}
                                                             </span>
                                                         </td>
                                                     )
@@ -334,7 +334,7 @@ export default function EcoSystemFeatures() {
                                                 </td>
                                                 {Object.keys(vendors).map(vKey => {
                                                     const v = vendors[vKey]
-                                                    const isBest = vKey === "Varroc"
+                                                    const isBest = vKey === "VendorB"
                                                     const displayVal = v.pcbBid === "not invited" 
                                                         ? "not invited" 
                                                         : viewMode === "perItem" 
@@ -360,7 +360,7 @@ export default function EcoSystemFeatures() {
                                                                         {displayVal}
                                                                     </span>
                                                                     <span className="text-[7.5px] text-slate-400 block -mt-0.5">
-                                                                        {vKey === "Sahasra" ? "+1.7%" : isBest ? "−2.7%" : "+6.7%"}
+                                                                        {vKey === "VendorA" ? "+1.7%" : isBest ? "−2.7%" : "+6.7%"}
                                                                     </span>
                                                                 </>
                                                             )}
@@ -379,7 +379,7 @@ export default function EcoSystemFeatures() {
                                                 </td>
                                                 {Object.keys(vendors).map(vKey => {
                                                     const v = vendors[vKey]
-                                                    const isBest = vKey === "Sahasra"
+                                                    const isBest = vKey === "VendorA"
                                                     const displayVal = v.labourBid === "not invited"
                                                         ? "not invited"
                                                         : viewMode === "perItem"
@@ -405,7 +405,7 @@ export default function EcoSystemFeatures() {
                                                                         {displayVal}
                                                                     </span>
                                                                     <span className="text-[7.5px] text-slate-400 block -mt-0.5">
-                                                                        {isBest ? "−10.5%" : vKey === "Varroc" ? "−2.5%" : "+5.0%"}
+                                                                        {isBest ? "−10.5%" : vKey === "VendorB" ? "−2.5%" : "+5.0%"}
                                                                     </span>
                                                                 </>
                                                             )}
@@ -421,7 +421,7 @@ export default function EcoSystemFeatures() {
                                                 </td>
                                                 {Object.keys(vendors).map(vKey => {
                                                     const v = vendors[vKey]
-                                                    const isBest = vKey === "Sahasra"
+                                                    const isBest = vKey === "VendorA"
                                                     return (
                                                         <td 
                                                             key={vKey}
@@ -434,7 +434,7 @@ export default function EcoSystemFeatures() {
                                                         >
                                                             <span className="block text-[10px] font-bold">${v.landedBomCost.toLocaleString()}</span>
                                                             <span className="text-[7.5px] font-medium text-slate-400 block mt-0.2">
-                                                                {isBest ? "best" : vKey === "Varroc" ? "FX 83.2" : vKey === "Acme" ? "+$3,710" : "partial"}
+                                                                {isBest ? "best" : vKey === "VendorB" ? "FX 83.2" : vKey === "VendorC" ? "+$3,710" : "partial"}
                                                             </span>
                                                         </td>
                                                     )
@@ -519,7 +519,7 @@ export default function EcoSystemFeatures() {
                                 <div className="bg-indigo-50/80 border border-indigo-100 text-indigo-900 rounded p-1.5 text-[9px] leading-tight flex gap-1">
                                     <Sparkles className="size-2.5 text-indigo-600 shrink-0 mt-0.5 animate-pulse" />
                                     <div>
-                                        <span className="font-bold">Rec:</span> Award 60/40 to Sahasra + Varroc. Holds margin and de‑risks allocation.
+                                        <span className="font-bold">Rec:</span> Award 60/40 to VendorA + VendorB. Holds margin and de‑risks allocation.
                                     </div>
                                 </div>
 

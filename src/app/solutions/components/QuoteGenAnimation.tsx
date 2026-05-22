@@ -71,8 +71,8 @@ const QGI = {
 
 /* ============ DATA ============ */
 const QG_SOURCES = [
-  { id: 'S1', label: 'EVT-7741', vendor: 'Sahasra (Mumbai)',  color: '#3666ff', items: ['Pump Body', 'O-ring kit'], sub: 304000 },
-  { id: 'S2', label: 'EVT-7740', vendor: 'Tata Precision',    color: '#00b884', items: ['Shaft Assy', 'Bearings'],            sub: 154000 },
+  { id: 'S1', label: 'EVT-7741', vendor: 'Vendor A',  color: '#3666ff', items: ['Pump Body', 'O-ring kit'], sub: 304000 },
+  { id: 'S2', label: 'EVT-7740', vendor: 'Vendor B',    color: '#00b884', items: ['Shaft Assy', 'Bearings'],            sub: 154000 },
 ];
 
 const QG_ROWS = [
@@ -251,11 +251,11 @@ export default function QuoteGenAnimation({
         }
         await sleep(600);
 
-        // Cursor hover → click
+        // Cursor glides to the Generate Quote button, then clicks
         if (cancelRef.current) return;
-        setLocalPhase(2); onPhaseChange?.(2); await sleep(700);
+        setLocalPhase(2); onPhaseChange?.(2); await sleep(950);
         if (cancelRef.current) return;
-        setLocalPhase(3); onPhaseChange?.(3); await sleep(380);
+        setLocalPhase(3); onPhaseChange?.(3); await sleep(620);
 
         // Step 2: Apply landed costs — rows build up
         if (cancelRef.current) return;
@@ -367,15 +367,15 @@ export default function QuoteGenAnimation({
   const getNarrativeText = (): string => {
     switch (step) {
       case 1:
-        return 'FactWise automatically aggregates bids from across your supply base. No more digging through emails — every quote is instantly digitized and ready for side-by-side comparison.';
+        return 'Select the best bids and FactWise generates your customer quote in one click — every line item priced, every BOM rolled up. No manual calculation, no margin errors.';
       case 2:
-        return 'Raw quotes only tell half the story. FactWise instantly rolls up your BOMs and calculates true landed costs by factoring in duty, freight, and markup — giving you the total cost of ownership in one click.';
+        return 'Landed costs auto-applied — duty, freight, insurance, markup — so every line is priced at true total cost. No spreadsheet, no formula babysitting.';
       case 3:
-        return 'Analyze where your budget is going. See exactly which categories are driving your spend so you can spot hidden costs and target areas for negotiation or optimization.';
+        return 'Ask our AI anything about your quote — where the biggest expenses are hiding, which categories drive spend, where add-on charges are stacking up. Instant answers, no analyst.';
       case 4:
-        return 'Model your costs across different order volumes to protect your margins. Easily verify if bulk discounts offset additional logistics fees, ensuring you send the most competitive quote possible.';
+        return 'Model how costs shift across order volumes — see if bulk discounts offset added logistics so you can sharpen the quote and send it before anyone else does.';
       default:
-        return 'Generating your customer quote. Aggregating best bids, calculating landed costs, and analyzing category spend...';
+        return 'Generating your customer quote — aggregating best bids, calculating landed costs, and analyzing category spend.';
     }
   };
 
@@ -392,9 +392,9 @@ export default function QuoteGenAnimation({
     root: {
       position: 'relative' as const,
       width: '100%',
-      height: '550px',
-      minHeight: '550px',
-      maxHeight: '550px',
+      height: '490px',
+      minHeight: '490px',
+      maxHeight: '490px',
       fontFamily: "'Inter', system-ui, sans-serif",
       color: '#1A1D2E',
       background: 'white',
@@ -514,7 +514,7 @@ export default function QuoteGenAnimation({
         .qg-cat-amount { animation: qgCountUp .55s cubic-bezier(.22,1,.36,1) both; }
 
         .qg-top-section {
-          max-height: 400px;
+          max-height: 340px;
           opacity: 1;
           transition: max-height 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, margin 0.6s ease;
           overflow: hidden;
@@ -557,7 +557,56 @@ export default function QuoteGenAnimation({
           animation: qgFadeIn .5s cubic-bezier(.22,1,.36,1) both;
         }
         .qg-pulsingDot { width: 6px; height: 6px; border-radius: 50%; background: #3666ff; margin-top: 5px; flex-shrink: 0; animation: qgPulse 1.6s ease-in-out infinite; }
-        .qg-narrativeText { font-size: 12px; font-weight: 600; color: #475569; line-height: 1.55; text-align: left; }
+        .qg-narrativeText { font-size: 11px; font-weight: 500; color: #64748b; line-height: 1.55; text-align: left; }
+
+        /* ── Generate Quote one-click cursor animation ── */
+        .qg-genBtn-wrap { position: relative; }
+        .qg-genBtn { position: relative; z-index: 2; transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+        .qg-genBtn.targeted {
+          box-shadow: 0 6px 16px -4px rgba(54,102,255,0.45), 0 0 0 4px rgba(54,102,255,0.22) !important;
+        }
+        .qg-genBtn.pressed { transform: scale(0.94); }
+        .qg-click-ring {
+          position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+          width: 36px; height: 36px; border-radius: 999px;
+          border: 2px solid #3666ff; opacity: 0; pointer-events: none;
+          z-index: 3;
+        }
+        .qg-click-ring.on { animation: qg-clickRing 0.6s cubic-bezier(.22,1,.36,1) forwards; }
+        @keyframes qg-clickRing {
+          0%   { width: 12px; height: 12px; opacity: 0.85; border-width: 3px; }
+          100% { width: 110px; height: 110px; opacity: 0; border-width: 1px; }
+        }
+        .qg-cursor {
+          position: absolute; z-index: 6; pointer-events: none;
+          filter: drop-shadow(0 4px 10px rgba(15,23,42,0.25));
+          transition: left 0.85s cubic-bezier(.22,1,.36,1), top 0.85s cubic-bezier(.22,1,.36,1), transform 0.25s cubic-bezier(.22,1,.36,1), opacity 0.4s ease;
+        }
+        /* phase 0: cursor off-screen above-right, hidden */
+        .qg-cursor-p0 { left: 90%; top: -8%; opacity: 0; transform: scale(0.85); }
+        /* phase 1: cursor enters at top-right of source column, idle */
+        .qg-cursor-p1 { left: 78%; top: 14%; opacity: 1; transform: scale(0.95); }
+        /* phase 2: cursor glides down to the Generate Quote button */
+        .qg-cursor-p2 { left: 52%; top: 88%; opacity: 1; transform: scale(1); }
+        /* phase 3: cursor "presses" — small downward + scale-down nudge */
+        .qg-cursor-p3 { left: 52%; top: 90%; opacity: 1; transform: scale(0.82); }
+        /* phase 4+: cursor fades out as the quote auto-generates */
+        .qg-cursor-p4 { left: 52%; top: 90%; opacity: 0; transform: scale(0.92); }
+
+        .qg-cursor-label {
+          position: absolute; left: 26px; top: 18px; white-space: nowrap;
+          padding: 3px 7px; border-radius: 5px;
+          background: #0b1322; color: white;
+          font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          opacity: 0; transform: translateY(2px);
+          transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .qg-cursor-label.on { opacity: 1; transform: translateY(0); }
+        .qg-cursor-label::before {
+          content: ''; position: absolute; left: 8px; top: -3px;
+          width: 6px; height: 6px; background: #0b1322; transform: rotate(45deg);
+        }
         @keyframes qgPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
       `}</style>
 
@@ -565,9 +614,6 @@ export default function QuoteGenAnimation({
         {/* Chrome bar */}
         <div className="pb-3 border-b border-slate-100 flex items-center justify-between" style={{ padding: '12px 14px', background: '#fafbfc' }}>
           <div className="flex items-center gap-2 text-left">
-            <div className="size-6 rounded-lg bg-gradient-to-br from-[#4f8bff] to-[#2a6cff] text-white flex items-center justify-center shadow-[0_4px_10px_rgba(54,102,255,0.3)] shrink-0">
-              <QGI.Sparkle s={13} />
-            </div>
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="text-[12px] font-bold text-slate-800 tracking-tight shrink-0">FactWise Engine</span>
               <span className="text-slate-300 text-[10px]">/</span>
@@ -618,14 +664,24 @@ export default function QuoteGenAnimation({
               })}
 
               {/* Generate button */}
-              <div style={s.genBtn}>
-                <button style={s.genBtnEl(phase)}>
+              <div style={s.genBtn} className="qg-genBtn-wrap">
+                <button style={s.genBtnEl(phase)} className={`qg-genBtn ${phase === 3 ? 'pressed' : ''} ${phase >= 2 && phase <= 3 ? 'targeted' : ''}`}>
                   <QGI.Sparkle s={12}/>
                   Generate Quote
                 </button>
+                {/* Click ripple — pulses outward on phase 3 */}
+                <div className={`qg-click-ring ${phase === 3 ? 'on' : ''}`} aria-hidden />
                 <div style={{ marginTop: 4, textAlign: 'center', fontSize: 9, color: '#94a3b8', fontFamily: "'JetBrains Mono', ui-monospace, monospace" }}>
                   One click · all events rolled up
                 </div>
+              </div>
+
+              {/* ── Mouse cursor — slides to button + clicks, then auto-generates ── */}
+              <div className={`qg-cursor qg-cursor-p${Math.min(phase, 4)}`} aria-hidden>
+                <svg viewBox="0 0 24 24" width="22" height="22">
+                  <path d="M5 3 L5 19 L9 15 L11.5 21 L14 20 L11.5 14 L17 14 Z" fill="#0b1322" stroke="white" strokeWidth="1.4" strokeLinejoin="round"/>
+                </svg>
+                <span className={`qg-cursor-label ${phase === 3 ? 'on' : ''}`}>One click</span>
               </div>
             </div>
 

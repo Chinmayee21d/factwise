@@ -26,10 +26,10 @@ interface CaseStudy {
 
 const CASE_STUDIES: CaseStudy[] = [
   {
-    id: 'tricolite',
+    id: 'customer-b',
     category: 'Manufacturing',
-    company: 'Tricolite Electrical',
-    logo: 'TE',
+    company: 'Customer B',
+    logo: 'CB',
     industry: 'Electronics manufacturing',
     title: 'Achieved 14% annual profit increase by automating multi-currency RfQs and sourcing workflows',
     metrics: [
@@ -42,10 +42,10 @@ const CASE_STUDIES: CaseStudy[] = [
     visual: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80'
   },
   {
-    id: 'varroc',
+    id: 'customer-c',
     category: 'Automotive',
-    company: 'Varroc Engineering',
-    logo: 'VE',
+    company: 'Customer C',
+    logo: 'CC',
     industry: 'Automotive components',
     title: 'Enabled 18x ROI within the first year by automating complex landed cost calculations',
     metrics: [
@@ -57,10 +57,10 @@ const CASE_STUDIES: CaseStudy[] = [
     visual: 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?auto=format&fit=crop&q=80'
   },
   {
-    id: 'sahasra',
+    id: 'customer-a',
     category: 'Electronics',
-    company: 'Sahasra Electronics',
-    logo: 'SE',
+    company: 'Customer A',
+    logo: 'CA',
     industry: 'Semiconductor manufacturing',
     title: 'Streamlined manual quoting workflows into a high-speed automated multi-currency process',
     metrics: [

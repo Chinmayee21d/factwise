@@ -3,7 +3,6 @@
 import * as React from "react"
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Header } from '@/components/ui/header-2'
 import { motion } from 'framer-motion'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
 
@@ -359,10 +358,10 @@ export default function SolutionsHero() {
               }}><IcLayers/></div>
             </div>
             {[
-              {name:'Apex Industrial',  price:'$45,890', win:true},
-              {name:'Meridian Mfg.',    price:'$46,420'},
-              {name:'Toraq Components', price:'$47,180'},
-              {name:'Helix Supply Co.', price:'$49,210', dim:true},
+              {name:'Vendor A', price:'$45,890', win:true},
+              {name:'Vendor B', price:'$46,420'},
+              {name:'Vendor C', price:'$47,180'},
+              {name:'Vendor D', price:'$49,210', dim:true},
             ].map((v,i)=>(
               <div key={v.name} style={{
                 display:'flex', justifyContent:'space-between', alignItems:'center',

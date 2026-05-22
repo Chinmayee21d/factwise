@@ -1,10 +1,8 @@
 import React from 'react';
-import { Header } from "@/components/ui/header-2";
 
 export default function HeaderDemo() {
 	return (
 		<div className="w-full bg-[#0a0a0c] text-white">
-			<Header />
 
 			<main className="mx-auto min-h-screen w-full max-w-3xl px-4 py-32">
 				<div  className="space-y-4 mb-8">

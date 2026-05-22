@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -8,56 +8,56 @@ import {
   useSpring,
 } from "framer-motion";
 import {
-  CircleDollarSign,
-  Bell,
-  Sparkles,
-  MessageSquare,
-  Share2,
-  Lock,
-} from "lucide-react";
+  AnimatedBotIcon,
+  AnimatedTrendingUpIcon,
+  AnimatedZapIcon,
+  AnimatedSearchCheckIcon,
+  AnimatedBrainCircuitIcon,
+  AnimatedLightbulbIcon,
+} from "@/components/ui/animated-icons";
 
 /* ─── Feature data ─── */
 const features = [
   {
-    icon: CircleDollarSign,
-    title: "Custom Currency Conversions",
+    icon: AnimatedBotIcon,
+    title: "AI-Powered BOM Structuring. Zero Manual Work.",
     description:
-      "Quote in any currency. Buy in yours. Custom exchange rates applied automatically across every vendor, every item, every event.",
+      "Upload any BOM in any format — FactWise's AI cleans, structures, and fills every gap automatically. No reformatting. No manual entry.",
     href: "#",
   },
   {
-    icon: Bell,
-    title: "Automated Reminders",
+    icon: AnimatedTrendingUpIcon,
+    title: "Quote More. Win More.",
     description:
-      "Never chase a vendor again. Set reminder schedules once — FactWise follows up automatically until every response is in.",
+      "Automate the heavy lifting so your team spends less time building quotes and more time sending them. More quotes out. More deals in.",
     href: "#",
   },
   {
-    icon: Sparkles,
-    title: "FactWise Recommended",
+    icon: AnimatedZapIcon,
+    title: "Cut Your Quoting Cycle by 50%.",
     description:
-      "Not sure which bid to shortlist? FactWise analyses every bid against your criteria and recommends the best option — so every award decision is backed by data, not instinct.",
+      "From customer inquiry to winning quote — in days, not weeks. Every step automated, every bottleneck eliminated.",
     href: "#",
   },
   {
-    icon: MessageSquare,
-    title: "Event Chat",
+    icon: AnimatedSearchCheckIcon,
+    title: "Source Faster. Negotiate Using AI.",
     description:
-      "Every conversation tied to the event it belongs to. Message vendors, loop in teammates, and keep every discussion in context — right where the decision is being made.",
+      "Auto-selected vendors, pre-filled target prices, and AI-powered negotiations — your sourcing event is live before anyone else has opened their inbox.",
     href: "#",
   },
   {
-    icon: Share2,
-    title: "Instant Sharing",
+    icon: AnimatedBrainCircuitIcon,
+    title: "AI Powered Analytics. Insights That Think For You.",
     description:
-      "Share events, quotes, and analytics with anyone — internally or externally — in one click. No downloads, no attachments, no back and forth.",
+      "AI-powered analytics agents surface the insights that matter — best bids, hidden costs, margin risks — so every award decision is backed by intelligence, not instinct.",
     href: "#",
   },
   {
-    icon: Lock,
-    title: "Customizable Permissions",
+    icon: AnimatedLightbulbIcon,
+    title: "Intelligent Costing. Always One Step Ahead.",
     description:
-      "Control exactly who sees what. Set permissions by role, entity, or workflow — so every user has access to what they need and nothing they don't.",
+      "Historical PO rates, contract prices, distributor data — all surfaced automatically at the line item level before a single RFQ goes out.",
     href: "#",
     comingSoon: false,
   },
@@ -72,7 +72,7 @@ function FeatureCard({
   comingSoon,
   index,
 }: {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ isHovered: boolean }>;
   title: string;
   description: string;
   href: string;
@@ -80,6 +80,7 @@ function FeatureCard({
   index: number;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Raw mouse position (relative to card)
   const mouseX = useMotionValue(-200);
@@ -108,7 +109,11 @@ function FeatureCard({
     <motion.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        handleMouseLeave();
+        setIsHovered(false);
+      }}
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
@@ -161,10 +166,7 @@ function FeatureCard({
               aria-hidden
               className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/70 to-transparent transition-transform duration-[900ms] ease-out"
             />
-            <Icon
-              className="size-[22px] relative z-10 transition-transform duration-500 group-hover:scale-110"
-              strokeWidth={1.7}
-            />
+            <Icon isHovered={isHovered} />
           </div>
           {/* Subtle dashed orbit ring on hover */}
           <span

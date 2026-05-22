@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Header } from '@/components/ui/header-2';
 import { PricingSection } from '@/components/ui/pricing';
 import CTASection from '@/components/CTASection';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
@@ -162,7 +161,6 @@ export default function PricingPage() {
 
 	return (
 		<main className="min-h-screen bg-[#f6f9fc] selection:bg-[#3666ff]/20 selection:text-[#000000] overflow-x-hidden">
-			<Header />
 
 			{/* ── Environment ────────────────────────────── */}
 			<div className="fixed inset-0 z-0">

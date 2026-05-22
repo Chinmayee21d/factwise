@@ -2,7 +2,6 @@
 
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Header } from '@/components/ui/header-2';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
 import {
   Zap,
@@ -35,7 +34,6 @@ export default function PlatformHub() {
 
   return (
     <main ref={containerRef} className="bg-[#f6f9fc] text-[#000000] min-h-screen relative overflow-hidden">
-      <Header />
 
       {/* Hero Section */}
       <section className="relative pt-40 pb-32 px-6 flex flex-col items-center justify-center text-center">

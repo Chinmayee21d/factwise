@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from '@/components/ui/header-2';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
 import { CheckCircle2, ArrowRight, Loader2, Sparkles, Shield, Globe, Zap } from 'lucide-react';
 
@@ -24,7 +23,6 @@ export default function DemoPage() {
     return (
       <main className="bg-[#f6f9fc] text-[#000000] min-h-screen flex flex-col relative overflow-hidden">
         <div className="absolute inset-0 noise-bg opacity-[0.05] pointer-events-none" />
-        <Header />
         <div className="flex-1 flex items-center justify-center px-6 relative z-10">
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -58,7 +56,6 @@ export default function DemoPage() {
     <main className="bg-[#f6f9fc] text-[#000000] min-h-screen flex flex-col relative">
       <div className="absolute inset-0 noise-bg opacity-[0.05] pointer-events-none" />
       <div className="absolute inset-0 dot-grid opacity-[0.3] pointer-events-none" />
-      <Header />
       
       <div className="flex-1 flex flex-col lg:flex-row pt-32 lg:pt-0 relative z-10">
         {/* Left: Form */}

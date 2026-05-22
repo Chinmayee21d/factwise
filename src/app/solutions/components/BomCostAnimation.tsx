@@ -100,7 +100,7 @@ const PARTS_FOCUS: FocusPart = {
     { src: 'Distributor', val: 131, sub: 'Electronic Manufacturer',  color: '#0ea5e9' },
     { src: 'Past PO',     val: 118, sub: 'PO-2024-3312 · Mar',   color: '#10b981' },
     { src: 'Quote',       val: 125, sub: 'Vendor C · 14 days',   color: '#f59e0b' },
-    { src: 'Contract',    val: 119, sub: 'MSA · Sahasra Co.',    color: '#8b5cf6' },
+    { src: 'Contract',    val: 119, sub: 'MSA · Vendor A',       color: '#8b5cf6' },
   ],
   bestIdx: 1,
 };
@@ -141,24 +141,24 @@ const L2: BOMNode[] = [
 const L3: BOMNode[] = [
   { id: 's31', level: 3, sku: 'PRT-S31', name: 'Forged Shaft', qty: 1, x: 10, y: 83, parent: 'g21' },
   { id: 's32', level: 3, sku: 'PRT-S32', name: 'Spline Coupling', qty: 2, x: 60, y: 83, parent: 'g23' },
+  { id: 's33', level: 3, sku: 'PRT-S33', name: 'Inner Race 28mm', qty: 8, x: 90, y: 83, parent: 'g23' },
 ];
 
 const NODES: BOMNode[] = [ROOT, ...L1, ...L2, ...L3];
 const NODE_BY_ID: Record<string, BOMNode> =
   NODES.reduce((acc, n) => { acc[n.id] = n; return acc; }, {} as Record<string, BOMNode>);
 
-interface DiffChange { id: string; fromLabel: string; toLabel: string; delta: number }
+interface DiffChange { id: string; item: string; fromLabel: string; toLabel: string; delta: string }
 const DIFF_CHANGES: DiffChange[] = [
-  { id: 'A2',  fromLabel: 'Control Board v2', toLabel: 'Control Board v3',  delta: 30 },
-  { id: 'A2b', fromLabel: 'Capacitor 6 EA',   toLabel: 'Capacitor 8 EA',     delta:  2 },
-  { id: 'A3',  fromLabel: 'Brass Impeller',   toLabel: 'Stainless Impeller', delta: 14 },
+  { id: 'L08', item: 'Control Board', fromLabel: 'Need-by · Sep 12', toLabel: 'Need-by · Sep 28', delta: '+16 d' },
+  { id: 'L11', item: 'Power Module',  fromLabel: 'Unit · $128',      toLabel: 'Unit · $148',      delta: '+$20'  },
 ];
 
 const NARRATIVE: Record<number, string> = {
-  1: 'Drop any BOM — Excel, CSV, or supplier spec — and FactWise auto-detects parent-child hierarchy, units of measure, and approved alternates. Six lines across three tiers parsed in seconds. No template, no manual remapping, no copy-paste from supplier sheets.',
-  2: 'Your BOM lives as a tree, not a flat list. Sub-assemblies nest naturally and every approved alternate sits alongside the primary part on the same line — ready to swap in if a vendor falls short, with no rebuilding required.',
-  3: 'Four price sources auto-match to every component — current distributor rates, your historical POs, recent quotes, and active contracts. The lowest defensible price wins and rolls up to a should-cost you can take into any sourcing event.',
-  4: 'Every revision is versioned and diffed. Compare v1 against v2 side-by-side, see exactly which parts changed and by how much, and surface the dollar impact before approving — no spreadsheet detective work, no surprises downstream.',
+  1: 'Build complex multi-level BOMs across multiple finished goods in a single import — FactWise auto-detects hierarchy, units, and approved alternates in seconds.',
+  2: 'Approved alternates sit alongside the primary part on every line — ready to swap in the moment a vendor falls short, with no rebuilding required.',
+  3: 'Four price sources — distributor rates, past POs, historical quotes, and contract prices — surface at the line item level before a single RFQ goes out.',
+  4: 'Ask our AI any question about your BOM costs — revisions, alternates, what-if scenarios — and get an instant answer. No analyst, no digging through spreadsheets.',
 };
 
 /* ============ Styles ============ */
@@ -168,7 +168,7 @@ const BOM_STYLE = `
   border: 1px solid rgba(15,23,42,0.08); padding: 14px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-between;
-  user-select: none; height: 600px; min-height: 600px; max-height: 600px;
+  user-select: none; height: 534px; min-height: 534px; max-height: 534px;
 }
 .bom-top { padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; }
 .bom-top .left { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -258,7 +258,7 @@ const BOM_STYLE = `
 @keyframes bs-heroRing { 0% { transform: scale(0.92); opacity: 0.8; } 100% { transform: scale(1.18); opacity: 0; } }
 
 /* Scene 3: Cost */
-.s3-wrap { height: 100%; display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+.s3-wrap { height: 100%; display: flex; flex-direction: column; gap: 12px; padding: 14px 14px 78px; }
 .s3-part { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
 .s3-part .L { display: flex; align-items: center; gap: 11px; }
 .s3-part .pico { width: 36px; height: 36px; border-radius: 99px; background: #eff4ff; color: #3666ff; display: grid; place-items: center; }
@@ -267,19 +267,17 @@ const BOM_STYLE = `
 .s3-part .R { font-size: 9.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; text-align: right; }
 .s3-part .R b { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0f172a; }
 .s3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; }
-.s3-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 11px 13px; position: relative; opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
+.s3-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 9px 12px; position: relative; opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
 .s3-card.in { opacity: 1; transform: translateY(0); }
 .s3-card.best { border-color: rgba(0,184,132,0.5); box-shadow: 0 6px 20px rgba(0,184,132,0.15); }
-.s3-card .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.s3-card .src { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+.s3-card .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.s3-card .src { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
 .s3-card .srcdot { width: 7px; height: 7px; border-radius: 50%; }
 .s3-card .star { color: #00b884; opacity: 0; transition: opacity .3s ease; }
 .s3-card.best .star { opacity: 1; }
-.s3-card .val { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.025em; line-height: 1; }
+.s3-card .val { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: #0f172a; letter-spacing: -0.025em; line-height: 1; }
 .s3-card.best .val { color: #047857; }
-.s3-card .sub { font-size: 10px; color: #94a3b8; margin-top: 5px; font-weight: 500; }
-.s3-card .bar { margin-top: 8px; height: 4px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
-.s3-card .bar .fill { height: 100%; border-radius: 99px; transform-origin: left; transform: scaleX(0); animation: bom-bar .7s cubic-bezier(.22,1,.36,1) forwards; animation-delay: .3s; }
+.s3-card .sub { font-size: 9.5px; color: #94a3b8; margin-top: 3px; font-weight: 500; }
 .s3-foot { background: linear-gradient(135deg, #ecfdf5, #f0fdfa); border: 1px solid #6ee7b7; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .4s ease; }
 .s3-foot.in { opacity: 1; transform: translateY(0); }
 .s3-foot .L { display: flex; align-items: center; gap: 10px; }
@@ -289,7 +287,7 @@ const BOM_STYLE = `
 .s3-foot .R { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 800; color: #047857; letter-spacing: -0.025em; }
 
 /* Scene 4: Diff */
-.s4-wrap { height: 100%; display: flex; flex-direction: column; padding: 14px; gap: 11px; }
+.s4-wrap { height: 100%; display: flex; flex-direction: column; padding: 14px 14px 78px; gap: 11px; }
 .s4-head { display: flex; align-items: center; gap: 10px; padding: 0 4px; }
 .s4-head .col-l, .s4-head .col-r { flex: 1; display: flex; align-items: center; gap: 8px; }
 .s4-head .col-r { padding-left: 36px; }
@@ -325,7 +323,7 @@ const BOM_STYLE = `
 
 .bom-narrative { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; align-items: flex-start; gap: 11px; padding: 12px 14px; background: white; border: 1px solid rgba(15,23,42,0.08); border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); z-index: 20; animation: bom-popIn .45s cubic-bezier(.22,1,.36,1) both; }
 .bom-narrative .pdot { width: 7px; height: 7px; border-radius: 50%; background: #3666ff; margin-top: 5px; flex-shrink: 0; animation: bom-pulse 1.6s ease-in-out infinite; }
-.bom-narrative .ntext { font-size: 12px; font-weight: 600; color: #475569; line-height: 1.55; text-align: left; }
+.bom-narrative .ntext { font-size: 11px; font-weight: 500; color: #64748b; line-height: 1.55; text-align: left; }
 
 .bom-foot-ctl { padding-top: 12px; margin-top: 8px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; font-size: 10px; }
 .bom-foot-ctl .L { display: flex; align-items: center; gap: 8px; }
@@ -558,7 +556,7 @@ export default function BomCostAnimation({
             <span className="tt">{meta.title}</span>
           </div>
           <div className="R">
-            {currentStep >= 2 && <span><b>6</b> lines · <b>3</b> tiers · <b>2</b> alts</span>}
+            {currentStep >= 2 && <span><b>7</b> lines · <b>3</b> tiers · <b>2</b> alts</span>}
           </div>
         </div>
 
@@ -589,7 +587,7 @@ export default function BomCostAnimation({
                   ? 'Any format — Excel, CSV, supplier spec. Multi-level, alternates and revisions all handled.'
                   : s1Phase === 2
                   ? 'Detecting hierarchy, units of measure, alternates and revision history…'
-                  : 'Six lines parsed across three tiers — two approved alternates detected and linked at the line level.'}
+                  : 'Seven lines parsed across three tiers — two approved alternates detected and linked at the line level.'}
               </div>
               {s1Phase === 2 && <div className="s1-progress"><div className="fill" /></div>}
             </div>
@@ -689,8 +687,6 @@ export default function BomCostAnimation({
               {PARTS_FOCUS.prices.map((p, i) => {
                 const visible = s3Cards > i;
                 const isBest = s3Best && i === PARTS_FOCUS.bestIdx;
-                const maxVal = Math.max(...PARTS_FOCUS.prices.map(x => x.val));
-                const w = (p.val / maxVal).toFixed(3);
                 return (
                   <div key={p.src} className={'s3-card ' + (visible ? 'in ' : '') + (isBest ? 'best' : '')}>
                     <div className="head">
@@ -702,9 +698,6 @@ export default function BomCostAnimation({
                     </div>
                     <div className="val">${p.val}</div>
                     <div className="sub">{p.sub}</div>
-                    <div className="bar">
-                      {visible && <div className="fill" style={{ background: p.color, transform: `scaleX(${w})` }} />}
-                    </div>
                   </div>
                 );
               })}
@@ -732,14 +725,14 @@ export default function BomCostAnimation({
                 <div key={d.id} className={'s4-row ' + (s4Rows > i ? 'in' : '')} style={{ transitionDelay: `${i * 60}ms` }}>
                   <div className="s4-card from">
                     <div className="nm">{d.fromLabel}</div>
-                    <div className="sm">{d.id} · v1</div>
+                    <div className="sm">{d.item} · v1</div>
                   </div>
                   <div className="s4-arrow"><div className="ac"><BI.Arrow s={11} /></div></div>
                   <div className="s4-card to">
                     <div className="nm">{d.toLabel}</div>
-                    <div className="sm">{d.id} · v2</div>
+                    <div className="sm">{d.item} · v2</div>
                   </div>
-                  <div className="s4-delta">+${d.delta}</div>
+                  <div className="s4-delta">{d.delta}</div>
                 </div>
               ))}
             </div>

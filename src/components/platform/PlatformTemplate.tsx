@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Header } from '@/components/ui/header-2';
 import { FlickeringFooter } from '@/components/ui/flickering-footer';
 import { cn } from '@/lib/utils';
 import { Check, ArrowRight, X, ChevronRight, Zap } from 'lucide-react';
@@ -95,7 +94,6 @@ export default function PlatformTemplate({
 
   return (
     <main className="bg-[#f6f9fc] text-[#f4f4f5] min-h-screen selection:bg-[#3666ff]/30 selection:text-white font-sans overflow-x-hidden max-w-[1600px] mx-auto">
-      <Header />
       
       {/* ── Hero Section (Aligned with Pipe Moodboard) ── */}
       <section className="relative pt-48 pb-20 overflow-hidden min-h-[85vh] flex flex-col justify-center border-b border-white/[0.05]">

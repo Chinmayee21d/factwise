@@ -48,33 +48,33 @@ const TAP_SPRING = {
 /* ── Data ────────────────────────────────────────── */
 const caseStudies: FocusRailItem[] = [
     {
-        id: "tricolite",
+        id: "customer-b",
         meta: "Electronics Manufacturing",
-        title: "Tricolite",
+        title: "Customer B",
         description: "Achieved 14% annual profit increase by automating multi-currency RfQs and complex turnkey sourcing workflows.",
         imageSrc: "/electronics_ems_factory_1778230909138.png",
         href: "#"
     },
     {
-        id: "varroc",
+        id: "customer-c",
         meta: "Automotive Components",
-        title: "Varroc Engineering",
+        title: "Customer C",
         description: "Enabled 15x–20x ROI within the first year by automating landed cost calculations and improving compliance across ₹1,000 Cr spend.",
         imageSrc: "/automotive_engineering_varroc_1778230925155.png",
         href: "#"
     },
     {
-        id: "bkt",
+        id: "customer-d",
         meta: "Tyre Manufacturing",
-        title: "BKT (Balkrishna Tyres)",
+        title: "Customer D",
         description: "Eliminated value leakage across global markets by standardizing best practices and integrating real-time commodity price intelligence.",
         imageSrc: "/tyre_manufacturing_bkt_1778230941928.png",
         href: "#"
     },
     {
-        id: "sahasra",
+        id: "customer-a",
         meta: "Semiconductors",
-        title: "Sahasra",
+        title: "Customer A",
         description: "Streamlined previously manual, error-prone quoting workflows into a high-speed, automated multi-currency process.",
         imageSrc: "/semiconductor_cleanroom_sahasra_1778230959517.png",
         href: "#"

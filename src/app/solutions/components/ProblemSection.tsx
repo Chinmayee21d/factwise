@@ -60,11 +60,11 @@ function BOMComplexityWidget({ isHovered }: { isHovered: boolean }) {
                         className="overflow-hidden space-y-1 border-t border-slate-100 pt-1 text-[8.5px]"
                     >
                         <div className="flex items-center justify-between text-emerald-700 bg-emerald-50/60 px-1 py-0.5 rounded border border-emerald-100/50">
-                            <span>↳ GigaDevice (Alt)</span>
+                            <span>↳ Vendor B (Alt)</span>
                             <span className="font-mono text-[8px] font-semibold">$2.10</span>
                         </div>
                         <div className="flex items-center justify-between text-slate-500 px-1">
-                            <span>↳ NXP (Alt)</span>
+                            <span>↳ Vendor C (Alt)</span>
                             <span className="font-mono text-[8px]">$2.85</span>
                         </div>
                     </motion.div>
@@ -203,7 +203,7 @@ function VendorCommWidget({ isHovered }: { isHovered: boolean }) {
             {/* Header */}
             <div className="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
                 <span className="text-[8.5px] font-mono text-slate-400 font-bold uppercase tracking-wider">
-                    RFQ: Sahasra Sales
+                    RFQ: Vendor A
                 </span>
                 <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 font-semibold flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
@@ -215,7 +215,7 @@ function VendorCommWidget({ isHovered }: { isHovered: boolean }) {
             <div className="space-y-1.5 my-2">
                 <div className="bg-white p-1.5 rounded border border-slate-100 shadow-3xs text-[8.5px]">
                     <div className="flex justify-between text-slate-400 font-bold mb-0.5">
-                        <span>✉️ To: Sahasra Sales</span>
+                        <span>✉️ To: Vendor A</span>
                         <span>4 days ago</span>
                     </div>
                     <p className="text-slate-600 truncate leading-tight font-medium">
@@ -225,7 +225,7 @@ function VendorCommWidget({ isHovered }: { isHovered: boolean }) {
 
                 <div className="bg-white p-1.5 rounded border border-slate-100 shadow-3xs text-[8.5px]">
                     <div className="flex justify-between text-slate-400 font-bold mb-0.5">
-                        <span>✉️ To: Sahasra Sales</span>
+                        <span>✉️ To: Vendor A</span>
                         <span className="text-red-500 font-bold flex items-center gap-0.5">
                             ⏰ Overdue
                         </span>
@@ -279,7 +279,7 @@ function VendorCommWidget({ isHovered }: { isHovered: boolean }) {
                     </div>
 
                     <div className="bg-slate-50 border border-slate-200/60 px-2 py-1 rounded flex items-center justify-between text-emerald-600 font-bold shadow-3xs">
-                        <span>Sahasra status:</span>
+                        <span>Vendor A status:</span>
                         <span className="text-[8.5px] bg-emerald-50 border border-emerald-200 px-1.5 rounded animate-pulse">
                             ✉️ Bid Locked ($8.15)
                         </span>
@@ -320,7 +320,7 @@ function HiddenCostsWidget({ isHovered }: { isHovered: boolean }) {
                         <div className="text-[7.5px] text-slate-400 font-bold uppercase tracking-wider">
                             Supplier
                         </div>
-                        <div className="text-[8.5px] font-bold text-slate-600">GlobalParts Inc</div>
+                        <div className="text-[8.5px] font-bold text-slate-600">Vendor A</div>
                     </div>
                 </div>
             </div>
@@ -479,32 +479,32 @@ const problems: ProblemItem[] = [
         number: "01",
         emoji: "🔴",
         title: "BOM & Pricing Complexity",
-        subtitle: "You can't price what you don't fully understand.",
-        description: "Multi-level BOMs built manually with no version control or price visibility. Without access to historical PO rates, target prices are guesses — leading to lost deals or erased margins before you even quote."
+        subtitle: "Complex BOMs, Costs You Can't See.",
+        description: "Multi-level BOMs managed by hand — no version control, no cost visibility. Without past POs, contracts, or market rates, target pricing becomes guesswork."
     },
     {
         id: "vendor-comm",
         number: "02",
         emoji: "🟡",
         title: "Vendor Communication",
-        subtitle: "Sourcing runs on emails nobody tracks.",
-        description: "RFQs sent over email, follow-ups that go unanswered, responses scattered across inboxes — by the time all vendor bids are in, days have passed and half the data is missing."
+        subtitle: " Sourcing runs on emails nobody tracks.",
+        description: "RFQs over email, follow-ups unanswered, responses scattered across inboxes — days pass before bids land, and half the data is missing."
     },
     {
         id: "hidden-costs",
         number: "03",
         emoji: "🔵",
         title: "Hidden Costs",
-        subtitle: "The cheapest bid is not always the cheapest purchase.",
-        description: "Unit price comparisons miss duties, freight, insurance, and packaging. Without true landed cost visibility, teams award on the wrong number — and the margin gap shows up only after the PO is issued."
+        subtitle: " The cheapest bid is not always the cheapest purchase.",
+        description: "Unit-price comparisons miss duty, freight, insurance, packaging. Award on the wrong number and the margin gap only surfaces after the PO ships."
     },
     {
         id: "manual-quoting",
         number: "04",
         emoji: "🟣",
         title: "Manual Quoting",
-        subtitle: "Customer quotes built on gut feel.",
-        description: "Pulling numbers from emails, applying markups in spreadsheets, rolling up BOM costs manually — one error and the margin is gone. One delay and the deal is gone."
+        subtitle: "A quote built on gut feel is a margin you're giving away.",
+        description: "Numbers pulled from emails, markups in spreadsheets, BOMs rolled up by hand. One error costs the margin. One delay costs the deal."
     }
 ];
 
@@ -598,10 +598,6 @@ export default function ProblemSection() {
                             Where Most Manufacturers <br />
                             <span className="text-[#3666ff]">Lose Time and Money.</span>
                         </h2>
-
-                        <p className="text-[17px] md:text-[18px] text-slate-400 max-w-2xl font-normal leading-[1.65]" style={{ fontFamily: 'var(--font-inter)' }}>
-                            Legacy spreadsheets and fragmented email chains create blind spots at every step. Here's why the traditional procurement cycle leaks margin.
-                        </p>
                     </div>
 
                     {/* Desktop horizontal navigation arrows */}
@@ -675,11 +671,8 @@ export default function ProblemSection() {
                             {/* Card See Solution Transition Footer */}
                             <div className="pt-3 border-t border-slate-100 relative z-10">
                                 <div className="relative h-5 overflow-hidden">
-                                    {/* Default State */}
-                                    <div className="absolute inset-0 flex items-center justify-between transition-all duration-300 transform group-hover:-translate-y-full group-hover:opacity-0">
-                                        <span className="text-[9px] font-bold tracking-wider font-mono text-slate-400">
-                                            LEAKING VALUE
-                                        </span>
+                                    {/* Default State — just the accent dot, right-aligned */}
+                                    <div className="absolute inset-0 flex items-center justify-end transition-all duration-300 transform group-hover:-translate-y-full group-hover:opacity-0">
                                         <span className="h-1.5 w-1.5 rounded-full bg-[#3666ff]/80" />
                                     </div>
 

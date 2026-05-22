@@ -17,10 +17,10 @@ interface BidDetail {
   q: number;
   /** Per-piece quote in the vendor's native currency — shown before normalisation. */
   qNative: number;
-  /** Duty, freight, insurance in INR (per piece). */
+  /** Duty, insurance, packaging in INR (per piece). */
   d: number;
-  f: number;
   i: number;
+  p: number;
 }
 
 interface Bidder {
@@ -55,6 +55,11 @@ const RAI = {
       <polyline points="20 6 9 17 4 12" />
     </svg>
   ),
+  Sparkle: ({ s }: SvgProps) => (
+    <svg viewBox="0 0 24 24" width={s || 10} height={s || 10} fill="currentColor">
+      <path d="M12 3l1.8 4.4L18.4 9 13.8 10.6 12 15l-1.8-4.4L5.6 9l4.6-1.6L12 3zM19 14l.9 2.2 2.2.9-2.2.9L19 19.2 18.1 17l-2.2-.9 2.2-.9L19 14zM5 14l.9 2.2 2.2.9-2.2.9L5 19.2 4.1 17l-2.2-.9 2.2-.9L5 14z"/>
+    </svg>
+  ),
   Play: ({ s }: SvgProps) => (
     <svg viewBox="0 0 24 24" width={s || 12} height={s || 12} fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
   ),
@@ -78,22 +83,22 @@ const FX_EUR_INR = 90.5;
 
 const RA_BIDS: Record<string, Bidder> = {
   A: {
-    fx: 'INR', flag: 'IN', name: 'Sahasra Electronics',
+    fx: 'INR', flag: 'IN', name: 'Vendor A',
     // Domestic vendor — native = INR, so qNative === q. Minimal landed add-ons.
-    L1: { q: 1240, qNative: 1240, d: 0, f: 60, i: 18 },
-    L2: { q: 920,  qNative: 920,  d: 0, f: 45, i: 14 },
+    L1: { q: 1240, qNative: 1240, d: 0, i: 18, p: 22 },
+    L2: { q: 920,  qNative: 920,  d: 0, i: 14, p: 18 },
   },
   B: {
-    fx: 'USD', flag: 'CN', name: 'Pearl River Mfg',
-    // Native USD quote × FX 83 ≈ INR. Heavy duty/freight/insurance burden.
-    L1: { q: 1180, qNative: 14.22, d: 248, f: 325, i: 62 },
-    L2: { q:  880, qNative: 10.60, d: 186, f: 240, i: 48 },
+    fx: 'USD', flag: 'CN', name: 'Vendor B',
+    // Native USD quote × FX 83 ≈ INR. Heavy duty/insurance/packaging burden.
+    L1: { q: 1180, qNative: 14.22, d: 248, i: 62, p: 58 },
+    L2: { q:  880, qNative: 10.60, d: 186, i: 48, p: 44 },
   },
   C: {
-    fx: 'EUR', flag: 'DE', name: 'EuroDrive GmbH',
+    fx: 'EUR', flag: 'DE', name: 'Vendor C',
     // Native EUR quote × FX 90.5 ≈ INR. Moderate landed add-ons.
-    L1: { q: 1290, qNative: 14.25, d: 148, f: 210, i: 44 },
-    L2: { q:  960, qNative: 10.61, d: 112, f: 158, i: 34 },
+    L1: { q: 1290, qNative: 14.25, d: 148, i: 44, p: 38 },
+    L2: { q:  960, qNative: 10.61, d: 112, i: 34, p: 30 },
   },
 };
 
@@ -147,29 +152,43 @@ const RA_STYLE = `
 .ra-tok.on.amber  { background: #fef6e7; color: #b45309; border-color: #fde3ad; }
 .ra-tok.on.violet { background: #f3f0ff; color: #6d28d9; border-color: #ddd5ff; }
 .ra-tok.on.cyan   { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
+.ra-tok.on.rose   { background: #fff1f3; color: #be123c; border-color: #fecdd3; }
 .ra-crumb .plus { color: #cbd5e1; font-weight: 700; }
 .ra-crumb .norm { margin-left: 4px; font-size: 9px; color: #94a3b8; font-family: 'Inter', system-ui, sans-serif; font-weight: 500; }
 .ra-grid { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; position: relative; }
 .ra-ghead { display: grid; grid-template-columns: 1.3fr repeat(3, 1fr); background: #f8fafc; border-bottom: 1px solid #e2e8f0; position: relative; z-index: 10; }
-.ra-ghead > div { padding: 9px 12px; text-align: center; border-left: 1px solid #e2e8f0; }
-.ra-ghead > div:first-child { text-align: left; border-left: none; padding-left: 14px; }
-.ra-ghead .vCol { display: flex; flex-direction: column; gap: 2px; align-items: center; transition: background .35s ease, color .35s ease; position: relative; z-index: 10; }
+.ra-ghead > div { padding: 7px 8px; text-align: center; border-left: 1px solid #e2e8f0; }
+.ra-ghead > div:first-child { text-align: left; border-left: none; padding-left: 12px; }
+.ra-ghead .vCol { display: flex; flex-direction: column; gap: 1px; align-items: center; transition: background .35s ease, color .35s ease; position: relative; z-index: 10; }
 .ra-ghead .vCol.naive { background: #eff4ff; }
 .ra-ghead .vCol.true  { background: #ecfdf5; }
 .ra-ghead .vCol.scanning { background: rgba(54,102,255,0.08); }
 .ra-ghead .vCol.awarded { background: #ecfdf5; animation: ra-awardedPop .5s cubic-bezier(.34,1.56,.64,1) both; }
-.ra-ghead .vCol .vMain { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; color: #334155; }
+.ra-ghead .vCol .vMain { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.01em; color: #334155; }
 .ra-ghead .vCol.naive .vMain { color: #1e40af; }
 .ra-ghead .vCol.true  .vMain { color: #047857; }
 .ra-ghead .vCol.awarded .vMain { color: #047857; }
 .ra-ghead .vCol .vFlag { width: 15px; height: 15px; border-radius: 3px; background: #e2e8f0; color: #64748b; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8px; display: grid; place-items: center; font-weight: 800; letter-spacing: 0; }
 .ra-ghead .vCol .vFx { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8px; letter-spacing: 0.04em; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
+.ra-ghead .vCol .vCat {
+  margin-top: 2px; font-size: 7px; font-weight: 800; letter-spacing: 0.05em;
+  text-transform: uppercase; padding: 1.5px 5px; border-radius: 99px;
+  border: 1px solid transparent; opacity: 0; transform: translateY(-2px);
+  transition: opacity .4s ease, transform .4s ease;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+.ra-ghead .vCol .vCat.in { opacity: 1; transform: translateY(0); animation: ra-catPop .45s cubic-bezier(.34,1.56,.64,1) both; }
+.ra-ghead .vCol .vCat.competitive   { background: #ecfdf5; color: #047857; border-color: #6ee7b7; }
+.ra-ghead .vCol .vCat.noncomp       { background: #fef6e7; color: #b45309; border-color: #fde3ad; }
+.ra-ghead .vCol .vCat.excluded      { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; text-decoration: line-through; }
+@keyframes ra-catPop { 0% { opacity: 0; transform: translateY(-4px) scale(0.85); } 60% { opacity: 1; transform: translateY(0) scale(1.06); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 .ra-grow { display: grid; grid-template-columns: 1.3fr repeat(3, 1fr); border-bottom: 1px solid #f1f5f9; }
 .ra-grow.in { animation: ra-rowIn .38s cubic-bezier(.22,1,.36,1) both; }
-.ra-liCell { padding: 10px 14px; display: flex; align-items: center; gap: 9px; text-align: left; }
-.ra-liCell .leaf { width: 7px; height: 7px; border-radius: 50%; background: #3666ff; flex-shrink: 0; }
-.ra-liCell .liName { font-size: 12px; font-weight: 700; color: #1e293b; line-height: 1.25; letter-spacing: -0.01em; }
-.ra-liCell .liQty  { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8.5px; color: #94a3b8; font-weight: 600; margin-top: 1px; letter-spacing: 0.04em; }
+.ra-liCell { padding: 9px 12px; display: flex; align-items: center; gap: 8px; text-align: left; }
+.ra-liCell .leaf { width: 6px; height: 6px; border-radius: 50%; background: #3666ff; flex-shrink: 0; }
+.ra-liCell .liName { font-size: 10.5px; font-weight: 700; color: #1e293b; line-height: 1.2; letter-spacing: -0.005em; }
+.ra-liCell .liQty  { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 8px; color: #94a3b8; font-weight: 600; margin-top: 1px; letter-spacing: 0.04em; }
 .ra-bid { padding: 8px 12px; border-left: 1px solid #f1f5f9; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-height: 88px; transition: background .35s ease; }
 .ra-bid.naive { background: rgba(239,244,255,0.5); }
 .ra-bid.true  { background: rgba(236,253,245,0.5); }
@@ -178,9 +197,9 @@ const RA_STYLE = `
 .ra-bid .line { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; animation: ra-pop .38s cubic-bezier(.34,1.56,.64,1) both; }
 .ra-bid .line.base { font-size: 11.5px; font-weight: 700; color: #334155; letter-spacing: -0.01em; }
 .ra-bid .line.duty { font-size: 9px; font-weight: 600; color: #b45309; }
-.ra-bid .line.frt  { font-size: 9px; font-weight: 600; color: #6d28d9; }
 .ra-bid .line.ins  { font-size: 9px; font-weight: 600; color: #0e7490; }
-.ra-bid .line .lbl { opacity: 0.55; font-size: 8.5px; }
+.ra-bid .line.pkg  { font-size: 9px; font-weight: 600; color: #be123c; }
+.ra-bid .line .lbl { opacity: 0.65; font-size: 8.5px; font-family: 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: 0; }
 .ra-bid .tot { margin-top: auto; padding-top: 5px; border-top: 1px dashed #e2e8f0; font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 800; font-size: 10.5px; color: #1e293b; width: 100%; text-align: right; letter-spacing: -0.01em; }
 .ra-bid.naive .tot { color: #1e40af; }
 .ra-bid.true  .tot { color: #047857; }
@@ -205,7 +224,20 @@ const RA_STYLE = `
 .ra-awardedOverlay { position: absolute; top: 0; bottom: 0; width: 33.33%; left: 0; background: rgba(34,197,94,0.12); border-left: 3px solid #22c55e; border-right: 3px solid #22c55e; border-radius: 0; pointer-events: none; z-index: 1; animation: ra-awardedPop .6s cubic-bezier(.34,1.56,.64,1) both; }
 @keyframes ra-awardedPop { 0% { opacity: 0; transform: scaleY(0.92); } 60% { opacity: 1; transform: scaleY(1.02); } 100% { opacity: 1; transform: scaleY(1); } }
 .ra-awardedBadge { position: absolute; top: -14px; left: 0; width: 33.33%; display: flex; justify-content: center; animation: ra-pop .5s cubic-bezier(.34,1.56,.64,1) .3s both; pointer-events: none; z-index: 10; }
-.ra-awardedBadge .ab-inner { background: #15803d; color: white; font-size: 8px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 99px; box-shadow: 0 4px 12px rgba(21,128,61,0.4); display: flex; align-items: center; gap: 5px; }
+.ra-awardedBadge .ab-inner {
+  background: linear-gradient(135deg, #3666ff 0%, #1d4ed8 60%, #15803d 100%);
+  color: white; font-size: 8px; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
+  box-shadow: 0 6px 14px rgba(54,102,255,0.45), 0 0 0 3px rgba(54,102,255,0.12);
+  display: flex; align-items: center; gap: 5px;
+  position: relative; overflow: hidden;
+}
+.ra-awardedBadge .ab-inner::after {
+  content: ''; position: absolute; inset: -50%;
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+  animation: ra-shimmer 2.2s linear infinite;
+}
+@keyframes ra-shimmer { 0% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
 
 /* ── Narrative card ── */
 .ra-narrative {
@@ -218,7 +250,7 @@ const RA_STYLE = `
 }
 @keyframes ra-narrativeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .ra-pulsingDot { width: 6px; height: 6px; border-radius: 50%; background: #3666ff; margin-top: 5px; flex-shrink: 0; animation: ra-pulse 1.6s ease-in-out infinite; }
-.ra-narrativeText { font-size: 11.5px; font-weight: 600; color: #475569; line-height: 1.55; text-align: left; }
+.ra-narrativeText { font-size: 10.5px; font-weight: 500; color: #64748b; line-height: 1.55; text-align: left; }
 @keyframes ra-fadeIn   { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes ra-rowIn    { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes ra-pop      { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -290,11 +322,13 @@ export default function RfqAnalyticsAnimation({
 
     async function run() {
       while (!cancelRef.current) {
+        // ── reset ─────────────────────────────────────────────
         setLocalPhase(0); setLocalPopulated(0); setLocalLayers(0);
         setLocalShowTrue(false); setLocalWinner(null); setLocalScanCol(0);
         onPhaseChangeRef.current?.(0);
         await sleep(900);
 
+        // ── STEP 1: vendor bids arrive (native currencies) ────
         if (cancelRef.current) return;
         setLocalPhase(1); onPhaseChangeRef.current?.(1);
         for (let i = 1; i <= RA_LI.length; i++) {
@@ -302,31 +336,29 @@ export default function RfqAnalyticsAnimation({
           setLocalPopulated(i); await sleep(350);
         }
         await sleep(500);
-
         if (cancelRef.current) return;
         setLocalPhase(2); setLocalWinner('B'); onPhaseChangeRef.current?.(2);
-        await sleep(2200);
+        await sleep(2000);
 
+        // ── STEP 2: custom landed cost formula auto-applied ───
         if (cancelRef.current) return;
-        setLocalPhase(3); onPhaseChangeRef.current?.(3); await sleep(900);
-
+        setLocalPhase(3); onPhaseChangeRef.current?.(3); await sleep(800);
+        // 3 layers: Duty, Insurance, Packaging
         for (let l = 1; l <= 3; l++) {
           if (cancelRef.current) return;
-          setLocalLayers(l); setLocalPhase(3 + l); onPhaseChangeRef.current?.(3 + l); await sleep(1000);
+          setLocalLayers(l); setLocalPhase(3 + l); onPhaseChangeRef.current?.(3 + l); await sleep(900);
         }
-
         if (cancelRef.current) return;
         setLocalShowTrue(true); setLocalPhase(7); onPhaseChangeRef.current?.(7); await sleep(1700);
 
+        // ── STEP 3: vendor performance categorisation ─────────
         if (cancelRef.current) return;
-        setLocalPhase(8); onPhaseChangeRef.current?.(8);
-        setLocalScanCol(3); await sleep(850);
+        setLocalPhase(8); onPhaseChangeRef.current?.(8); await sleep(2200);
+
+        // ── STEP 4: AI recommends best bid ────────────────────
         if (cancelRef.current) return;
-        setLocalScanCol(2); await sleep(850);
-        if (cancelRef.current) return;
-        setLocalScanCol(1); await sleep(850);
-        if (cancelRef.current) return;
-        setLocalScanCol(4); setLocalWinner('A'); await sleep(5500);
+        setLocalPhase(9); onPhaseChangeRef.current?.(9);
+        setLocalScanCol(4); setLocalWinner('A'); await sleep(5000);
       }
     }
 
@@ -352,24 +384,29 @@ export default function RfqAnalyticsAnimation({
     else if (controlledPhase === 5) { activePopulated=2; activeLayers=2; activeShowTrue=false; activeWinner='B'; }
     else if (controlledPhase === 6) { activePopulated=2; activeLayers=3; activeShowTrue=false; activeWinner='B'; }
     else if (controlledPhase === 7) { activePopulated=2; activeLayers=3; activeShowTrue=true;  activeWinner='B'; }
-    else if (controlledPhase >= 8)  { activePopulated=2; activeLayers=3; activeShowTrue=true;  activeWinner='A'; activeScanCol=4; }
+    else if (controlledPhase === 8) { activePopulated=2; activeLayers=3; activeShowTrue=true;  activeWinner='B'; }
+    else if (controlledPhase >= 9)  { activePopulated=2; activeLayers=3; activeShowTrue=true;  activeWinner='A'; activeScanCol=4; }
   }
 
   const totalAtLayer = (k: string) => {
     let t = raSumQuote(k);
     const bid = RA_BIDS[k];
     if (activeLayers >= 1) t += RA_LI.reduce((s, li) => s + (bid[li.id] as BidDetail).d, 0);
-    if (activeLayers >= 2) t += RA_LI.reduce((s, li) => s + (bid[li.id] as BidDetail).f, 0);
-    if (activeLayers >= 3) t += RA_LI.reduce((s, li) => s + (bid[li.id] as BidDetail).i, 0);
+    if (activeLayers >= 2) t += RA_LI.reduce((s, li) => s + (bid[li.id] as BidDetail).i, 0);
+    if (activeLayers >= 3) t += RA_LI.reduce((s, li) => s + (bid[li.id] as BidDetail).p, 0);
     return t;
   };
 
   const getActiveMenuStep = (): number => {
     if (!isAuto && activeMenuStep !== null) return activeMenuStep;
+    // Step 1: vendor bids arrive (phases 1-2)
     if (activePhase >= 1 && activePhase <= 2) return 1;
-    if (activePhase === 3) return 2;
-    if (activePhase >= 4 && activePhase <= 6) return 3;
-    if (activePhase >= 7 && activePhase <= 8) return 4;
+    // Step 2: custom landed cost formula auto-applied (phases 3-7)
+    if (activePhase >= 3 && activePhase <= 7) return 2;
+    // Step 3: vendor performance categorisation (phase 8)
+    if (activePhase === 8) return 3;
+    // Step 4: AI Recommended best bid (phase 9+)
+    if (activePhase >= 9) return 4;
     return 0;
   };
 
@@ -378,13 +415,13 @@ export default function RfqAnalyticsAnimation({
     const step = getActiveMenuStep();
     switch (step) {
       case 1:
-        return 'Your suppliers submit bids in their native currencies — INR from domestic vendors, USD and EUR from overseas. At face value the overseas quotes look competitive. But comparing raw unit prices across different currencies is how teams consistently overpay — the full cost of a bid only becomes clear once every add-on is accounted for.';
+        return 'Vendors quote in their native currencies — USD, EUR, INR. On raw unit price the overseas bids look most competitive, but that hides every add-on yet to come.';
       case 2:
-        return 'FactWise instantly normalises all quotes to a single currency (INR) using live mid-market treasury rates. With raw bids on equal footing, Pearl River ($14.22 USD → ₹1,180) appears to be the lowest quote, but this doesn\'t account for cross-border logistics overhead.';
+        return 'Your custom landed cost formula auto-applies — duty, freight, insurance, packaging — and every bid is normalised to your currency. True cost surfaces in seconds.';
       case 3:
-        return 'FactWise layers each foreign bid with its real landed costs — import duty classified by HSN code, freight charges along the actual shipping corridor, and marine insurance. Domestic suppliers carry zero duty and minimal freight. Every cost component is itemised on the same line so you can see exactly what is driving each vendor\'s true price.';
+        return 'Every vendor gets categorised against your criteria — competitive, non-competitive, or excluded — so you see at a glance who is actually in play.';
       case 4:
-        return 'With every cost visible and every currency normalised, the true winner is clear. The vendor that appeared cheapest on paper is no longer the lowest once duty, freight, and insurance are added. FactWise locks the optimal bid automatically and surfaces the saving so you can award with complete confidence.';
+        return 'FactWise Recommended Analytics scans every bid and highlights the best per item based on your criteria — every award decision backed by intelligence, not instinct.';
       default:
         return 'FactWise is computing true landed costs across all vendor bids — layering duties, freight, and insurance, then normalising to a single currency so every comparison is on equal footing.';
     }
@@ -393,7 +430,7 @@ export default function RfqAnalyticsAnimation({
   const step = getActiveMenuStep();
 
   return (
-    <div className="relative rounded-3xl bg-white border border-slate-200/80 p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col justify-between select-none" style={{ height: '578px', minHeight: '578px', maxHeight: '578px' }}>
+    <div className="relative rounded-3xl bg-white border border-slate-200/80 p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col justify-between select-none" style={{ height: '514px', minHeight: '514px', maxHeight: '514px' }}>
 
       {/* Top Chrome Bar */}
       <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
@@ -416,44 +453,52 @@ export default function RfqAnalyticsAnimation({
       <div ref={bodyRef} className="ra-body">
 
         {/* Breadcrumb */}
-        {activePhase >= 1 && activePhase < 9 && (
+        {activePhase >= 1 && (
           <div className="min-h-[1.5rem] flex items-center py-0.5">
             {activePhase >= 3 ? (
               <div className="ra-crumb">
-                <span>Landed =</span>
+                <span>Total =</span>
                 <span className="ra-tok on slate">Quote</span>
                 <span className="plus">+</span>
                 <span className={'ra-tok ' + (activeLayers >= 1 ? 'on amber' : '')}>Duty</span>
                 <span className="plus">+</span>
-                <span className={'ra-tok ' + (activeLayers >= 2 ? 'on violet' : '')}>Shipping</span>
+                <span className={'ra-tok ' + (activeLayers >= 2 ? 'on cyan' : '')}>Insurance</span>
                 <span className="plus">+</span>
-                <span className={'ra-tok ' + (activeLayers >= 3 ? 'on cyan' : '')}>Insurance</span>
+                <span className={'ra-tok ' + (activeLayers >= 3 ? 'on rose' : '')}>Packaging</span>
                 <span className="norm">· → INR @ {FX_USD_INR}/{FX_EUR_INR}</span>
               </div>
             ) : (
-              <div className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Baseline Ingestion Matrix</div>
+              <div className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">Vendor Bids · Mixed Currencies</div>
             )}
           </div>
         )}
 
         {/* Matrix Grid */}
-        {activePhase >= 1 && activePhase < 9 && (
+        {activePhase >= 1 && (
           <div className="ra-grid">
             <div className="ra-ghead font-mono">
               <div className="text-left font-sans text-slate-400 pl-3">Line item</div>
               {RA_KEYS.map((k) => {
                 let cls = activeWinner === k ? (activeWinner === 'A' ? 'true' : 'naive') : '';
-                if (activePhase === 8 && activeScanCol > 0 && activeScanCol < 4) {
-                  if (RA_KEYS.indexOf(k) + 1 === activeScanCol) cls += ' scanning';
-                }
-                if (activePhase === 8 && activeScanCol === 4 && k === 'A') cls += ' awarded';
+                if (activePhase >= 9 && activeScanCol === 4 && k === 'A') cls += ' awarded';
+                // Category labels appear from phase 8 onwards (Step 3 — categorise)
+                const showCat = activePhase >= 8;
+                const catCls =
+                  k === 'A' ? 'competitive' :
+                  k === 'C' ? 'noncomp'    :
+                  'excluded';
+                const catLbl =
+                  k === 'A' ? 'Competitive' :
+                  k === 'C' ? 'Non-Comp'    :
+                  'Excluded';
                 return (
                   <div key={k} className={'vCol ' + cls}>
                     <div className="vMain font-bold">
                       <span className="vFlag font-bold text-[8.5px]">{RA_BIDS[k].flag}</span>
-                      <span>V·{k}</span>
+                      <span>Vendor {k}</span>
                     </div>
                     <span className="vFx text-[8px] font-semibold">{RA_BIDS[k].fx}</span>
+                    <span className={`vCat ${catCls} ${showCat ? 'in' : ''}`}>{catLbl}</span>
                   </div>
                 );
               })}
@@ -474,10 +519,7 @@ export default function RfqAnalyticsAnimation({
                     const c = RA_BIDS[k][li.id] as BidDetail;
                     const isWin = activeWinner === k;
                     let cls = isWin ? (activeWinner === 'A' ? 'true' : 'naive') : '';
-                    if (activePhase === 8 && activeScanCol > 0 && activeScanCol < 4) {
-                      if (RA_KEYS.indexOf(k) + 1 === activeScanCol) cls += ' scanning';
-                    }
-                    if (activePhase === 8 && activeScanCol === 4 && k === 'A') cls += ' awarded';
+                    if (activePhase >= 9 && activeScanCol === 4 && k === 'A') cls += ' awarded';
                     // Add-ons (duty/freight/insurance) are quoted in INR. While no add-ons
                     // are layered yet, show the quote in the vendor's native currency.
                     // Once any add-on appears, normalise the quote to INR so we never mix
@@ -486,13 +528,16 @@ export default function RfqAnalyticsAnimation({
                     const baseDisplay = showNative
                       ? raFormatPrice(c.qNative, k, true)
                       : raFormatPrice(c.q, k, false);
-                    const tot = c.q + (activeLayers >= 1 ? c.d : 0) + (activeLayers >= 2 ? c.f : 0) + (activeLayers >= 3 ? c.i : 0);
+                    const tot = c.q
+                      + (activeLayers >= 1 ? c.d : 0)
+                      + (activeLayers >= 2 ? c.i : 0)
+                      + (activeLayers >= 3 ? c.p : 0);
                     return (
                       <div key={k} className={'ra-bid ' + cls}>
                         <span className="line base">{baseDisplay}</span>
-                        {activeLayers >= 1 && c.d > 0 && <span className="line duty"><span className="lbl">+D </span>{raInr(c.d)}</span>}
-                        {activeLayers >= 2 && <span className="line frt"><span className="lbl">+F </span>{raInr(c.f)}</span>}
-                        {activeLayers >= 3 && <span className="line ins"><span className="lbl">+I </span>{raInr(c.i)}</span>}
+                        {activeLayers >= 1 && c.d > 0 && <span className="line duty"><span className="lbl">Duty </span>{raInr(c.d)}</span>}
+                        {activeLayers >= 2 && <span className="line ins"><span className="lbl">Insurance </span>{raInr(c.i)}</span>}
+                        {activeLayers >= 3 && <span className="line pkg"><span className="lbl">Packaging </span>{raInr(c.p)}</span>}
                         {activeLayers > 0 && <div className="tot">{raFormatPrice(tot, k, false)}</div>}
                       </div>
                     );
@@ -506,19 +551,19 @@ export default function RfqAnalyticsAnimation({
                 <div className="lbl text-slate-500 font-bold flex items-center gap-1.5 pl-3">
                   <span className="truncate">
                     {activePhase <= 2
-                      ? 'Quote total · qty 200 · native'
+                      ? 'Quote total · qty 200'
                       : activeShowTrue
-                        ? 'True landed · qty 200 · INR'
-                        : 'Landed cost · qty 200 · INR'}
+                        ? 'Total cost · qty 200 · INR'
+                        : 'Running total · qty 200 · INR'}
                   </span>
                 </div>
                 {RA_KEYS.map((k) => {
                   const isWin = activeWinner === k;
                   let cls = isWin ? (activeWinner === 'A' ? 'true' : 'naive') : '';
-                  if (activePhase === 8 && activeScanCol > 0 && activeScanCol < 4) {
+                  if (activePhase >= 10 && activeScanCol > 0 && activeScanCol < 4) {
                     if (RA_KEYS.indexOf(k) + 1 === activeScanCol) cls += ' scanning';
                   }
-                  if (activePhase === 8 && activeScanCol === 4 && k === 'A') cls += ' awarded';
+                  if (activePhase >= 9 && activeScanCol === 4 && k === 'A') cls += ' awarded';
                   const showNative = activePhase <= 2;
                   const t = showNative ? raSumNativeQuote(k) : totalAtLayer(k);
                   return (
@@ -526,7 +571,7 @@ export default function RfqAnalyticsAnimation({
                       <div className="v">{raFormatPrice(t * 200, k, showNative)}</div>
                       {isWin && (
                         <div className="winTag flex items-center gap-1 font-extrabold uppercase">
-                          {activeWinner === 'A' ? <><RAI.Trophy s={9} /><span>True winner</span></> : <span>Lowest quote</span>}
+                          {activeWinner === 'A' ? <><RAI.Sparkle s={9} /><span>AI Pick</span></> : <span>Lowest quote</span>}
                         </div>
                       )}
                     </div>
@@ -535,20 +580,12 @@ export default function RfqAnalyticsAnimation({
               </div>
             )}
 
-            {/* Scan overlay */}
-            {activePhase === 8 && activeScanCol > 0 && activeScanCol < 4 && (
-              <div className="ra-scanOverlay" style={{
-                left: activeScanCol === 3 ? 'calc(30.2% + 46.5%)' : activeScanCol === 2 ? 'calc(30.2% + 23.3%)' : '30.2%',
-                width: '23.3%'
-              }} />
-            )}
-
-            {/* Awarded overlay */}
-            {activePhase === 8 && activeScanCol === 4 && (
+            {/* AI Recommended overlay — single clean pop on the winning column */}
+            {activePhase >= 9 && activeScanCol === 4 && (
               <>
                 <div className="ra-awardedOverlay" style={{ left: '30.2%', width: '23.3%' }} />
                 <div className="ra-awardedBadge" style={{ left: '30.2%', width: '23.3%' }}>
-                  <div className="ab-inner"><RAI.Check s={8} /><span>AWARDED</span></div>
+                  <div className="ab-inner"><RAI.Sparkle s={9} /><span>AI Recommended</span></div>
                 </div>
               </>
             )}

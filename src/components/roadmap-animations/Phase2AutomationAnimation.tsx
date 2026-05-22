@@ -167,11 +167,11 @@ const P2_CSS = `
 `;
 
 const VENDORS = [
-  { id: "v1", name: "Vertex Mfg",      code: "VM", x: 10, y: 38 },
-  { id: "v2", name: "PrimeForge Co.",  code: "PF", x: 10, y: 80 },
-  { id: "v3", name: "TitanSupply",     code: "TS", x: 50, y: 92 },
-  { id: "v4", name: "Apex Industrial", code: "AI", x: 90, y: 80 },
-  { id: "v5", name: "BoltWorks Inc.",  code: "BW", x: 90, y: 38 },
+  { id: "v1", name: "Vendor A", code: "VA", x: 10, y: 38 },
+  { id: "v2", name: "Vendor B", code: "VB", x: 10, y: 80 },
+  { id: "v3", name: "Vendor C", code: "VC", x: 50, y: 92 },
+  { id: "v4", name: "Vendor D", code: "VD", x: 90, y: 80 },
+  { id: "v5", name: "Vendor E", code: "VE", x: 90, y: 38 },
 ];
 const RFQ_X = 50, RFQ_Y = 14;
 
@@ -183,11 +183,11 @@ const SCHEDULE = [
 ];
 
 const QUOTES = [
-  { code: "PF", name: "PrimeForge Co.",  price: 18.42, lead: "12 d" },
-  { code: "VM", name: "Vertex Mfg",      price: 19.10, lead: "10 d" },
-  { code: "AI", name: "Apex Industrial", price: 19.85, lead: "14 d" },
-  { code: "BW", name: "BoltWorks Inc.",  price: 20.40, lead: "9 d"  },
-  { code: "TS", name: "TitanSupply",     price: 21.20, lead: "11 d" },
+  { code: "VA", name: "Vendor A", price: 18.42, lead: "12 d" },
+  { code: "VB", name: "Vendor B", price: 19.10, lead: "10 d" },
+  { code: "VC", name: "Vendor C", price: 19.85, lead: "14 d" },
+  { code: "VD", name: "Vendor D", price: 20.40, lead: "9 d"  },
+  { code: "VE", name: "Vendor E", price: 21.20, lead: "11 d" },
 ];
 
 const APPROVAL_STEPS = [
