@@ -226,7 +226,7 @@ export default function IntegrationsShowcase() {
                 <path d="M 730,64  V 150" />
                 <path d="M 334,186 V 270 H 468" />
                 <path d="M 730,186 V 270 H 594" />
-                <path d="M 132,270 H 234" />
+                <path d="M 132,270 H 172" />
                 <path d="M 392,270 H 468" />
                 <path d="M 594,270 H 670" />
                 <path d="M 832,270 H 876" />
@@ -268,29 +268,29 @@ export default function IntegrationsShowcase() {
                 {
                   x: 12,
                   y: 222,
-                  front: { bg: "#312E81", label: "X", tc: "#a5b4fc", fs: 20, fw: "400" },
-                  back: { bg: "#0052CC", label: "JR", tc: "#ffffff", fs: 16, fw: "700" },
+                  front: { bg: "#0066B2", label: "SAP", tc: "#ffffff", fs: 14, fw: "700" },
+                  back: { bg: "#1A1A1A", label: "NS", tc: "#ffffff", fs: 16, fw: "700" },
                   delay: "0s"
                 },
                 {
                   x: 68,
                   y: 222,
-                  front: { bg: "#065F46", label: "↑", tc: "#6EE7B7", fs: 22, fw: "400" },
-                  back: { bg: "#FF7A59", label: "HS", tc: "#ffffff", fs: 16, fw: "700" },
+                  front: { bg: "#00A1E0", label: "SF", tc: "#ffffff", fs: 16, fw: "700" },
+                  back: { bg: "#0078D4", label: "D365", tc: "#ffffff", fs: 12, fw: "700" },
                   delay: "0.3s"
                 },
                 {
                   x: 12,
                   y: 278,
-                  front: { bg: "#991B1B", label: "RC", tc: "#FCA5A5", fs: 13, fw: "700" },
-                  back: { bg: "#4A154B", label: "SL", tc: "#ffffff", fs: 16, fw: "700" },
+                  front: { bg: "#CC0000", label: "DK", tc: "#ffffff", fs: 16, fw: "700" },
+                  back: { bg: "#003DA5", label: "MO", tc: "#ffffff", fs: 16, fw: "700" },
                   delay: "0.6s"
                 },
                 {
                   x: 68,
                   y: 278,
-                  front: { bg: "#5B21B6", label: "▶", tc: "#DDD6FE", fs: 18, fw: "400" },
-                  back: { bg: "#635BFF", label: "ST", tc: "#ffffff", fs: 16, fw: "700" },
+                  front: { bg: "#1B5E20", label: "OC", tc: "#ffffff", fs: 16, fw: "700" },
+                  back: { bg: "#4A154B", label: "SL", tc: "#ffffff", fs: 16, fw: "700" },
                   delay: "0.9s"
                 }
               ].map(({ x, y, front, back, delay }, i) => (
@@ -328,24 +328,24 @@ export default function IntegrationsShowcase() {
                 </foreignObject>
               ))}
 
-              {/* ── TOP ROW (cy=64) ── */}
+              {/* ── TOP ROW (cy=64) — Inputs that feed FactWise's 3 workflows ── */}
               <Pill x={158} y={64} w={68}  label="ERP" />
               <Pill x={248} y={64} w={72}  label="CRM" />
-              <Pill x={338} y={64} w={128} label="Subscriptions" />
-              <Pill x={490} y={64} w={130} label="Legacy billing" />
-              <Pill x={648} y={64} w={152} label="Booking system" />
+              <Pill x={338} y={64} w={128} label="BOM / Parts" />
+              <Pill x={490} y={64} w={130} label="Inventory" />
+              <Pill x={648} y={64} w={152} label="Supplier Network" />
 
-              {/* ── MIDDLE ROW (cy=168) ── */}
-              <Pill x={296}  y={168} w={76}  label="SDK" />
-              <Pill x={636}  y={168} w={188} label="Event Destinations" />
+              {/* ── MIDDLE ROW (cy=168) — How things plug in ── */}
+              <Pill x={296}  y={168} w={76}  label="API / MCP" />
+              <Pill x={636}  y={168} w={188} label="Notifications" />
 
-              {/* ── MAIN ROW (cy=270) ── */}
-              <Pill x={234}  y={270} w={158} label="App Marketplace ↗" />
+              {/* ── MAIN ROW (cy=270) — The S2P hub ── */}
+              <Pill x={172}  y={270} w={220} label="Custom AI Agent Marketplace ↗" />
 
               {/* CENTER HUB — FactWise */}
               <Pill x={456} y={270} w={148} h={76} rx={18} label="FactWise" large />
 
-              <Pill x={670}  y={270} w={162} label="Data Pipeline" />
+              <Pill x={670}  y={270} w={162} label="Analytics" />
 
               {/* Snowflake-style icon */}
               <g className="anim-node" style={{ cursor: "default" }}>
@@ -367,13 +367,13 @@ export default function IntegrationsShowcase() {
                 <circle cx={906} cy={270} r={3.5} fill="#3666ff" pointerEvents="none" />
               </g>
 
-              {/* ── ORCHESTRATION (cy=370) ── */}
-              <Pill x={468} y={370} w={124} label="Orchestration" />
+              {/* ── ORCHESTRATION (cy=370) — FactWise's AI generates 3 outputs ── */}
+              <Pill x={468} y={370} w={124} label="AI Workflows" />
 
-              {/* ── PSP × 3 (cy=456) ── */}
-              <Pill x={410} y={456} w={68} label="PSP" />
-              <Pill x={496} y={456} w={68} label="PSP" />
-              <Pill x={582} y={456} w={68} label="PSP" />
+              {/* ── 3 FactWise modules (cy=456) — Quote / PO / Pay ── */}
+              <Pill x={410} y={456} w={68} label="Quote" />
+              <Pill x={496} y={456} w={68} label="PO" />
+              <Pill x={582} y={456} w={68} label="Payment" />
             </svg>
           </div>
         </div>
