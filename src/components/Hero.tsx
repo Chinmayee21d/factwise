@@ -56,7 +56,7 @@ export default function Hero() {
           muted
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
-          src="/factwise-hero.mp4"
+          src="/factwise-hero.mp4.mov"
         />
 
         {/* Noise overlay — inline data URI, no external fetch */}

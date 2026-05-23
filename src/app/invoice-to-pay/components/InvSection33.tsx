@@ -29,21 +29,21 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
     const goManual = (p: number) => { setIsAuto(false); setPhase(p); };
 
     const steps = [
-        { p: 1, title: 'Inspection lot staged · 500u inbound' },
-        { p: 2, title: 'Primary QC · visual & dimensional' },
-        { p: 3, title: 'Secondary QC · functional pass' },
-        { p: 4, title: 'Production-line QC · final inline gate' },
-        { p: 5, title: 'AI reconciles QC vs GR · credits computed' },
+        { p: 1, title: 'GR lot staged — all three QC checkpoints ready' },
+        { p: 2, title: 'Primary QC — visual and dimensional checks recorded on platform' },
+        { p: 3, title: 'Secondary QC — functional tests logged with full attachment support' },
+        { p: 4, title: 'Production-line QC — final gate before warehouse clearance' },
+        { p: 5, title: 'AI reconciles QC against GR — credit auto-applied for every rejected unit' },
     ];
 
     const stages = [
-        { l: 'Primary', sub: 'Visual + dim', fired: phase >= 2, total: phase >= 2 ? 500 : 0, rej: phase >= 2 ? 12 : 0 },
-        { l: 'Secondary', sub: 'Functional', fired: phase >= 3, total: phase >= 3 ? 488 : 0, rej: phase >= 3 ? 6 : 0 },
-        { l: 'Production', sub: 'Inline · live', fired: phase >= 4, total: phase >= 4 ? 482 : 0, rej: phase >= 4 ? 2 : 0 },
+        { l: 'Primary', sub: 'Visual + dim', fired: phase >= 2, total: phase >= 2 ? 300 : 0, rej: phase >= 2 ? 12 : 0 },
+        { l: 'Secondary', sub: 'Functional', fired: phase >= 3, total: phase >= 3 ? 288 : 0, rej: phase >= 3 ? 6 : 0 },
+        { l: 'Production', sub: 'Inline · live', fired: phase >= 4, total: phase >= 4 ? 282 : 0, rej: phase >= 4 ? 2 : 0 },
     ];
 
     const totalRej = (phase >= 2 ? 12 : 0) + (phase >= 3 ? 6 : 0) + (phase >= 4 ? 2 : 0);
-    const passed = phase >= 4 ? 480 : phase >= 3 ? 482 : phase >= 2 ? 488 : 500;
+    const passed = phase >= 4 ? 280 : phase >= 3 ? 282 : phase >= 2 ? 288 : 300;
 
     return (
         <div id="inv-section-3-3" className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-40 scroll-mt-24">
@@ -70,7 +70,7 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
                     <span className="text-[#3666ff]">Nothing Slips Through.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Primary, secondary, and production-line inspections all happen on the platform — against any invoice or goods receipt, with full attachment support. AI reconciles QC outcomes against goods receipts automatically, so rejected items are tracked, actioned, and never paid for.
+                    Primary, secondary, and production-line checks — all on the platform, against any invoice or goods receipt, with full attachment support. FactWise's AI flags discrepancies between QC outcomes and the goods receipt automatically. Rejected items are tracked, actioned, and never paid for.
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 text-left">
@@ -126,7 +126,7 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[12px] font-bold text-slate-800 tracking-tight">Quality Pipeline</span>
                                 <span className="text-slate-300 text-[10px]">/</span>
-                                <span className="text-[11px] font-medium text-slate-500">GR-9241 · lot 500u</span>
+                                <span className="text-[11px] font-medium text-slate-500">GR-9241 · lot 300u</span>
                             </div>
                         </div>
                         <span className="text-[8.5px] font-mono font-bold uppercase tracking-wider px-2 py-[2px] rounded-full" style={{ background: 'rgba(54,102,255,0.08)', color: '#3666ff', border: '1px solid rgba(54,102,255,0.2)' }}>
@@ -146,7 +146,7 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
                                         <div key={i} style={{ aspectRatio: '1/1', borderRadius: 1, background: phase >= 1 ? '#3666ff' : '#cbd5e1' }} />
                                     ))}
                                 </div>
-                                <div style={{ fontSize: 9, fontWeight: 800, color: '#3666ff', fontFamily: "'JetBrains Mono',monospace", textAlign: 'center', marginTop: 3 }}>500u</div>
+                                <div style={{ fontSize: 9, fontWeight: 800, color: '#3666ff', fontFamily: "'JetBrains Mono',monospace", textAlign: 'center', marginTop: 3 }}>300u</div>
                             </div>
 
                             <div style={{ flex: 1, padding: '0 12px', position: 'relative' }}>
@@ -257,7 +257,7 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
                                     </div>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
                                         {[
-                                            { l: 'GR Received', v: '480u', c: '#0b1322' },
+                                            { l: 'GR Received', v: '300u', c: '#0b1322' },
                                             { l: 'QC Passed', v: `${passed}u`, c: '#059669' },
                                             { l: 'Total Rej', v: `${totalRej}u`, c: '#dc2626' },
                                             { l: 'Auto Credit', v: `₹${(totalRej * 240).toLocaleString('en-IN')}`, c: '#3666ff' },
@@ -274,7 +274,7 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
 
                         {/* Animated cursor */}
                         <FwCursor pose={
-                            phase === 1 ? { x: 12, y: 30, click: false, label: 'Lot · 500u staged' } :
+                            phase === 1 ? { x: 12, y: 30, click: false, label: 'Lot · 300u staged' } :
                             phase === 2 ? { x: 28, y: 42, click: true,  label: 'Primary QC · 12 rej' } :
                             phase === 3 ? { x: 52, y: 42, click: true,  label: 'Secondary QC · 6 rej' } :
                             phase === 4 ? { x: 78, y: 42, click: true,  label: 'Production · 2 rej', labelDir: 'bl' } :
@@ -293,10 +293,10 @@ export default function InvSection33({ isActive = true }: { isActive?: boolean }
                             >
                                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#3666ff', flexShrink: 0, animation: 'inv-pulse 1.4s infinite' }} />
                                 <span style={{ fontSize: 10.5, color: '#64748b', fontWeight: 600, lineHeight: 1.4 }}>
-                                    {phase === 1 ? 'A 500-unit lot is staged at the entry — all three QC gates idle, ready to inspect.' :
-                                        phase === 2 ? 'Primary QC fires — visual and dimensional checks · 12 units rejected at this stage.' :
-                                            phase === 3 ? 'Secondary QC runs — functional pass · 6 more units rejected.' :
-                                                phase === 4 ? 'Production-line QC — final inline gate · 2 last units rejected.' :
+                                    {phase === 1 ? 'A lot is staged at the entry — all three QC gates idle, ready to inspect.' :
+                                        phase === 2 ? 'Primary QC fires — visual and dimensional checks performed on the inbound lot.' :
+                                            phase === 3 ? 'Secondary QC runs — functional pass checks executed on surviving units.' :
+                                                phase === 4 ? 'Production-line QC — final inline gate check executed before warehouse clearance.' :
                                                     'AI reconciles QC outcomes against the goods receipt — credits computed automatically for the rejected qty.'}
                                 </span>
                             </motion.div>

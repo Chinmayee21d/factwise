@@ -19,47 +19,46 @@ import {
 /* ─── Feature data ─── */
 const features = [
   {
-    icon: AnimatedBotIcon,
-    title: "AI-Powered Requisition Intake. Zero Manual Entry.",
+    icon: AnimatedTrendingUpIcon,
+    title: "Increase Savings. Automatically.",
     description:
-      "Upload purchase requisitions in any format — PDF, Excel, email, or Slack screenshots. FactWise's AI automatically cleans, structures, and parses every line item into standard fields instantly.",
+      "Stop sourcing in silos. FactWise combines requisitions for the same item automatically — unlocking volume advantage and driving costs down before negotiations even begin.",
     href: "#",
   },
   {
     icon: AnimatedZapIcon,
-    title: "Direct ERP Live Sync. Zero Lag.",
+    title: "Procure Faster. Always.",
     description:
-      "Connect seamlessly with SAP, Oracle, NetSuite, or Microsoft Dynamics via FactWise API. Requisitions raised in your ERP sync automatically into FactWise in real time with no human intervention.",
+      "From first requisition to final PO in half the time — every bottleneck eliminated, every step automated.",
     href: "#",
   },
   {
-    icon: AnimatedTrendingUpIcon,
-    title: "Consolidated Demands. Maximize Savings.",
+    icon: AnimatedBotIcon,
+    title: "Negotiate Using AI. Pay Less.",
     description:
-      "FactWise auto-identifies matching items across different requisitions, departments, and projects. Consolidate separate orders into single sourcing events to unlock high-volume bulk discounts automatically.",
-    href: "#",
-  },
-  {
-    icon: AnimatedSearchCheckIcon,
-    title: "Instant RFQ Generation. Auto-Selected Vendors.",
-    description:
-      "Turn approved requisitions into active RFQs in under 60 seconds. Auto-select top vendors based on performance, capacity, and historical rates, and set auto-chasing reminders to collect responses faster.",
-    href: "#",
-  },
-  {
-    icon: AnimatedBrainCircuitIcon,
-    title: "True Landed Cost Analytics. Stop Guessing.",
-    description:
-      "Look beyond simple unit prices. FactWise's AI analyzes all bids, auto-calculating duties, international freight, local transport, packaging, and taxes to surface the true landed cost for every line item.",
+      "AI-powered auto-negotiations drive vendors to their best price automatically — without your team sending a single message.",
     href: "#",
   },
   {
     icon: AnimatedLightbulbIcon,
-    title: "One-Click PO Dispatch. Flawless Sync.",
+    title: "Automate Pricing. Always Accurate.",
     description:
-      "Instantly generate and dispatch accurate POs to multiple winning vendors with a single click. Every detail syncs back to your ERP automatically, preventing data entry errors and delivery delays.",
+      "Historical rates, contract prices, and market data surfaced automatically — so you always know the best price before you even start sourcing.",
     href: "#",
-    comingSoon: false,
+  },
+  {
+    icon: AnimatedSearchCheckIcon,
+    title: "Complete Visibility. Zero Surprises.",
+    description:
+      "Every requisition, every approval, every PO — tracked in real time from start to finish. Complete visibility across the entire procurement journey, always.",
+    href: "#",
+  },
+  {
+    icon: AnimatedBrainCircuitIcon,
+    title: "AI-Powered Efficiency. Every Step.",
+    description:
+      "From item import to vendor allocation — FactWise's AI handles the repetitive, time-consuming work automatically so your team focuses on decisions, not data entry.",
+    href: "#",
   },
 ];
 
@@ -122,7 +121,15 @@ function FeatureCard({
         delay: index * 0.08,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="group relative flex flex-col bg-white p-8 lg:p-9 overflow-hidden isolate transition-colors duration-300"
+      className="group relative flex flex-col bg-white p-8 lg:p-9 overflow-hidden isolate rounded-2xl border border-slate-200/70 shadow-[0_4px_24px_-14px_rgba(15,23,42,0.12)] transition-colors duration-300"
+      style={
+        index % 2 === 1
+          ? {
+              background:
+                "radial-gradient(circle at top left, rgba(54,102,255,0.13), transparent 48%), radial-gradient(circle at bottom right, rgba(54,102,255,0.13), transparent 48%), #ffffff",
+            }
+          : undefined
+      }
     >
       {/* Animated border glow — sits on the card edge using a mask */}
       <motion.div
@@ -217,7 +224,7 @@ function FeatureCard({
 /* ─── Main section ─── */
 export default function ReqToPoFeatures() {
   return (
-    <section className="relative w-full bg-[#fafbfc] py-28 overflow-hidden">
+    <section className="relative w-full bg-white py-28 overflow-hidden">
       {/* Decorative dot-grid background */}
       <div
         aria-hidden
@@ -254,16 +261,16 @@ export default function ReqToPoFeatures() {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-[#3666ff] opacity-75 animate-ping" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-[#3666ff]" />
               </span>
-              Engine Capabilities
+              Core Capabilities
             </motion.div>
 
             <h2
               className="text-[36px] md:text-[48px] font-semibold text-[#0D1117] mb-5 tracking-[-0.03em] leading-[1.1] max-w-2xl"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Intelligent Req-to-PO.{" "}
+              Powerful Features.{" "}
               <span className="text-[#3666ff]">
-                Automated at Every Turn.
+                Right Where You Need Them.
               </span>
             </h2>
 
@@ -271,7 +278,7 @@ export default function ReqToPoFeatures() {
               className="text-[17px] md:text-[18px] text-slate-400 max-w-2xl leading-[1.65] font-normal"
               style={{ fontFamily: "var(--font-inter)" }}
             >
-              Every tool your team needs to streamline requisitions, automate approvals, and generate flawless purchase orders — in record time.
+              Every tool your team needs to move faster and decide smarter — built into the flow, not bolted on.
             </p>
           </div>
 
@@ -309,7 +316,7 @@ export default function ReqToPoFeatures() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="relative grid grid-cols-1 md:grid-cols-3 gap-px bg-slate-200/70 border border-slate-200/70 rounded-2xl overflow-hidden shadow-[0_4px_40px_-12px_rgba(15,23,42,0.08)]"
+          className="relative grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {features.map((f, i) => (
             <FeatureCard key={f.title} {...f} index={i} />

@@ -29,11 +29,11 @@ export default function InvSection35({ isActive = true }: { isActive?: boolean }
     const goManual = (p: number) => { setIsAuto(false); setPhase(p); };
 
     const steps = [
-        { p: 1, title: 'Macro view · invoice just raised' },
-        { p: 2, title: 'Walk through GR · QC · validation' },
-        { p: 3, title: 'Payment Made · chain fully green' },
-        { p: 4, title: 'Line-item view · 4 parallel tracks' },
-        { p: 5, title: 'Click flagged event · audit drawer' },
+        { p: 1, title: 'Invoice raised — complete audit trail begins immediately' },
+        { p: 2, title: 'GR status, QC outcomes, and AI-flagged discrepancies — all visible' },
+        { p: 3, title: 'Payment made — every rupee accounted for, chain fully green' },
+        { p: 4, title: 'Line-item view — GR, QC, validation, and payment tracked in parallel' },
+        { p: 5, title: 'Click any flagged event — full audit drawer with evidence and history' },
     ];
 
     const milestones = [
@@ -79,7 +79,7 @@ export default function InvSection35({ isActive = true }: { isActive?: boolean }
                     <span className="text-[#3666ff]">From Invoice to Payment.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    From the moment an invoice is raised to the moment payment is made, every stakeholder sees GR status, QC outcomes, AI-flagged discrepancies, approvals, and payment history — all tracked at the line item level. No more chasing updates; every rupee accounted for, every step of the way.
+                    Every invoice, every GR, every QC outcome, every payment — tracked in real time from start to finish. GR status, AI-flagged discrepancies, approvals, and payment history all visible at the line item level. No more chasing updates. Every rupee accounted for, every step of the way.
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 text-left">

@@ -503,55 +503,83 @@ export default function BlogPage() {
     <main style={{ minHeight: "100vh", background: "#fff", fontFamily: "var(--font-inter), sans-serif" }}>
 
       {/* ── Hero ── */}
-      <div style={{ padding: "10vh 24px 56px", textAlign: "center", background: "#fff", paddingTop: "calc(10vh + 80px)" }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em]">
-            Blog
-          </div>
-        </div>
-        <h1 style={{
-          margin: "0 0 16px",
-          fontSize: "clamp(32px, 5vw, 52px)",
-          fontWeight: 800,
-          letterSpacing: "-0.03em",
-          lineHeight: 1.1,
-          color: "#0b1322",
-        }}>
-          Discover our latest insights
-        </h1>
-        <p style={{ margin: "0 auto 32px", fontSize: 16, lineHeight: 1.7, color: "#64748b", maxWidth: 560 }}>
-          Procurement strategies, industry trends, and expert guidance — everything you need to build a world-class sourcing operation.
-        </p>
-
-        {/* Search bar */}
-        <form onSubmit={handleSearch} style={{
-          display: "flex", maxWidth: 520, margin: "0 auto",
-          border: "1px solid rgba(15,23,42,0.14)", borderRadius: 10,
-          overflow: "hidden", boxShadow: "0 2px 12px -4px rgba(0,0,0,0.08)",
-        }}>
-          <div style={{ padding: "0 14px", display: "flex", alignItems: "center", background: "#fff" }}>
-            <Search size={15} color="#94a3b8" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search articles…"
-            value={query}
-            onChange={e => { setQuery(e.target.value); if (!e.target.value) setSubmitted(""); }}
-            style={{
-              flex: 1, border: "none", outline: "none",
-              fontSize: 14, color: "#334155", padding: "13px 0",
-              background: "#fff",
-            }}
+      <section className="relative flex flex-col items-center justify-center overflow-hidden bg-slate-950 px-6 pt-40 pb-24 text-center">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/procurement_team_collab_1778762496149.png"
+            alt="FactWise insights"
+            className="w-full h-full object-cover opacity-50 scale-105"
           />
-          <ShimmerButton
-            type="submit"
-            variant="primary"
-            className="rounded-none rounded-r-[10px] h-auto py-3 px-6 text-[14px]"
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/60 to-slate-950" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-8 shadow-sm"
           >
-            Find Now
-          </ShimmerButton>
-        </form>
-      </div>
+            Blog
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-white font-bold tracking-tighter leading-[1.05] mb-6"
+            style={{ fontSize: "clamp(34px, 5.5vw, 60px)" }}
+          >
+            Discover our latest insights
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="text-white/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-10 font-light"
+          >
+            Procurement strategies, industry trends, and expert guidance — everything you need to build a world-class sourcing operation.
+          </motion.p>
+
+          {/* Search bar */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            onSubmit={handleSearch}
+            style={{
+              display: "flex", maxWidth: 520, margin: "0 auto",
+              border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10,
+              overflow: "hidden", boxShadow: "0 8px 32px -8px rgba(0,0,0,0.5)",
+              background: "rgba(255,255,255,0.08)", backdropFilter: "blur(12px)",
+            }}
+          >
+            <div style={{ padding: "0 14px", display: "flex", alignItems: "center" }}>
+              <Search size={15} color="rgba(255,255,255,0.6)" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search articles…"
+              value={query}
+              onChange={e => { setQuery(e.target.value); if (!e.target.value) setSubmitted(""); }}
+              style={{
+                flex: 1, border: "none", outline: "none",
+                fontSize: 14, color: "#fff", padding: "13px 0",
+                background: "transparent",
+              }}
+              className="placeholder:text-white/50"
+            />
+            <ShimmerButton
+              type="submit"
+              variant="primary"
+              className="rounded-none rounded-r-[10px] h-auto py-3 px-6 text-[14px]"
+            >
+              Find Now
+            </ShimmerButton>
+          </motion.form>
+        </div>
+      </section>
 
       {/* ── Sticky Category Filter Bar ── */}
       <div style={{

@@ -29,27 +29,26 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
     const goManual = (p: number) => { setIsAuto(false); setPhase(p); };
 
     const steps = [
-        { p: 1, title: 'Delivery arrives at the dock' },
-        { p: 2, title: 'Tap each package · quantities tick live' },
-        { p: 3, title: 'Partial deliveries supported at line level' },
-        { p: 4, title: 'Damaged on arrival? Flagged on the spot' },
-        { p: 5, title: 'AI 3-way check · PO · Invoice · GR' },
+        { p: 2, title: 'GR created against any invoice or PO — attachments included' },
+        { p: 3, title: 'Received quantities recorded line by line — in real time' },
+        { p: 4, title: 'Short shipments and damaged goods flagged the moment they arrive' },
+        { p: 5, title: 'AI cross-checks GR against invoice and PO — mismatches surface instantly' },
     ];
 
     const boxState = (i: number): 'pending' | 'received' | 'damaged' => {
         if (phase <= 1) return 'pending';
         if (phase === 2) return i === 0 ? 'received' : 'pending';
-        if (phase === 3) return i <= 2 ? 'received' : 'pending';
-        if (phase === 4) return i <= 2 ? 'received' : i === 3 ? 'damaged' : 'pending';
-        return i <= 2 ? 'received' : i === 3 ? 'damaged' : 'received';
+        if (phase === 3) return (i === 0 || i === 1 || i === 4 || i === 5) ? 'received' : 'pending';
+        if (phase === 4) return (i === 0 || i === 1 || i === 4 || i === 5) ? 'received' : i === 3 ? 'damaged' : 'pending';
+        return i === 3 ? 'damaged' : 'received';
     };
-    const received = phase <= 1 ? 0 : phase === 2 ? 100 : phase === 3 ? 300 : phase === 4 ? 300 : 380;
+    const received = phase <= 1 ? 0 : phase === 2 ? 100 : phase === 3 ? 400 : phase === 4 ? 400 : 500;
     const damaged = phase >= 4 ? 100 : 0;
     const pending = 600 - received - damaged;
 
     const lines = [
-        { sku: 'BRK-M8-304', name: 'Steel Bracket M8', ordered: 400, inv: 380, rcvd: received, dmg: damaged, st: phase >= 4 ? 'short' : phase >= 2 ? 'partial' : 'pending' },
-        { sku: 'BRK-M6-201', name: 'Steel Bracket M6', ordered: 200, inv: 200, rcvd: phase >= 3 ? 200 : phase >= 2 ? 80 : 0, dmg: 0, st: phase >= 3 ? 'ok' : phase >= 2 ? 'partial' : 'pending' },
+        { sku: 'BRK-M8-304', name: 'Steel Bracket M8', ordered: 400, inv: 380, rcvd: phase <= 1 ? 0 : phase === 2 ? 100 : phase === 3 ? 200 : phase === 4 ? 200 : 300, dmg: damaged, st: phase >= 4 ? 'short' : phase >= 2 ? 'partial' : 'pending' },
+        { sku: 'BRK-M6-201', name: 'Steel Bracket M6', ordered: 200, inv: 200, rcvd: phase >= 3 ? 200 : 0, dmg: 0, st: phase >= 3 ? 'ok' : 'pending' },
     ];
 
     return (
@@ -91,7 +90,7 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
 
                     {/* Stage */}
                     <div className="relative flex-1 mt-3" style={{ background: '#fbfcfe', borderRadius: 16, border: '1px solid rgba(15,23,42,0.06)', padding: 14, overflow: 'hidden' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 10, height: 'calc(100% - 60px)' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 10, height: 'calc(100% - 60px)' }}>
                             {/* LEFT: dock with truck + boxes */}
                             <div style={{ position: 'relative', background: 'white', border: '1px solid rgba(15,23,42,0.06)', borderRadius: 12, padding: 8, overflow: 'hidden' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -112,9 +111,9 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                                         initial={{ x: -60, opacity: 0 }}
                                         animate={{ x: phase >= 1 ? 0 : -60, opacity: phase >= 1 ? 1 : 0 }}
                                         transition={{ type: 'spring', stiffness: 80, damping: 18 }}
-                                        style={{ position: 'absolute', left: 4, top: '50%', transform: 'translateY(-50%)' }}
+                                        style={{ position: 'absolute', left: 2, top: '50%', transform: 'translateY(-50%)' }}
                                     >
-                                        <svg width="80" height="48" viewBox="0 0 100 60" fill="none">
+                                        <svg width="60" height="36" viewBox="0 0 100 60" fill="none">
                                             <rect x="62" y="14" width="26" height="26" rx="3" fill="#1A1D2E" />
                                             <rect x="66" y="18" width="18" height="10" rx="1" fill="#a3c5ff" />
                                             <rect x="6" y="8" width="58" height="34" rx="2" fill="#fff" stroke="#1A1D2E" strokeWidth="2" />
@@ -129,12 +128,19 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                                     </motion.div>
 
                                     {/* Boxes grid */}
-                                    <div style={{ position: 'absolute', left: 100, right: 8, top: 8, bottom: 8, display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, alignContent: 'center' }}>
-                                        {Array.from({ length: 5 }).map((_, i) => {
+                                    <div style={{ position: 'absolute', left: 66, right: 4, top: 8, bottom: 8, display: 'grid', gridTemplateColumns: 'repeat(3, 30px)', gridTemplateRows: 'repeat(2, 30px)', gap: '6px 6px', justifyContent: 'center', alignContent: 'center' }}>
+                                        {[
+                                            { name: 'A1·100u' },
+                                            { name: 'A2·100u' },
+                                            { name: 'A3·100u' },
+                                            { name: 'A4·100u' },
+                                            { name: 'B1·100u' },
+                                            { name: 'B2·100u' },
+                                        ].map((box, i) => {
                                             const st = boxState(i);
                                             const isDmg = st === 'damaged';
                                             const isRcv = st === 'received';
-                                            const pingNow = (phase === 2 && i === 0) || (phase === 3 && (i === 1 || i === 2)) || (phase === 4 && i === 3);
+                                            const pingNow = (phase === 2 && i === 0) || (phase === 3 && (i === 4 || i === 5)) || (phase === 4 && i === 3);
                                             return (
                                                 <motion.div
                                                     key={i}
@@ -142,15 +148,22 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                                                     animate={{ y: 0, opacity: 1 }}
                                                     transition={{ delay: 0.1 + i * 0.06 }}
                                                     style={{
-                                                        position: 'relative', aspectRatio: '1/1',
-                                                        borderRadius: 6, border: '2px solid',
+                                                        position: 'relative',
+                                                        aspectRatio: '1/1',
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        borderRadius: 6,
+                                                        border: '2px solid',
                                                         background: isDmg ? 'rgba(239,68,68,0.08)' : isRcv ? 'rgba(16,185,129,0.08)' : '#fff',
                                                         borderColor: isDmg ? '#ef4444' : isRcv ? '#10b981' : '#cbd5e1',
-                                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
                                                         transition: 'all .4s',
                                                     }}
                                                 >
-                                                    <svg viewBox="0 0 24 24" width="60%" height="60%" fill="none"
+                                                    <svg viewBox="0 0 24 24" width="55%" height="55%" fill="none"
                                                         stroke={isDmg ? '#ef4444' : isRcv ? '#10b981' : '#94a3b8'} strokeWidth="1.8">
                                                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                                                         <line x1="3.27" y1="6.96" x2="12" y2="12.01" />
@@ -158,10 +171,30 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                                                         <line x1="12" y1="22.08" x2="12" y2="12" />
                                                     </svg>
                                                     <div style={{
-                                                        fontSize: 7, fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", marginTop: 1,
-                                                        color: isDmg ? '#dc2626' : isRcv ? '#059669' : '#64748b'
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        gap: 0,
+                                                        marginTop: 1,
+                                                        lineHeight: 1
                                                     }}>
-                                                        {String.fromCharCode(65 + i)}·100u
+                                                        <span style={{
+                                                            fontSize: 7.5,
+                                                            fontWeight: 800,
+                                                            fontFamily: "'JetBrains Mono',monospace",
+                                                            color: isDmg ? '#dc2626' : isRcv ? '#059669' : '#475569'
+                                                        }}>
+                                                            {box.name.split('·')[0]}
+                                                        </span>
+                                                        <span style={{
+                                                            fontSize: 6,
+                                                            fontWeight: 700,
+                                                            fontFamily: "'JetBrains Mono',monospace",
+                                                            color: isDmg ? '#ef4444' : isRcv ? '#10b981' : '#94a3b8',
+                                                            marginTop: 0.5
+                                                        }}>
+                                                            {box.name.split('·')[1]}
+                                                        </span>
                                                     </div>
                                                     {(isRcv || isDmg) && (
                                                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
@@ -190,7 +223,7 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                                 {/* Counters */}
                                 <div style={{ marginTop: 6, padding: '6px 8px', borderRadius: 8, border: '1px solid rgba(15,23,42,0.07)', background: 'white', display: 'flex', justifyContent: 'space-around' }}>
                                     {[
-                                        { l: 'Received', v: received, c: '#10b981' },
+                                        { l: 'Accepted', v: received, c: '#10b981' },
                                         { l: 'Damaged', v: damaged, c: '#ef4444' },
                                         { l: 'Pending', v: pending, c: '#94a3b8' },
                                         { l: 'Expected', v: 600, c: '#1A1D2E' },
@@ -288,11 +321,11 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
 
                         {/* Animated cursor */}
                         <FwCursor pose={
-                            phase === 1 ? { x: 28, y: 38, click: false, label: 'Receiving dock' } :
-                            phase === 2 ? { x: 18, y: 48, click: true,  label: 'Scan · Box 1' } :
-                            phase === 3 ? { x: 34, y: 48, click: true,  label: 'Scan · Box 3' } :
-                            phase === 4 ? { x: 38, y: 70, click: true,  label: 'Mark damaged' } :
-                                          { x: 76, y: 60, click: false, label: 'AI 3-way match', labelDir: 'bl' }
+                            phase === 1 ? { x: 10, y: 28, click: false, label: 'Receiving dock' } :
+                            phase === 2 ? { x: 21, y: 24, click: true,  label: 'Scan · Box A1' } :
+                            phase === 3 ? { x: 39, y: 40, click: true,  label: 'Scan · Box B2' } :
+                            phase === 4 ? { x: 21, y: 40, click: true,  label: 'Mark A4 damaged' } :
+                                          { x: 76, y: 56, click: false, label: 'AI 3-way match', labelDir: 'bl' }
                         }/>
 
                         {/* Caption */}
@@ -346,7 +379,7 @@ export default function InvSection32({ isActive = true }: { isActive?: boolean }
                     <span className="text-[#3666ff]">Record Every Discrepancy.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Create goods receipts against any invoice or directly against a PO — uploading attachments, recording received quantities, and flagging rejected items in real time. AI cross-checks every GR against the original invoice and PO automatically, capturing every discrepancy at the line item level.
+                    Create goods receipts against any invoice or PO — recording quantities, flagging damaged goods, and capturing every discrepancy at the line item level in real time. FactWise's AI cross-checks every GR against the original invoice and PO automatically. Nothing assumed. Everything verified.
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 text-left">

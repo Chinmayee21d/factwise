@@ -6,45 +6,46 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+import { useRouter } from "next/navigation";
 
 const modules = [
   {
     tag: "SOURCE TO CONTRACT",
     title: "Inquiry to Quote",
-    description: "Turn every customer inquiry into a winning quote. Intelligent sourcing, automated negotiations, and true landed cost analytics — from BOM to customer quote in record time.",
+    description: "From BOM to customer quote in record time — intelligent sourcing, automated negotiations, and true landed-cost analytics.",
     imageUrl: "/images/quote-order.png",
     features: [
       "BOM & cost intelligence",
       "Automated vendor sourcing & negotiations",
       "One-click customer quote generation",
     ],
-    href: "/solutions/quote-to-order",
+    href: "/inquiry-to-quote",
     icon: BarChart3
   },
   {
     tag: "PROCURE TO PAY",
     title: "Requisition to PO",
-    description: "From internal request to approved purchase order — without the back and forth. Raise, approve, source, negotiate, and issue POs across your entire organisation in one seamless flow.",
+    description: "Raise, approve, source, and issue purchase orders in one seamless flow — without the back and forth.",
     imageUrl: "/images/req-po.png",
     features: [
       "Combine requisitions for bulk pricing",
       "Auto-filled target prices on every RFQ",
       "Multi-vendor POs in one click",
     ],
-    href: "/solutions/requisition-to-po",
+    href: "/requisitions-to-po",
     icon: ShieldCheck
   },
   {
     tag: "INVOICE AUTOMATION",
     title: "Invoice to Pay",
-    description: "Every invoice verified. Every payment controlled. Quadruple validation across PO, GR, QC, and contract terms — so not a single rupee moves without full confidence.",
+    description: "Every invoice validated against PO, GR, QC, and contract terms — so you always pay the right amount.",
     imageUrl: "/images/invoice-pay.png",
     features: [
       "AI-powered invoice generation",
       "Flexible GR, QC & payment sequencing",
       "Always pay the right amount — automatically",
     ],
-    href: "/solutions/invoice-to-pay",
+    href: "/invoice-to-pay",
     icon: ZapIcon
   },
 ];
@@ -210,9 +211,9 @@ const CARDS_STYLE = `
 
   .fw-card-desc {
     font-size: 13.5px !important;
-    color: var(--gray-400) !important;
+    color: #475569 !important;
     line-height: 1.65 !important;
-    font-weight: 300 !important;
+    font-weight: 400 !important;
     padding-bottom: 20px !important;
     text-align: left;
   }
@@ -315,6 +316,7 @@ const CARDS_STYLE = `
 `;
 
 function Card({ module, index }: { module: typeof modules[0], index: number }) {
+  const router = useRouter();
   const [tilt, setTilt] = React.useState({ x: 0, y: 0, isHovered: false });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -350,17 +352,7 @@ function Card({ module, index }: { module: typeof modules[0], index: number }) {
       style={{ transform: transformStyle }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onClick={() => {
-        if (index === 0) {
-          window.location.href = "/solutions";
-          return;
-        }
-        const targetId = index === 1 ? "roadmap" : "case-studies";
-        const element = document.getElementById(targetId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }}
+      onClick={() => router.push(module.href)}
     >
       <div className="fw-card-bar"></div>
       <div className="fw-card-header">
@@ -421,10 +413,10 @@ export default function ProcurementModules() {
             Platform Modules
           </div>
           <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
-            Modular <span className="text-[#3666ff]">Procurement</span> Intelligence
+            Modular <span className="text-[#3666ff]">Manufacturing</span> Intelligence
           </h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium">
-            Scalable, enterprise-ready modules designed to automate every friction point in your procurement lifecycle.
+            Scalable, enterprise-ready modules designed to automate every workflow manufacturers depend on — from first inquiry to final payment.
           </p>
         </motion.div>
 

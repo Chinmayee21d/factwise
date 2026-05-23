@@ -1,10 +1,12 @@
 'use client';
 
 import * as React from "react"
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { gsap } from 'gsap'
 
 const IcFile     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
 const IcTruck    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -144,6 +146,20 @@ function FloatCard({ style, delay=0, yAmt=12, dur=6, children }: {
 
 export default function InvoiceHero() {
   const mono = "'JetBrains Mono', monospace"
+  const leftColRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+
+      tl
+        .from('.inv-hw', { yPercent: 115, duration: 0.65, stagger: 0.058 })
+        .from('[data-inv-sub]',  { opacity: 0, y: 18, duration: 0.55 }, '+=0.05')
+        .from('[data-inv-btns]', { opacity: 0, y: 12, duration: 0.45 }, '-=0.28')
+    }, leftColRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
     <>
@@ -169,46 +185,47 @@ export default function InvoiceHero() {
       }}>
 
         {/* LEFT COLUMN */}
-        <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} style={{ maxWidth:600 }}>
-          <div style={{
-            display:'inline-flex', alignItems:'center', gap:8,
-            padding:'5px 14px', borderRadius:100,
-            background:'rgba(79,139,255,0.07)', border:'1px solid rgba(79,139,255,0.18)',
-            fontSize:11, fontWeight:600, color:'#8baee8',
-            marginBottom:32, letterSpacing:'0.1em', textTransform:'uppercase',
-            fontFamily:'var(--font-inter)',
-          }}>
-            <span style={{
-              width:5, height:5, borderRadius:'50%', background:'#4f8bff',
-              boxShadow:'0 0 8px #4f8bff', display:'inline-block',
-              animation:'fw-pulse 2s infinite',
-            }}/>
-            Invoice-to-Pay · Quadruple validation
-          </div>
+        <div ref={leftColRef} style={{ maxWidth:600 }}>
 
+          {/* Heading */}
           <h1 style={{
             fontSize:'clamp(30px, 2.8vw, 46px)', fontWeight:600,
-            lineHeight:1.1, letterSpacing:'-0.035em', marginBottom:24,
+            lineHeight:1.15, letterSpacing:'-0.035em', marginBottom:24,
             fontFamily:'var(--font-display)',
           }}>
-            Every Invoice Verified.{' '}
-            <span style={{
-              background:'linear-gradient(135deg,#7ba6ff 0%,#4f8bff 50%,#2a6cff 100%)',
-              WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-            }}>
-              Every Payment Controlled.
-            </span>{' '}
-            Every Rupee Accounted For.
+            {['Every', 'Invoice', 'Matched.'].map((w, i) => (
+              <React.Fragment key={`a${i}`}>
+                <span style={{ display:'inline-block', overflow:'hidden', verticalAlign:'bottom', paddingBottom:'0.07em' }}>
+                  <span className="inv-hw" style={{ display:'inline-block' }}>{w}</span>
+                </span>{' '}
+              </React.Fragment>
+            ))}
+            {['Every', 'Payment', 'Cleared.'].map((w, i) => (
+              <React.Fragment key={`c${i}`}>
+                <span style={{ display:'inline-block', overflow:'hidden', verticalAlign:'bottom', paddingBottom:'0.07em' }}>
+                  <span className="inv-hw" style={{
+                    display:'inline-block',
+                    background:'linear-gradient(135deg,#7ba6ff 0%,#4f8bff 50%,#2a6cff 100%)',
+                    WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
+                  }}>{w}</span>
+                </span>{' '}
+              </React.Fragment>
+            ))}
           </h1>
 
-          <p style={{
-            fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
-            marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
-          }}>
-            Stop chasing invoices and matching documents by hand. FactWise unifies every step of the invoice-to-pay journey into one AI-powered flow — with quadruple validation built in at every step — so every invoice is verified, every discrepancy is caught, and every rupee is accounted for.
+          {/* Subtext */}
+          <p
+            data-inv-sub
+            style={{
+              fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
+              marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
+            }}
+          >
+            4-way validation across PO, GR, QC, and contract — every discrepancy caught before a single payment moves.
           </p>
 
-          <div style={{ display:'flex', gap:14, alignItems:'center', marginBottom:48 }}>
+          {/* CTA Buttons */}
+          <div data-inv-btns style={{ display:'flex', gap:14, alignItems:'center', marginBottom:48 }}>
             <Button asChild style={{
               background:'linear-gradient(135deg,#4f8bff,#2a6cff)', color:'white', border:'none',
               padding:'14px 24px 14px 28px', borderRadius:100, fontSize:15, fontWeight:600,
@@ -232,7 +249,8 @@ export default function InvoiceHero() {
               Watch product tour
             </button>
           </div>
-        </motion.div>
+
+        </div>
 
         {/* RIGHT COLUMN */}
         <motion.div

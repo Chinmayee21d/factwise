@@ -185,7 +185,7 @@ const CO_STYLE = `
 .co-rail-step.done + .co-rail-sep { background: #cbd5e1; }
 .co-rail-step.active + .co-rail-sep { background: #cbd5e1; }
 
-.co-grid { position: relative; display: grid; grid-template-columns: 172px minmax(0, 1fr) 152px;
+.co-grid { position: relative; display: grid; grid-template-columns: 172px minmax(0, 1fr);
   gap: 0; padding: 14px; flex: 1; min-height: 0; min-width: 0; }
 
 .co-col-mod { display: flex; flex-direction: column; gap: 8px; padding-right: 4px; z-index: 2; position: relative; }
@@ -430,8 +430,6 @@ function coGetEndpoint(target: string, rootEl: HTMLElement): { x: number; y: num
 
 export default function CollaborationAnimation({ speed = 1 }: { speed?: number }) {
   const [phaseIdx, setPhaseIdx] = useState(0);
-  const [feed, setFeed] = useState<string[]>([CO_PHASES[0].activity]);
-  const [tick, setTick] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -450,21 +448,8 @@ export default function CollaborationAnimation({ speed = 1 }: { speed?: number }
     return () => clearInterval(iv);
   }, [speed]);
 
-  useEffect(() => {
-    setFeed((prev) => {
-      const next = [CO_PHASES[phaseIdx].activity, ...prev];
-      return next.slice(0, 3);
-    });
-  }, [phaseIdx]);
-
-  useEffect(() => {
-    const t = setTimeout(() => setTick((x) => x + 1), 40);
-    return () => clearTimeout(t);
-  }, [phaseIdx]);
-
   const phase = CO_PHASES[phaseIdx];
   const litMod = new Set(phase.lit);
-  const litVen = new Set(phase.vendors);
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 relative overflow-hidden bg-linear-to-br from-white via-slate-50 to-indigo-50/40">
@@ -592,75 +577,6 @@ export default function CollaborationAnimation({ speed = 1 }: { speed?: number }
           </div>
         </div>
 
-        {/* Right: vendors */}
-        <div className="co-col-ven">
-          <div className="head">
-            <span className="l">External · vendors</span>
-            <span className="b">3</span>
-          </div>
-          {CO_VENDORS.map((v) => {
-            const lit = litVen.has(v.id);
-            const stStr =
-              phase.id === 'rfq' ? 'Invited'
-              : phase.id === 'bids' && v.id === 'acme' ? 'Bid −3.2%'
-              : phase.id === 'bids' && v.id === 'titan' ? 'Bid +1.1%'
-              : phase.id === 'bids' && v.id === 'apex' ? 'Bid +4.0%'
-              : phase.id === 'negotiate' && v.id === 'acme' ? 'Counter R2'
-              : phase.id === 'approve' && v.id === 'acme' ? 'Awarded'
-              : phase.id === 'po' && v.id === 'acme' ? 'PO sent'
-              : phase.id === 'invoice' && v.id === 'acme' ? 'INV-119'
-              : phase.id === 'pay' && v.id === 'acme' ? 'Paid ✓'
-              : 'Idle';
-            return (
-              <div
-                key={v.id}
-                className={`co-ven${lit ? ' lit' : ''}`}
-                data-ven={v.id}
-                style={{
-                  borderColor: lit ? v.tone : '#cbd5e1',
-                  boxShadow: lit ? `0 8px 18px -8px ${v.tone}66` : 'none',
-                  ['--ven-tone' as string]: v.tone,
-                }}
-              >
-                <div className="row1">
-                  <div className="av" style={{ background: v.tone }}><COI.Building s={12} /></div>
-                  <span className="n">{v.name}</span>
-                  <span className="rg">{v.region}</span>
-                </div>
-                <div className="row2"><span className="d" />{stStr}</div>
-              </div>
-            );
-          })}
-          <div style={{ flex: 1 }} />
-          <div style={{
-            padding: '7px 8px', background: 'rgba(54,102,255,0.06)', borderRadius: 8,
-            fontSize: 9.5, color: '#3666ff', lineHeight: 1.35, fontWeight: 500,
-            display: 'flex', gap: 6, alignItems: 'flex-start',
-          }}>
-            <COI.Radio s={11} />
-            <span>Vendors bid, negotiate &amp; track payments — all on the same platform.</span>
-          </div>
-        </div>
-
-        {/* SVG flow overlay */}
-        <FlowOverlay phase={phase} tick={tick} rootRef={rootRef} />
-      </div>
-
-      {/* Activity feed */}
-      <div className="co-feed">
-        <div className="co-feed-head">
-          <span style={{ color: '#047857', display: 'inline-flex' }}><COI.Radio s={11} /></span>
-          <span className="l">Live activity · one stream</span>
-          <span className="s">in context · just now</span>
-        </div>
-        <div className="co-feed-list">
-          {feed.map((line, i) => (
-            <div key={`${line}-${i}`} className={`co-feed-item${i === 0 ? ' head-item' : ''}`}>
-              <span className="d" />
-              <span>{line}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
     </div>

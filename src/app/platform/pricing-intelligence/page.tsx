@@ -153,7 +153,7 @@ export default function PricingIntelligencePage() {
       relatedModules={[
         { name: "Strategic Sourcing", href: "/platform/sourcing" },
         { name: "Supplier Management", href: "/platform/supplier-management" },
-        { name: "BOM Sourcing", href: "/solutions/bom-sourcing" },
+        { name: "Inquiry to Quote", href: "/inquiry-to-quote" },
         { name: "Contracts", href: "/platform/contracts" }
       ]}
       ctaBanner={{

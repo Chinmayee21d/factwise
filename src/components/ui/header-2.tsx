@@ -13,7 +13,7 @@ import { usePathname } from 'next/navigation';
 export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark' }) {
 	const pathname = usePathname();
 	// Pages with white/light backgrounds need dark nav text from the start
-	const LIGHT_PAGES = ['/about', '/blog', '/pricing', '/platform', '/demo', '/enterprise'];
+	const LIGHT_PAGES = ['/pricing', '/platform', '/demo', '/careers/jobs'];
 	const isLightPage = LIGHT_PAGES.some(p => pathname === p || pathname.startsWith(p + '/'));
 	const theme = isLightPage ? 'light' : propTheme;
 	const [open, setOpen] = React.useState(false);
@@ -26,17 +26,17 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 
 	const links = [
 		{
+			label: 'Home',
+			href: '/',
+		},
+		{
 			label: 'Product',
 			href: '/platform',
 			subLinks: [
-				{ label: 'Inquiry to Quote', href: '/solutions' },
+				{ label: 'Inquiry to Quote', href: '/inquiry-to-quote' },
 				{ label: 'Requisitions to PO', href: '/requisitions-to-po' },
 				{ label: 'Invoice to Pay', href: '/invoice-to-pay' },
 			]
-		},
-		{
-			label: 'Pricing',
-			href: '/pricing',
 		},
 		{
 			label: 'Blog',
@@ -50,11 +50,16 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 			label: 'Careers',
 			href: '/careers',
 		},
-		{
-			label: 'Enterprise',
-			href: '/enterprise',
-		},
 	];
+
+	const isLinkActive = (link: { href: string; subLinks?: { href: string }[] }) => {
+		if (link.href === '/') return pathname === '/';
+		if (pathname === link.href || pathname.startsWith(link.href + '/')) return true;
+		if (link.subLinks) {
+			return link.subLinks.some(s => pathname === s.href || pathname.startsWith(s.href + '/'));
+		}
+		return false;
+	};
 
 	React.useEffect(() => {
 		if (open) {
@@ -108,54 +113,71 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 				</a>
 
 				<div className="hidden items-center gap-1 md:flex">
-					{links.map((link, i) => (
-						<div key={i} className="relative group">
-							{link.subLinks ? (
-								<button
-									className={buttonVariants({
-										variant: 'ghost',
-										className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium cursor-pointer', {
-											'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
-											'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
-										})
-									})}
-									type="button"
-								>
-									{link.label}
-									<ChevronDown size={14} className="group-hover:rotate-180 transition-transform opacity-50" />
-								</button>
-							) : (
-								<a
-									className={buttonVariants({
-										variant: 'ghost',
-										className: cn('transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium', {
-											'text-white/80 hover:text-white hover:bg-white/10': !scrolled && !open && theme === 'dark',
-											'text-black/60 hover:text-black hover:bg-black/5': scrolled || open || theme === 'light',
-										})
-									})}
-									href={link.href}
-								>
-									{link.label}
-								</a>
-							)}
+					{links.map((link, i) => {
+						const darkMode = !scrolled && !open && theme === 'dark';
+						const active = isLinkActive(link);
+						const linkClass = cn(
+							'relative transition-colors duration-500 flex items-center gap-1.5 text-[14px] font-medium cursor-pointer',
+							darkMode
+								? active ? 'text-white' : 'text-white/80 hover:text-white hover:bg-white/10'
+								: active ? 'text-black' : 'text-black/60 hover:text-black hover:bg-black/5',
+						);
+						const underline = (
+							<span
+								className={cn(
+									'pointer-events-none absolute bottom-[3px] left-3 right-3 h-[2px] rounded-full origin-center transition-transform duration-300 ease-out',
+									darkMode ? 'bg-white' : 'bg-[#3666ff]',
+									active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
+								)}
+							/>
+						);
+						return (
+							<div key={i} className="relative group">
+								{link.subLinks ? (
+									<button
+										className={buttonVariants({ variant: 'ghost', className: linkClass })}
+										type="button"
+									>
+										{link.label}
+										<ChevronDown size={14} className="group-hover:rotate-180 transition-transform opacity-50" />
+										{underline}
+									</button>
+								) : (
+									<a
+										className={buttonVariants({ variant: 'ghost', className: linkClass })}
+										href={link.href}
+									>
+										{link.label}
+										{underline}
+									</a>
+								)}
 
-							{(link as any).subLinks && (
-								<div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
-									<div className="w-64 bg-white border border-black/[0.08] rounded-2xl p-2 shadow-xl backdrop-blur-xl">
-										{(link as any).subLinks.map((sub: any, j: number) => (
-											<a
-												key={j}
-												href={sub.href}
-												className="block px-4 py-3 rounded-xl hover:bg-black/[0.04] text-sm text-black/60 hover:text-black transition-colors"
-											>
-												{sub.label}
-											</a>
-										))}
+								{(link as any).subLinks && (
+									<div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
+										<div className="w-64 bg-white border border-black/[0.08] rounded-2xl p-2 shadow-xl backdrop-blur-xl">
+											{(link as any).subLinks.map((sub: any, j: number) => {
+												const subActive = pathname === sub.href || pathname.startsWith(sub.href + '/');
+												return (
+													<a
+														key={j}
+														href={sub.href}
+														className={cn(
+															'block px-4 py-3 rounded-xl text-sm transition-colors',
+															subActive
+																? 'bg-[#3666ff]/[0.08] text-[#3666ff] font-semibold'
+																: 'text-black/60 hover:bg-black/[0.04] hover:text-black',
+														)}
+													>
+														{sub.label}
+													</a>
+												);
+											})}
+										</div>
 									</div>
-								</div>
-							)}
-						</div>
-					))}
+								)}
+							</div>
+						);
+					})}
 					<div className={cn("w-px h-4 mx-4 transition-colors duration-500", {
 						"bg-white/20": !scrolled && !open && theme === 'dark',
 						"bg-black/10": scrolled || open || theme === 'light',
@@ -198,15 +220,17 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 					)}
 				>
 					<div className="grid gap-y-4">
-						{links.map((link) => (
+						{links.map((link) => {
+							const active = isLinkActive(link);
+							return (
 							<div key={link.label} className="flex flex-col gap-2">
 								{link.subLinks ? (
-									<div className="text-2xl font-medium text-[#808080] flex items-center gap-2 py-1 select-none">
+									<div className={cn('text-2xl font-medium flex items-center gap-2 py-1 select-none', active ? 'text-[#3666ff]' : 'text-[#808080]')}>
 										{link.label}
 									</div>
 								) : (
 									<a
-										className="text-2xl font-medium text-[#808080] hover:text-[#000000] transition-colors"
+										className={cn('text-2xl font-medium transition-colors', active ? 'text-[#3666ff] font-semibold' : 'text-[#808080] hover:text-[#000000]')}
 										href={link.href}
 										onClick={() => setOpen(false)}
 									>
@@ -215,20 +239,24 @@ export function Header({ theme: propTheme = 'dark' }: { theme?: 'light' | 'dark'
 								)}
 								{(link as any).subLinks && (
 									<div className="flex flex-col gap-2 ml-4 mb-4">
-										{(link as any).subLinks.map((sub: any) => (
+										{(link as any).subLinks.map((sub: any) => {
+											const subActive = pathname === sub.href || pathname.startsWith(sub.href + '/');
+											return (
 											<a
 												key={sub.label}
 												href={sub.href}
-												className="text-lg text-[#808080] hover:text-[#000000] transition-colors"
+												className={cn('text-lg transition-colors', subActive ? 'text-[#3666ff] font-semibold' : 'text-[#808080] hover:text-[#000000]')}
 												onClick={() => setOpen(false)}
 											>
 												{sub.label}
 											</a>
-										))}
+											);
+										})}
 									</div>
 								)}
 							</div>
-						))}
+							);
+						})}
 					</div>
 					<div className="flex flex-col gap-4 pt-10 border-t border-black/[0.07]">
 						<Button variant="outline" className="w-full h-12 text-lg border-black/[0.1] hover:bg-black/[0.04]">

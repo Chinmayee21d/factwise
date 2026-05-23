@@ -32,6 +32,7 @@ export default function InvoiceToPayFlow() {
 
         const panels = gsap.utils.toArray<HTMLElement>('.itpf-panel');
         let animating = false;
+        let triggerStartPx = 0;
 
         gsap.set('.itpf-panel-slide', { xPercent: 100 });
         gsap.set(panels, { zIndex: (i: number) => i });
@@ -40,6 +41,9 @@ export default function InvoiceToPayFlow() {
             if ((index === panels.length && isScrollingDown) || (index === -1 && !isScrollingDown)) {
                 setActivePanel(-1);
                 intentObserver.disable();
+                if (index === -1) {
+                    window.scrollTo({ top: Math.max(0, triggerStartPx - 1) });
+                }
                 return;
             }
 
@@ -76,6 +80,7 @@ export default function InvoiceToPayFlow() {
             pin: true,
             start: 'top top',
             end: '+=200',
+            onRefresh: (self) => { triggerStartPx = self.start; },
             onEnter: () => {
                 if (currentIndexRef.current === -1) {
                     gotoPanel(0, true);
@@ -89,6 +94,7 @@ export default function InvoiceToPayFlow() {
                 intentObserver.enable();
             },
         });
+        triggerStartPx = trigger.start;
 
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -134,7 +140,9 @@ export default function InvoiceToPayFlow() {
     }, []);
 
     const gradientBg =
-        "radial-gradient(ellipse 75% 75% at 0% 0%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), white";
+        "radial-gradient(ellipse 75% 75% at 0% 0%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
+        "radial-gradient(ellipse 75% 75% at 100% 100%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
+        "white";
 
     return (
         <>

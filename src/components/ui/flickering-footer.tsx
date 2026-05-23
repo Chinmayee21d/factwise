@@ -35,11 +35,9 @@ const footerLinks = [
   {
     title: "Product",
     links: [
-      { name: "Source-to-Pay", href: "#" },
-      { name: "Strategic Sourcing", href: "#" },
-      { name: "Supplier Management", href: "#" },
-      { name: "PO Management", href: "#" },
-      { name: "Invoicing & Payments", href: "#" },
+      { name: "Inquiry to Quote", href: "/inquiry-to-quote" },
+      { name: "Requisitions to PO", href: "/requisitions-to-po" },
+      { name: "Invoice to Pay", href: "/invoice-to-pay" },
     ],
   },
   {
@@ -55,7 +53,7 @@ const footerLinks = [
   {
     title: "Resources",
     links: [
-      { name: "Blog", href: "#" },
+      { name: "Blog", href: "/blog" },
       { name: "Case Studies", href: "#" },
       { name: "Documentation", href: "#" },
       { name: "System Status", href: "#" },
@@ -65,9 +63,9 @@ const footerLinks = [
     title: "Company",
     links: [
       { name: "About Us", href: "/about" },
-      { name: "Careers", href: "#" },
+      { name: "Careers", href: "/careers" },
       { name: "Press", href: "#" },
-      { name: "Sustainability", href: "#" },
+      { name: "Book a Demo", href: "/demo" },
     ],
   },
 ];
@@ -113,18 +111,14 @@ const AnimatedContainer = ({ children, delay = 0.1 }: { children: React.ReactNod
 
 export function FlickeringFooter() {
   return (
-    <footer
-      className="relative w-full h-[480px] bg-slate-50 overflow-hidden"
-      style={{ clipPath: 'polygon(0% 0, 100% 0%, 100% 100%, 0 100%)' }}
-    >
-      {/* Sticky Reveal Wrapper */}
-      <motion.div 
+    <footer className="relative w-full bg-slate-50 overflow-hidden">
+      <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: false, amount: 0.3 }}
-        className="fixed bottom-0 left-0 w-full h-[480px] bg-slate-50"
+        className="w-full bg-slate-50"
       >
-        <div className="sticky top-[calc(100vh-480px)] h-full w-full flex flex-col justify-between">
+        <div className="flex flex-col justify-between">
 
           {/* Main Content Area */}
           <div className="relative flex-1 flex items-center border-t border-slate-200 py-8">
@@ -139,23 +133,17 @@ export function FlickeringFooter() {
                 {/* Brand Section */}
                 <div className="lg:col-span-4 space-y-6">
                   <AnimatedContainer>
-                    <Link href="/" className="flex items-center gap-3 group">
+                    <Link href="/" className="flex items-center gap-4 group">
                       <img
                         src="/logo.png"
                         alt="FactWise Logo"
-                        className="h-8 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 rounded-tl-sm rounded-br-sm"
+                        className="h-11 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 rounded-tl-sm rounded-br-sm"
                       />
-                      <span className="text-[17px] font-bold tracking-tight text-[#1A1D2E]">FactWise</span>
+                      <span className="text-[26px] font-bold tracking-tight text-[#1A1D2E]">FactWise</span>
                     </Link>
                   </AnimatedContainer>
 
                   <AnimatedContainer delay={0.2}>
-                    <p className="text-slate-500 text-base leading-relaxed font-medium max-w-sm">
-                      The next-generation source-to-pay platform. Unifying your entire supply chain in one intelligent, automated ecosystem.
-                    </p>
-                  </AnimatedContainer>
-
-                  <AnimatedContainer delay={0.3}>
                     <div className="flex gap-3">
                       {socialPlatforms.map((platform, i) => (
                         <Button
@@ -182,13 +170,13 @@ export function FlickeringFooter() {
                         <ul className="space-y-4">
                           {section.links.map((link) => (
                             <li key={link.name}>
-                              <a
+                              <Link
                                 href={link.href}
                                 className="text-slate-600 hover:text-[#3666ff] text-[14px] font-medium transition-colors inline-flex items-center group/link"
                               >
                                 {link.name}
                                 <ArrowRight className="w-0 h-3 ml-1.5 opacity-0 -translate-x-2 transition-all group-hover/link:w-3 group-hover/link:opacity-100 group-hover/link:translate-x-0 text-[#3666ff]" />
-                              </a>
+                              </Link>
                             </li>
                           ))}
                         </ul>

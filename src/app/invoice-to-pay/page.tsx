@@ -5,6 +5,7 @@ import { FlickeringFooter } from "@/components/ui/flickering-footer";
 import InvoiceHero from "./components/InvoiceHero";
 import InvoiceProblemSection from "./components/InvoiceProblemSection";
 import InvoiceToPayFlow from "./components/InvoiceToPayFlow";
+import InvFeatures from "./components/InvFeatures";
 
 export default function InvoiceToPayPage() {
   return (
@@ -12,6 +13,7 @@ export default function InvoiceToPayPage() {
       <InvoiceHero />
       <InvoiceProblemSection />
       <InvoiceToPayFlow />
+      <InvFeatures />
       <FlickeringFooter />
     </main>
   );

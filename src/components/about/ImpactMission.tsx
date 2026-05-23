@@ -41,21 +41,21 @@ export const ImpactMission = () => {
               Our Mission
             </div>
 
-            <motion.h2 
+            <motion.h2
               initial="hidden"
               whileInView="visible"
               viewport={{ once: false }}
               className="text-4xl md:text-5xl font-bold text-slate-900 leading-[1.05] tracking-tighter mb-8 overflow-hidden py-2"
             >
-              {"Redefining The ".split("").map((char, index) => (
+              {"Automating Every Workflow ".split("").map((char, index) => (
                 <motion.span
                   key={index}
                   variants={{
                     hidden: { y: 100, opacity: 0 },
-                    visible: { 
-                      y: 0, 
+                    visible: {
+                      y: 0,
                       opacity: 1,
-                      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.02 }
+                      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.018 }
                     }
                   }}
                   className="inline-block"
@@ -66,19 +66,19 @@ export const ImpactMission = () => {
               ))}
               <br className="md:hidden" />
               <span className="text-[#3666ff] font-instrument italic font-medium inline-block">
-                {"Procurement Ecosystem".split("").map((char, index) => (
+                {"Manufacturers Depend On.".split("").map((char, index) => (
                   <motion.span
                     key={index}
                     variants={{
                       hidden: { y: 100, opacity: 0 },
-                      visible: { 
-                        y: 0, 
+                      visible: {
+                        y: 0,
                         opacity: 1,
-                        transition: { 
-                          duration: 0.6, 
-                          ease: [0.16, 1, 0.3, 1], 
-                          delay: (index + 15) * 0.02 // Offset by length of "Redefining The "
-                        } 
+                        transition: {
+                          duration: 0.6,
+                          ease: [0.16, 1, 0.3, 1],
+                          delay: (index + 26) * 0.018
+                        }
                       }
                     }}
                     className="inline-block"
@@ -89,7 +89,7 @@ export const ImpactMission = () => {
                 ))}
               </span>
             </motion.h2>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
@@ -97,9 +97,10 @@ export const ImpactMission = () => {
                 className="space-y-6"
               >
                 <p className="text-slate-600 text-lg md:text-xl leading-relaxed">
-                  We are building the future of supply chain collaboration. FactWise empowers 
-                  organizations to transform procurement from a back-office function into a 
-                  strategic competitive advantage, powered by agentic AI and deep industry expertise.
+                  We are building the operating system for modern manufacturing \u2014 connecting every team,
+                  every vendor, and every workflow into one intelligent platform. FactWise automates
+                  the complex, eliminates the manual, and gives manufacturers the clarity to make
+                  better decisions, faster.
                 </p>
                 <div className="pt-4 border-t border-slate-200">
                   <p className="text-slate-900 font-semibold text-lg italic">

@@ -26,7 +26,6 @@
  * ============================================================ */
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   Layers, Plus, Check, ArrowRight,
   Workflow, GitFork, Grid3x3, Cog
@@ -418,9 +417,8 @@ function useCount(target: number, active: boolean, dur = 1000): number {
   return v;
 }
 
-/* ============ STAT / PILL ============ */
+/* ============ MAIN COMPONENT ============ */
 export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnimationProps) {
-  // Inject scoped styles once
   useEffect(() => {
     if (document.getElementById("bs-style")) return;
     const s = document.createElement("style");
@@ -428,15 +426,11 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
     document.head.appendChild(s);
   }, []);
 
-  const [phase, setPhase] = useState<Phase>(0);
+  const [phase, setPhase] = useState<Phase>(2);
   const [l1n, setL1n] = useState(0);
   const [l2n, setL2n] = useState(0);
   const [l3n, setL3n] = useState(0);
-  const [altn, setAltn] = useState(0);
-  const [volStep, setVolStep] = useState(0);
-  const [combined, setCombined] = useState(false);
-  const [finChips, setFinChips] = useState(0);
-  const [lit, setLit] = useState({ multi: false, sub: false, alt: false, vol: false, comb: false });
+  const [rfqStep, setRfqStep] = useState(0);
 
   const cancelRef = useRef(false);
   const speedMul = Math.max(0.3, Number(speed) || 1);
@@ -447,64 +441,48 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
 
     async function loop() {
       while (!cancelRef.current) {
-        // Reset all state and immediately start — no blank idle frame
-        setL1n(0); setL2n(0); setL3n(0); setAltn(0);
-        setVolStep(0); setCombined(false); setFinChips(0);
-        setLit({ multi: false, sub: false, alt: false, vol: false, comb: false });
-        onPhaseChange?.(2);
+        setL1n(0); setL2n(0); setL3n(0); setRfqStep(0);
 
-        // 1 L1
+        // Phase 2 — L1
         setPhase(2); onPhaseChange?.(2);
-        setLit((s) => ({ ...s, multi: true }));
         for (let i = 1; i <= L1.length; i++) { if (cancelRef.current) return; setL1n(i); await sleep(350); }
-        await sleep(1100);
+        await sleep(1000);
 
-        // 2 L2 SUB-BOM
+        // Phase 3 — L2
         setPhase(3); onPhaseChange?.(3);
-        setLit((s) => ({ ...s, sub: true }));
         for (let i = 1; i <= L2.length; i++) { if (cancelRef.current) return; setL2n(i); await sleep(300); }
-        await sleep(1100);
+        await sleep(1000);
 
-        // 3 L3 SUB-SUB-BOM
+        // Phase 4 — L3
         setPhase(4); onPhaseChange?.(4);
         for (let i = 1; i <= L3.length; i++) { if (cancelRef.current) return; setL3n(i); await sleep(300); }
-        await sleep(1100);
+        await sleep(1400);
 
-        // 4 COMBINE
+        // Phase 5 — RFQ scene: cards fan in, then RFQ card highlights
         setPhase(5); onPhaseChange?.(5);
-        setLit((s) => ({ ...s, comb: true }));
-        await sleep(1100);
-        setCombined(true);
-        await sleep(3200);
+        setRfqStep(0);
+        await sleep(200);
+        for (let i = 1; i <= 3; i++) { if (cancelRef.current) return; setRfqStep(i); await sleep(350); }
+        await sleep(300);
+        setRfqStep(4); // arrow + RFQ card appear
+        await sleep(3000);
       }
     }
     void loop();
     return () => { cancelRef.current = true; };
   }, [speedMul, onPhaseChange]);
 
-  // === Stat targets (kept for potential future use) ===
-  const levelsT = phase >= 4 ? 3 : phase >= 3 ? 2 : phase >= 2 ? 1 : 0;
-  void levelsT;
-
-  const captions: Record<number, string> = {
-    2: "Exploding into top-level sub-assemblies.",
-    3: "Drill into any sub-BOM. Children fan out below.",
-    4: "n-level sub-BOMs — no depth limit, full traceability.",
-    5: "Better pricing leverage — multi-plant requisitions combined.",
-  };
-
   const stageTitle =
     phase === 2 ? "Level 1 — Sub-Assemblies" :
-      phase === 3 ? "Level 2 — Sub-BOM" :
-        phase === 4 ? "Level 3 — Sub-Sub-BOM" :
-          phase === 5 ? "RFQ" : "BOM Explorer";
+    phase === 3 ? "Level 2 — Sub-BOM" :
+    phase === 4 ? "Level 3 — Sub-Sub-BOM" :
+    "RFQ · Multi-Plant Merge";
 
   const stageLevel =
     phase === 2 ? "L1" :
-      phase === 3 ? "L1 › L2" :
-        phase === 4 ? "L1 › L2 › L3" : null;
+    phase === 3 ? "L1 › L2" :
+    phase === 4 ? "L1 › L2 › L3" : null;
 
-  // Edges to draw, with the "shown" flag derived from phase counters.
   interface Edge { key: string; from: BOMNode; to: BOMNode; level: string; shown: boolean; }
   const edges: Edge[] = [
     ...L1.map((n, i) => ({ key: "e-root-" + n.id, from: ROOT, to: n, level: "lvl1", shown: phase >= 2 && l1n > i })),
@@ -571,39 +549,94 @@ export default function ScaleAnimation({ speed = 0.5, onPhaseChange }: ScaleAnim
                   </div>
                 </div>
 
+                {/* BOM graph — visible during phases 2–4 */}
                 <SceneGraph
                   active={phase >= 2 && phase <= 4}
                   phase={phase}
-                  l1n={l1n} l2n={l2n} l3n={l3n} altn={altn}
+                  l1n={l1n} l2n={l2n} l3n={l3n} altn={0}
                   edges={edges}
                   graphTransform={graphTransform}
                 />
 
-                <SceneCombine active={phase === 5} combined={combined} />
-              </div>
+                {/* Scale callout — visible during BOM phases */}
+                <div style={{
+                  position: "absolute", bottom: 14, right: 14, zIndex: 10,
+                  background: "linear-gradient(135deg, #eff4ff 0%, #dbeafe 100%)",
+                  border: "1.5px solid rgba(54,102,255,0.25)", borderRadius: 12,
+                  padding: "10px 16px", boxShadow: "0 8px 24px -8px rgba(54,102,255,0.3)",
+                  display: "flex", flexDirection: "column", gap: 4, minWidth: 110,
+                  opacity: phase <= 4 ? 1 : 0,
+                  transition: "opacity 0.4s ease",
+                }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: "#1e3a8a", letterSpacing: "-0.02em", lineHeight: 1 }}>3000 items</span>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: "#3666ff", letterSpacing: "-0.02em", lineHeight: 1 }}>100 vendors</span>
+                  </div>
+                  <span style={{ fontSize: 8.5, fontWeight: 700, color: "#64748b", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 2 }}>At any scale</span>
+                </div>
 
-              <AnimatePresence mode="wait">
-                {captions[phase] && (
-                  <motion.div
-                    key={phase}
-                    initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -4, scale: 0.97 }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex items-center gap-3 px-5 py-3.5 rounded-xl shrink-0"
-                    style={{
-                      background: "rgba(248,250,255,0.95)",
-                      border: "1px solid rgba(99,102,241,0.25)",
-                      boxShadow: "0 4px 24px -6px rgba(99,102,241,0.25), 0 1px 4px rgba(15,23,42,0.05)",
-                    }}
-                  >
-                    <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_#818cf8] shrink-0 animate-pulse" />
-                    <p className="text-[12px] font-semibold text-slate-800 leading-relaxed tracking-wide m-0">
-                      {captions[phase]}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                {/* RFQ scene — visible during phase 5 */}
+                <div className={"bs-scene " + (phase === 5 ? "on" : "")}>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", padding: "0 24px", gap: 20 }}>
+                    {/* Req cards */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {REQS.map((r, i) => (
+                        <div key={r.id} style={{
+                          padding: "8px 14px", borderRadius: 8, background: "white",
+                          borderLeft: `3px solid ${r.color}`,
+                          boxShadow: "0 4px 12px -6px rgba(15,23,42,0.15)",
+                          fontSize: 11, fontWeight: 700, color: "#334155", whiteSpace: "nowrap",
+                          display: "flex", alignItems: "center", gap: 8,
+                          opacity: rfqStep > i ? 1 : 0,
+                          transform: rfqStep > i ? "translateX(0)" : "translateX(-18px)",
+                          transition: "opacity 0.45s ease, transform 0.45s cubic-bezier(0.22,1,0.36,1)",
+                        }}>
+                          <span style={{ color: r.color, fontWeight: 800 }}>{r.plant}</span>
+                          <span style={{ color: "#94a3b8", fontWeight: 600, fontSize: 10 }}>{r.qty.toLocaleString()} qty</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Arrow */}
+                    <div style={{
+                      flex: 1, display: "flex", alignItems: "center",
+                      opacity: rfqStep >= 4 ? 1 : 0,
+                      transition: "opacity 0.4s ease",
+                    }}>
+                      <div style={{ flex: 1, height: 2, background: "linear-gradient(90deg, rgba(0,184,132,0.3) 0%, rgba(0,184,132,0.9) 100%)" }} />
+                      <div style={{ color: "#00b884", fontSize: 14, marginLeft: -1, lineHeight: 1 }}>▶</div>
+                    </div>
+
+                    {/* RFQ card */}
+                    <div style={{
+                      padding: "16px 20px", flexShrink: 0,
+                      background: "linear-gradient(180deg, #ffffff 0%, #f1fbf6 100%)",
+                      border: `2px solid ${rfqStep >= 4 ? "rgba(0,184,132,0.6)" : "rgba(0,184,132,0.2)"}`,
+                      borderRadius: 14,
+                      boxShadow: rfqStep >= 4
+                        ? "0 0 0 5px rgba(0,184,132,0.12), 0 20px 40px -10px rgba(0,184,132,0.4)"
+                        : "0 4px 20px -8px rgba(0,184,132,0.15)",
+                      opacity: rfqStep >= 4 ? 1 : 0,
+                      transform: rfqStep >= 4 ? "scale(1)" : "scale(0.88)",
+                      transition: "all 0.6s cubic-bezier(0.34,1.56,0.64,1)",
+                    }}>
+                      <span style={{ background: "#00b884", color: "white", fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 4, letterSpacing: "0.06em" }}>RFQ</span>
+                      <div style={{ fontSize: 17, fontWeight: 800, marginTop: 7, color: "#0b1322", letterSpacing: "-0.01em" }}>RFQ-EVT-9043</div>
+                      <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>3 plants · 100 vendors</div>
+                      <div style={{ display: "flex", gap: 18, marginTop: 11, paddingTop: 9, borderTop: "1px dashed rgba(15,23,42,0.1)" }}>
+                        <div>
+                          <div style={{ fontSize: 18, fontWeight: 800, color: "#00b884", lineHeight: 1 }}>−12%</div>
+                          <div style={{ fontSize: 8.5, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 3 }}>Price</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 18, fontWeight: 800, color: "#3666ff", lineHeight: 1 }}>3×</div>
+                          <div style={{ fontSize: 8.5, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 3 }}>Leverage</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>{/* end bs-stage */}
 
             </div>
           </div>

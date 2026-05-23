@@ -29,11 +29,11 @@ export default function InvSection34({ isActive = true }: { isActive?: boolean }
     const goManual = (p: number) => { setIsAuto(false); setPhase(p); };
 
     const steps = [
-        { p: 1, title: 'Select invoices · same vendor' },
-        { p: 2, title: 'Consolidate 3 → 1 · single approval' },
-        { p: 3, title: 'Approve · quadruple validation spins up' },
-        { p: 4, title: 'PO · GR · QC · Contract — all 4 green' },
-        { p: 5, title: 'Auto-credit for rejected qty · ~5% recovered' },
+        { p: 1, title: 'Pay a single line item, a full invoice, or consolidate across invoices' },
+        { p: 2, title: 'Multiple invoices from the same vendor merged into one payment' },
+        { p: 3, title: 'Approve — quadruple validation triggers automatically' },
+        { p: 4, title: 'PO, GR, QC, and Contract — all four verified before a rupee moves' },
+        { p: 5, title: 'Credit auto-applied for rejected quantities — up to 5% in costs recovered' },
     ];
 
     const invoices = [
@@ -326,7 +326,7 @@ export default function InvSection34({ isActive = true }: { isActive?: boolean }
                     <span className="text-[#3666ff]">Pay Only What You Owe.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Pay for a single line item, a full invoice, or consolidate multiple invoices from one vendor into a single payment — with built-in credit logic for rejected qty. Every payment is backed by quadruple validation against PO, GR, QC, and Contract, helping teams recover up to 5% in costs previously lost.
+                    Pay a single line item, a full invoice, or consolidate multiple invoices from one vendor into one payment — with credit logic for rejected quantities built in automatically. Every payment is matched against the PO, GR, QC, and contract terms before a single rupee moves. Teams using FactWise recover up to 5% in costs previously lost to payment errors.
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 text-left">

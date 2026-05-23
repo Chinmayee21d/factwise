@@ -4,97 +4,170 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Users2, Lightbulb, TrendingUp } from 'lucide-react';
 
-const CULTURE_PILLARS = [
+const PILLARS = [
   {
-    title: "Collaborate",
-    desc: "Collaboration is key at FactWise, and regardless of position, each team member is encouraged to voice their perspective.",
-    icon: Users2,
-    color: "blue"
+    title: 'Collaborate',
+    desc: 'Regardless of position, every team member is encouraged to voice their perspective and shape the direction of the company.',
+    Icon: Users2,
+    // Gentle float — teammates moving together
+    iconAnimate: { y: [0, -5, 0] },
+    iconTransition: { duration: 3, repeat: Infinity, ease: 'easeInOut' as const, repeatDelay: 0.5 },
   },
   {
-    title: "Create",
-    desc: "We value passion, dedication and adaptability that enables us to create elegant, beautiful solutions for complex challenges for our customers.",
-    icon: Lightbulb,
-    color: "purple"
+    title: 'Create',
+    desc: 'Passion and adaptability fuel us to build elegant, beautiful solutions for the most complex challenges our customers face.',
+    Icon: Lightbulb,
+    // Tilt — an idea taking shape
+    iconAnimate: { rotate: [0, -10, 10, -5, 0] },
+    iconTransition: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' as const, repeatDelay: 0.8 },
   },
   {
-    title: "Grow",
-    desc: "We strongly believe in striving for excellence, upholding accountability and transparency, and having fun! This allows every team member to grow at their own pace and on their own terms.",
-    icon: TrendingUp,
-    color: "emerald"
-  }
+    title: 'Grow',
+    desc: 'Excellence, accountability, and autonomy — every team member grows at their own pace, on their own terms.',
+    Icon: TrendingUp,
+    // Rightward push — trending upward
+    iconAnimate: { x: [0, 5, 0] },
+    iconTransition: { duration: 2.8, repeat: Infinity, ease: 'easeInOut' as const, repeatDelay: 0.6 },
+  },
 ];
 
 export const CareersCulture = () => {
   return (
-    <section className="py-32 px-6 md:px-14 bg-slate-50/50 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col items-center text-center mb-20">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+    <section style={{
+      padding: '80px 24px',
+      background: 'white',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Ambient background blobs */}
+      <div style={{ position: 'absolute', bottom: -80, left: -80, width: 360, height: 360, borderRadius: '50%', background: 'rgba(54,102,255,0.04)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -80, right: -80, width: 360, height: 360, borderRadius: '50%', background: 'rgba(54,102,255,0.04)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 1040, margin: '0 auto' }}>
+
+        {/* ── Heading ── */}
+        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
-            className="inline-flex items-center px-4 py-1.5 rounded-full bg-white border border-blue-100 text-[#3666ff] text-[10px] font-bold uppercase tracking-[0.2em] mb-6 shadow-sm"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '5px 14px', borderRadius: 100,
+              background: 'rgba(54,102,255,0.06)', border: '1px solid rgba(54,102,255,0.15)',
+              fontSize: 11, fontWeight: 700, color: '#3666ff',
+              marginBottom: 20, letterSpacing: '0.12em', textTransform: 'uppercase',
+              fontFamily: 'var(--font-inter)',
+            }}
           >
             Our Culture
           </motion.div>
-          
-          <motion.h2 
+
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter mb-6"
+            style={{
+              fontSize: 'clamp(30px, 3.2vw, 46px)', fontWeight: 600,
+              lineHeight: 1.1, letterSpacing: '-0.035em',
+              color: '#0D1117', margin: 0,
+              fontFamily: 'var(--font-display)',
+            }}
           >
-            Built on <span className="text-[#3666ff] font-instrument italic font-medium">Shared Principles</span>
+            Built on{' '}
+            <span style={{ color: '#3666ff', fontStyle: 'italic', fontWeight: 500 }}>
+              Shared Principles
+            </span>
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {CULTURE_PILLARS.map((pillar, index) => (
+        {/* ── Cards ── */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 20,
+        }}>
+          {PILLARS.map((pillar, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}
-              transition={{ delay: index * 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -10 }}
-              className="group relative bg-white border border-slate-200 rounded-[32px] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_32px_64px_rgba(0,0,0,0.08)] hover:border-[#3666ff]/20 transition-all duration-500"
+              transition={{ delay: index * 0.13, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -14, scale: 1.025 }}
+              style={{
+                position: 'relative',
+                background: 'white',
+                border: '1px solid rgba(54,102,255,0.1)',
+                borderRadius: 20,
+                padding: '36px 28px',
+                overflow: 'hidden',
+                cursor: 'default',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.04), 0 6px 28px rgba(54,102,255,0.07), 0 0 0 1px rgba(54,102,255,0.04)',
+                transition: 'box-shadow 0.35s ease, border-color 0.35s ease',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08), 0 24px 56px rgba(54,102,255,0.18), 0 0 0 1px rgba(54,102,255,0.2)';
+                el.style.borderColor = 'rgba(54,102,255,0.28)';
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                el.style.boxShadow = '0 2px 6px rgba(0,0,0,0.04), 0 6px 28px rgba(54,102,255,0.07), 0 0 0 1px rgba(54,102,255,0.04)';
+                el.style.borderColor = 'rgba(54,102,255,0.1)';
+              }}
             >
-              {/* Corner Accent Glow */}
-              <div className={`absolute -top-10 -right-10 size-32 rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none 
-                ${pillar.color === 'blue' ? 'bg-blue-100' : pillar.color === 'purple' ? 'bg-purple-100' : 'bg-emerald-100'}`} 
-              />
+              {/* Blue corner gradient — always visible, intensifies on hover via CSS */}
+              <div style={{
+                position: 'absolute', top: 0, right: 0,
+                width: 150, height: 150,
+                background: 'radial-gradient(ellipse at top right, rgba(54,102,255,0.13) 0%, rgba(100,144,255,0.06) 40%, transparent 70%)',
+                borderRadius: '0 20px 0 0',
+                pointerEvents: 'none',
+              }} />
+              {/* Subtle corner dot */}
+              <div style={{
+                position: 'absolute', top: 18, right: 18,
+                width: 5, height: 5, borderRadius: '50%',
+                background: 'rgba(54,102,255,0.25)',
+                pointerEvents: 'none',
+              }} />
 
-              <div className={`size-16 rounded-2xl flex items-center justify-center mb-8 transition-all duration-500 shadow-sm
-                ${pillar.color === 'blue' ? 'bg-blue-50 text-blue-600 group-hover:bg-blue-600' : 
-                  pillar.color === 'purple' ? 'bg-purple-50 text-purple-600 group-hover:bg-purple-600' : 
-                  'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600'} 
-                group-hover:text-white group-hover:scale-110 group-hover:rotate-[-6deg]`}
-              >
-                <pillar.icon className="size-8" strokeWidth={1.5} />
+              {/* Animated blue icon */}
+              <div style={{ marginBottom: 24 }}>
+                <motion.div
+                  animate={pillar.iconAnimate}
+                  transition={pillar.iconTransition}
+                  style={{
+                    width: 52, height: 52, borderRadius: 14,
+                    background: 'linear-gradient(135deg, #5a94ff 0%, #2a6cff 100%)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 16px rgba(54,102,255,0.40), 0 0 0 1px rgba(255,255,255,0.12) inset',
+                  }}
+                >
+                  <pillar.Icon size={22} color="white" strokeWidth={1.75} />
+                </motion.div>
               </div>
 
-              <h3 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">
+              <h3 style={{
+                fontSize: 19, fontWeight: 700, color: '#0D1117',
+                marginBottom: 10, letterSpacing: '-0.02em',
+                fontFamily: 'var(--font-display)',
+              }}>
                 {pillar.title}
               </h3>
-              
-              <p className="text-slate-500 leading-relaxed text-lg">
+
+              <p style={{
+                fontSize: 14.5, lineHeight: 1.65, color: '#64748b',
+                margin: 0, fontFamily: 'var(--font-inter)',
+              }}>
                 {pillar.desc}
               </p>
-
-              {/* Decorative side accent */}
-              <div className={`absolute top-10 left-0 w-1 h-12 rounded-r-full transition-all duration-500 scale-y-0 group-hover:scale-y-100
-                ${pillar.color === 'blue' ? 'bg-blue-500' : pillar.color === 'purple' ? 'bg-purple-500' : 'bg-emerald-500'}`} 
-              />
             </motion.div>
           ))}
         </div>
       </div>
-
-      {/* Background Decorative Elements */}
-      <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-blue-50/30 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-purple-50/20 rounded-full blur-[100px] pointer-events-none" />
     </section>
   );
 };

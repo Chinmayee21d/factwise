@@ -1,0 +1,32 @@
+import { MetadataRoute } from "next";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = "https://factwise.io";
+  const now = new Date();
+
+  return [
+    // Core pages — highest priority
+    { url: base,                                     lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${base}/demo`,                           lastModified: now, changeFrequency: "monthly", priority: 0.95 },
+
+    // Product / workflow pages
+    { url: `${base}/inquiry-to-quote`,               lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/requisitions-to-po`,             lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${base}/invoice-to-pay`,                 lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    // /solutions permanently redirects to /inquiry-to-quote — excluded from sitemap
+
+    // Platform module pages
+    { url: `${base}/platform`,                       lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${base}/platform/sourcing`,              lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/platform/purchase-orders`,       lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/platform/pricing-intelligence`,  lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+
+    // Commercial
+    { url: `${base}/pricing`,                        lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+
+    // Brand & content
+    { url: `${base}/about`,                          lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${base}/blog`,                           lastModified: now, changeFrequency: "daily",   priority: 0.8 },
+    { url: `${base}/careers`,                        lastModified: now, changeFrequency: "weekly",  priority: 0.6 },
+  ];
+}

@@ -2,64 +2,101 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { AboutCounter } from './AboutCounter';
 
 export const Hero = () => {
   return (
-    <section className="pt-32 pb-24 px-6 md:px-14 overflow-hidden">
-      <motion.div 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ margin: "-100px" }}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: {
-              staggerChildren: 0.15,
-              delayChildren: 0.2
-            }
-          }
-        }}
-        className="max-w-7xl mx-auto text-center mb-16"
-      >
-        <motion.h1 
-          variants={{
-            hidden: { opacity: 0, y: 30 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-          }}
-          className="text-4xl md:text-[4rem] font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-800 to-blue-600 pb-2"
-        >
-          One Platform. Every Buyer. <br /> Every Supplier. Every Step.
-        </motion.h1>
-        <motion.p 
-          variants={{
-            hidden: { opacity: 0, y: 20 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-          }}
-          className="text-slate-500 text-base md:text-[1.15rem] max-w-3xl mx-auto leading-relaxed"
-        >
-          FactWise is the leading source-to-pay cloud platform, bridging the gap between 
-          complexity and efficiency for the modern, global procurement ecosystem.
-        </motion.p>
-      </motion.div>
-
-      {/* Bento Grid Layout with Scroll Reveal & 3D Hover */}
-      <motion.div 
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ margin: "-50px" }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-7xl mx-auto rounded-3xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-200/50 h-[300px] md:h-[450px] relative group"
-      >
-        <img 
-          src="/group-diverse-people-having-business-meeting.jpg" 
-          className="w-full h-full object-cover object-top" 
-          alt="FactWise Team Meeting" 
+    <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-20 overflow-hidden bg-slate-950">
+      {/* Background Image & Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/group-diverse-people-having-business-meeting.jpg"
+          alt="FactWise Team"
+          className="w-full h-full object-cover opacity-60 scale-105"
         />
-        {/* Black Transparent Overlay */}
-        <div className="absolute inset-0 bg-black/60 transition-opacity duration-500 group-hover:bg-black/50" />
-      </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/50 to-slate-950" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-14 relative z-10 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-[0.2em] mb-8 shadow-sm"
+        >
+          About FactWise
+        </motion.div>
+
+        <motion.h1
+          className="text-5xl md:text-7xl font-bold text-white leading-[1.05] tracking-tighter mb-10 overflow-hidden py-2"
+        >
+          {"One Platform.".split("").map((char, index) => (
+            <motion.span
+              key={index}
+              initial={{ y: 120, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: index * 0.02 }}
+              className="inline-block"
+              style={{ display: char === " " ? "inline" : "inline-block" }}
+            >
+              {char === " " ? " " : char}
+            </motion.span>
+          ))}
+          <br />
+          <motion.span
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-block"
+          >
+            Every Team. Every Workflow.
+          </motion.span>
+          <br />
+          <span className="text-[#3666ff] font-instrument italic font-medium inline-block">
+            {"Every Step.".split("").map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ y: 120, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.16, 1, 0.3, 1],
+                  delay: 0.55 + index * 0.03,
+                }}
+                className="inline-block"
+                style={{ display: char === " " ? "inline" : "inline-block" }}
+              >
+                {char === " " ? " " : char}
+              </motion.span>
+            ))}
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          className="text-white/70 text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto mb-12 font-light"
+        >
+          FactWise is redefining how manufacturers buy, source, quote, and pay — automating
+          every workflow, eliminating every bottleneck, and building the operating system for
+          modern manufacturing operations.
+        </motion.p>
+
+        <motion.a
+          href="/platform"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.85, duration: 0.8 }}
+          whileHover={{ scale: 1.05, backgroundColor: '#4d7aff' }}
+          whileTap={{ scale: 0.95 }}
+          className="inline-block px-10 py-5 bg-[#3666ff] text-white rounded-full font-bold text-lg shadow-[0_20px_50px_rgba(54,102,255,0.4)] transition-all"
+        >
+          Explore the Platform
+        </motion.a>
+      </div>
+
+      {/* Background Decorative Glows */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-slate-950 to-transparent z-[1] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-t from-slate-950 to-transparent z-[1] pointer-events-none" />
     </section>
   );
 };

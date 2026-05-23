@@ -73,8 +73,9 @@ export const CareersHero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          whileHover={{ scale: 1.05, backgroundColor: '#4d7aff' }}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => document.getElementById('openings')?.scrollIntoView({ behavior: 'smooth' })}
           className="px-10 py-5 bg-[#3666ff] text-white rounded-full font-bold text-lg shadow-[0_20px_50px_rgba(54,102,255,0.4)] transition-all"
         >
           Explore Open Roles

@@ -10,14 +10,15 @@ const FIELDS = [
     { k: 'Invoice No', v: 'INV-AX-9047', conf: 99 },
     { k: 'Date', v: '12 May 2026', conf: 98 },
     { k: 'Against PO', v: 'PO-7821', conf: 97 },
-    { k: 'GST · IGST', v: '18% · ₹14,580', conf: 96 },
-    { k: 'Net Total', v: '₹95,580', conf: 99 },
+    { k: 'GST · IGST', v: '18% · ₹14,364', conf: 96 },
+    { k: 'Net Total', v: '₹94,164', conf: 99 },
 ];
 
 const CHECKS = [
     { l: 'Vendor matches PO', ok: true, note: null },
     { l: 'GST · format valid', ok: true, note: null },
     { l: 'Qty: PO 400 · INV 380', ok: false, note: 'short 20u' },
+    { l: 'Rate: PO ₹200 · INV ₹210', ok: false, note: 'over ₹10/u' },
 ];
 
 export default function InvSection31({ isActive = true }: { isActive?: boolean }) {
@@ -48,7 +49,7 @@ export default function InvSection31({ isActive = true }: { isActive?: boolean }
     };
 
     const steps = [
-        { p: 1, title: 'Two channels open · Portal + AI upload' },
+        { p: 1, title: 'Two ways in. One structured invoice flow.' },
         { p: 2, title: 'Drop any format · AI picks it up' },
         { p: 3, title: 'AI extracts every field · confidence scores' },
         { p: 4, title: 'Cross-checks PO · discrepancies flagged' },
@@ -154,7 +155,7 @@ export default function InvSection31({ isActive = true }: { isActive?: boolean }
                                 <FileText size={11} color="#94a3b8" />
                                 <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, color: '#64748b' }}>PO-7821</span>
                                 <span style={{ color: '#cbd5e1' }}>·</span>
-                                <span style={{ fontWeight: 600, color: '#475569' }}>Steel Bracket M8 · 400u · ₹240/u</span>
+                                <span style={{ fontWeight: 600, color: '#475569' }}>Steel Bracket M8 · 400u · ₹200/u</span>
                             </div>
                             <span style={{ fontSize: 7.5, fontWeight: 800, color: '#059669', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.18)', borderRadius: 4, padding: '1px 5px', fontFamily: "'JetBrains Mono',monospace" }}>REF</span>
                         </div>
@@ -226,19 +227,19 @@ export default function InvSection31({ isActive = true }: { isActive?: boolean }
                                                 </div>
                                                 <div>Ref PO: PO-7821</div>
                                                 <div style={{ borderTop: '1px dashed #cbd5e1', margin: '4px 0' }} />
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.6fr 0.8fr', fontSize: 7, color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
-                                                    <span>Item</span><span>Qty</span><span>Amount</span>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 0.5fr 0.6fr 0.8fr', fontSize: 7, color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase' }}>
+                                                    <span>Item</span><span>Qty</span><span>Rate</span><span>Amount</span>
                                                 </div>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.6fr 0.8fr', color: '#0b1322' }}>
-                                                    <span>Steel Bracket M8</span><span><b>380</b></span><span><b>₹91,200</b></span>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 0.5fr 0.6fr 0.8fr', color: '#0b1322' }}>
+                                                    <span>Steel Bracket M8</span><span><b>380</b></span><span>₹210</span><span><b>₹79,800</b></span>
                                                 </div>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.6fr 0.8fr', color: '#94a3b8', fontSize: 7.5 }}>
-                                                    <span>GST 18%</span><span /><span>₹4,380</span>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 0.5fr 0.6fr 0.8fr', color: '#94a3b8', fontSize: 7.5 }}>
+                                                    <span>GST 18%</span><span /><span /><span>₹14,364</span>
                                                 </div>
                                                 <div style={{ borderTop: '1px solid #e2e8f0', margin: '4px 0' }} />
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                     <span style={{ fontWeight: 800, color: '#475569' }}>NET TOTAL</span>
-                                                    <span style={{ fontWeight: 800, color: '#0b1322', fontSize: 10 }}>₹95,580</span>
+                                                    <span style={{ fontWeight: 800, color: '#0b1322', fontSize: 10 }}>₹94,164</span>
                                                 </div>
 
                                                 {/* Scan line overlay during phase 3 */}
@@ -276,10 +277,10 @@ export default function InvSection31({ isActive = true }: { isActive?: boolean }
                                         <span style={{ fontSize: 9.5, fontWeight: 800, color: '#475569' }}>Invoice draft</span>
                                         <span style={{
                                             fontSize: 7.5, fontWeight: 800, fontFamily: "'JetBrains Mono',monospace", textTransform: 'uppercase', padding: '1px 5px', borderRadius: 3,
-                                            background: phase >= 4 ? 'rgba(16,185,129,0.1)' : 'rgba(54,102,255,0.1)',
-                                            color: phase >= 4 ? '#059669' : '#3666ff'
+                                            background: phase >= 4 ? 'rgba(239,68,68,0.1)' : 'rgba(54,102,255,0.1)',
+                                            color: phase >= 4 ? '#ef4444' : '#3666ff'
                                         }}>
-                                            {phase >= 4 ? 'matched · 1 flag' : phase >= 3 ? 'extracting' : 'empty'}
+                                            {phase >= 4 ? 'matched · 2 flags' : phase >= 3 ? 'extracting' : 'empty'}
                                         </span>
                                     </div>
 

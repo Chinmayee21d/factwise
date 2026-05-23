@@ -33,6 +33,7 @@ export default function ReqToPoFlow() {
 
         const panels = gsap.utils.toArray<HTMLElement>('.rtpf-panel');
         let animating = false;
+        let triggerStartPx = 0;
 
         // Panels 1-4 start off-screen to the right; panel 0 (ReqSection31) is visible by default
         gsap.set('.rtpf-panel-slide', { xPercent: 100 });
@@ -44,6 +45,10 @@ export default function ReqToPoFlow() {
             if ((index === panels.length && isScrollingDown) || (index === -1 && !isScrollingDown)) {
                 setActivePanel(-1);
                 intentObserver.disable();
+                if (index === -1) {
+                    // Scroll just above the trigger start so the GSAP pin releases immediately
+                    window.scrollTo({ top: Math.max(0, triggerStartPx - 1) });
+                }
                 return;
             }
 
@@ -80,6 +85,7 @@ export default function ReqToPoFlow() {
             pin: true,
             start: 'top top',
             end: '+=200',
+            onRefresh: (self) => { triggerStartPx = self.start; },
             onEnter: () => {
                 if (currentIndexRef.current === -1) {
                     gotoPanel(0, true);
@@ -93,6 +99,7 @@ export default function ReqToPoFlow() {
                 intentObserver.enable();
             },
         });
+        triggerStartPx = trigger.start;
 
         const onKey = (e: KeyboardEvent) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -201,6 +208,7 @@ export default function ReqToPoFlow() {
                     position:'absolute', top:0, left:0, width:'100%', height:'100%',
                     background:
                         "radial-gradient(ellipse 75% 75% at 0% 0%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
+                        "radial-gradient(ellipse 75% 75% at 100% 100%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
                         "white",
                     display:'flex', alignItems:'center', overflow:'hidden',
                 }}
@@ -224,6 +232,7 @@ export default function ReqToPoFlow() {
                     position:'absolute', top:0, left:0, width:'100%', height:'100%',
                     background:
                         "radial-gradient(ellipse 75% 75% at 0% 0%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
+                        "radial-gradient(ellipse 75% 75% at 100% 100%, rgba(105,145,240,0.45), rgba(150,180,250,0.18) 35%, transparent 65%), " +
                         "white",
                     display:'flex', alignItems:'center', overflow:'hidden',
                 }}
@@ -312,34 +321,6 @@ export default function ReqToPoFlow() {
                 <ChevronRight style={{ width: 16, height: 16, color: 'inherit' }} />
             </button>
 
-            {/* ══════════════════════════════
-                STEP LABELS (top-right)
-            ══════════════════════════════ */}
-            <div style={{
-                position: 'absolute', top: 20, right: 20,
-                zIndex: 100, display: 'flex', gap: 6,
-            }}>
-                {STEPS.map((s, i) => (
-                    <button
-                        key={i}
-                        onClick={() => navToStep(i)}
-                        title={s.label}
-                        style={{
-                            padding: '5px 12px', borderRadius: 100,
-                            border: '1px solid',
-                            borderColor: activePanel === i ? 'rgba(54,102,255,0.4)' : 'rgba(15,23,42,0.08)',
-                            background: activePanel === i ? 'rgba(54,102,255,0.07)' : 'white',
-                            fontSize: 10, fontWeight: 700,
-                            color: activePanel === i ? '#3666ff' : activePanel > i ? '#00b884' : '#94a3b8',
-                            cursor: 'pointer', transition: 'all .25s ease',
-                            fontFamily: "'JetBrains Mono',monospace",
-                            letterSpacing: '0.04em',
-                        }}
-                    >
-                        {s.num}
-                    </button>
-                ))}
-            </div>
         </div>
 
         {/* Spacer so page content after this section scrolls normally */}
