@@ -117,8 +117,8 @@ export const ValuesGrid = () => {
                   style={{ background: 'linear-gradient(135deg, #3666ff 0%, #6690ff 100%)' }}
                 >
                   <motion.div
-                    animate={value.iconAnimate}
-                    transition={value.iconTransition}
+                    animate={value.iconAnimate as any}
+                    transition={value.iconTransition as any}
                     className="text-white"
                   >
                     <value.icon className="size-7" strokeWidth={2} />
