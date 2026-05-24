@@ -405,7 +405,7 @@ export default function ReqSection31({ isActive = true }: { isActive?: boolean }
                     Step 01 · Requisition Management
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
-                    Every Requisition Structured.<br />
+                    Streamline Every Requisition.<br />
                     <span className="text-[#3666ff]">Every Approval Tracked.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>

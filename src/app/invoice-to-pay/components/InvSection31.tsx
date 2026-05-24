@@ -78,8 +78,8 @@ export default function InvSection31({ isActive = true }: { isActive?: boolean }
                     Step 01 · AI Invoice Processing
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
-                    Zero Manual Entry.<br />
-                    <span className="text-[#3666ff]">Every Invoice Structured.</span>
+                    AI Powered Invoice Processing.<br />
+                    <span className="text-[#3666ff]">Zero Manual Entry.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                     Vendors create invoices directly on FactWise against any PO — or upload any format and FactWise AI reads, interprets, and structures every invoice automatically. Discrepancies against the PO are flagged the moment an invoice lands, and multiple invoices per PO are fully supported.

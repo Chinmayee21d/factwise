@@ -51,7 +51,7 @@ const pages = [
   },
   {
     id: 3,
-    title: "Decide with Data",
+    title: "AI Powered Analytics",
     description: "Make informed awards and protect your margins with real-time bid intelligence, historical pricing, and vendor performance metrics. FactWise delivers instant spend visibility and live KPIs exactly when and where you need them.",
     details: [
       "The Right Data. At Every Decision Point.",

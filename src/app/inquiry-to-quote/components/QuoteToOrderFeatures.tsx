@@ -20,44 +20,44 @@ import {
 const features = [
   {
     icon: AnimatedBotIcon,
-    title: "AI-Powered BOM Structuring. Zero Manual Work.",
+    title: "AI-Powered BOM Structuring.",
     description:
       "Upload any BOM in any format — FactWise's AI cleans, structures, and fills every gap automatically. No reformatting. No manual entry.",
     href: "#",
   },
   {
     icon: AnimatedTrendingUpIcon,
-    title: "Quote More. Win More.",
+    title: "Line-Item Cost Intelligence",
     description:
-      "Automate the heavy lifting so your team spends less time building quotes and more time sending them. More quotes out. More deals in.",
+      "Before a single RFQ goes out, see distributor prices, past PO rates, historical quotes, and contract prices at every line item — so every target price is grounded in real data.",
     href: "#",
   },
   {
     icon: AnimatedZapIcon,
-    title: "Cut Your Quoting Cycle by 50%.",
+    title: "Cut Quoting Time by 50%.",
     description:
       "From customer inquiry to winning quote — in days, not weeks. Every step automated, every bottleneck eliminated.",
     href: "#",
   },
   {
     icon: AnimatedSearchCheckIcon,
-    title: "Source Faster. Negotiate Using AI.",
+    title: "Smart Warnings.",
     description:
-      "Auto-selected vendors, pre-filled target prices, and AI-powered negotiations — your sourcing event is live before anyone else has opened their inbox.",
+      "FactWise flags high target rates, duplicate items across events, and contract mismatches — automatically — so every decision is made with complete context, not discovered after the damage is done.",
     href: "#",
   },
   {
     icon: AnimatedBrainCircuitIcon,
-    title: "AI Powered Analytics. Insights That Think For You.",
+    title: "AI Powered Analytics.",
     description:
       "AI-powered analytics agents surface the insights that matter — best bids, hidden costs, margin risks — so every award decision is backed by intelligence, not instinct.",
     href: "#",
   },
   {
     icon: AnimatedLightbulbIcon,
-    title: "Intelligent Costing. Always One Step Ahead.",
+    title: "Formula Driven Quoting.",
     description:
-      "Historical PO rates, contract prices, distributor data — all surfaced automatically at the line item level before a single RFQ goes out.",
+      "Build your own landed cost formula once — FactWise applies it automatically across every vendor, every bid, and every customer quote. Always accurate. Always yours.",
     href: "#",
     comingSoon: false,
   },

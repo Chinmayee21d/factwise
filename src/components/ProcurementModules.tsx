@@ -413,7 +413,7 @@ export default function ProcurementModules() {
             Platform Modules
           </div>
           <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
-            Modular <span className="text-[#3666ff]">Manufacturing</span> Intelligence
+            Smarter <span className="text-[#3666ff]">Manufacturing</span> Starts Here
           </h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto font-medium">
             Scalable, enterprise-ready modules designed to automate every workflow manufacturers depend on — from first inquiry to final payment.

@@ -380,13 +380,13 @@ export default function ReqSection34({ isActive = true }: { isActive?: boolean }
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                     See True Landed Cost.<br />
-                    <span className="text-[#3666ff]">Shortlist with Confidence.</span>
+                    <span className="text-[#3666ff]">Award with Confidence.</span>
                 </h3>
                 <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                     FactWise applies your custom landed cost formulas automatically across every bid — duties, freight, insurance, packaging — all factored in, normalized to your currency.
                 </p>
                 <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    See competitive, non-competitive, and excluded bids per vendor at a glance. Switch between a line-by-line view or an all-items, all-vendors view. FactWise Recommended Analytics highlights the best bid per item — so every shortlisting decision is backed by intelligence, not instinct.
+                    See competitive, non-competitive, and excluded bids per vendor at a glance. Switch between a line-by-line view or an all-items, all-vendors view. FactWise Recommended Analytics highlights the best bid per item — so every awarding decision is backed by intelligence, not instinct.
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 mb-8 text-left">

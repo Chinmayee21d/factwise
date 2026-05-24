@@ -176,7 +176,7 @@ export default function QuoteToOrderFlowV2() {
                             fontFamily: 'var(--font-display)',
                         }}
                     >
-                        How FactWise Transforms <span style={{ color: '#3666ff' }}>Every Step</span>
+                        How FactWise Automates <span style={{ color: '#3666ff' }}>Every Step</span>
                     </h2>
                     <p style={{ fontSize: 17, lineHeight: 1.65, color: '#64748b', maxWidth: 640, margin: '0 auto', fontFamily: 'var(--font-inter)' }}>
                         From the first BOM line to the final customer quote — intelligent at every step, automated at every turn.

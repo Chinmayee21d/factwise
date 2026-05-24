@@ -89,9 +89,9 @@ export default function StatsStrip() {
               color: '#7B82A8',
             }}
           >
-            Procurement is where it starts — not where it ends. FactWise runs
-            your quotes, vendors, orders, approvals, and payments in one place,
-            so your team spends less time chasing and more time closing.
+            Procurement is where it starts — not where it ends. FactWise automates every workflow — from quotes and vendors to orders,
+            approvals, and payments — so your team spends less time chasing and more time closing.
+
           </p>
         </motion.div>
 

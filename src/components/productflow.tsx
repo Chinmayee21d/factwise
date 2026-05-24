@@ -495,7 +495,7 @@ obs.observe(ROOT);
             
             <ScrollReveal type="kinetic">
               <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
-                Every Way You Procure. <br />
+                Automate Every Way You Procure. <br />
                 <span style={{ color: '#3666ff' }}>One Platform.</span>
               </h2>
             </ScrollReveal>

@@ -417,7 +417,7 @@ export default function ProblemSection() {
             
             <ScrollReveal type="split-chars" stagger={0.02}>
               <h2 className="text-3xl font-bold tracking-tight md:text-5xl text-[#1A1D2E] mb-6 leading-[1.1]">
-                Your procurement is draining <span className="text-[#3666ff]">money, time, and control.</span>
+                Your procurement is costing you <span className="text-[#3666ff]">money, time, and control.</span>
               </h2>
             </ScrollReveal>
 

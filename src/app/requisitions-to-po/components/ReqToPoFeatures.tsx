@@ -20,42 +20,42 @@ import {
 const features = [
   {
     icon: AnimatedTrendingUpIcon,
-    title: "Increase Savings. Automatically.",
+    title: "Increased Savings.",
     description:
       "Stop sourcing in silos. FactWise combines requisitions for the same item automatically — unlocking volume advantage and driving costs down before negotiations even begin.",
     href: "#",
   },
   {
     icon: AnimatedZapIcon,
-    title: "Procure Faster. Always.",
+    title: "Procure Faster.",
     description:
       "From first requisition to final PO in half the time — every bottleneck eliminated, every step automated.",
     href: "#",
   },
   {
     icon: AnimatedBotIcon,
-    title: "Negotiate Using AI. Pay Less.",
+    title: "Negotiate Using AI.",
     description:
       "AI-powered auto-negotiations drive vendors to their best price automatically — without your team sending a single message.",
     href: "#",
   },
   {
     icon: AnimatedLightbulbIcon,
-    title: "Automate Pricing. Always Accurate.",
+    title: "Automated Pricing.",
     description:
       "Historical rates, contract prices, and market data surfaced automatically — so you always know the best price before you even start sourcing.",
     href: "#",
   },
   {
     icon: AnimatedSearchCheckIcon,
-    title: "Complete Visibility. Zero Surprises.",
+    title: "Complete Visibility.",
     description:
       "Every requisition, every approval, every PO — tracked in real time from start to finish. Complete visibility across the entire procurement journey, always.",
     href: "#",
   },
   {
     icon: AnimatedBrainCircuitIcon,
-    title: "AI-Powered Efficiency. Every Step.",
+    title: "AI-Powered Efficiency.",
     description:
       "From item import to vendor allocation — FactWise's AI handles the repetitive, time-consuming work automatically so your team focuses on decisions, not data entry.",
     href: "#",

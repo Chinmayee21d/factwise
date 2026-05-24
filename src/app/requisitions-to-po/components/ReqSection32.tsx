@@ -459,7 +459,7 @@ export default function ReqSection32({ isActive = true }: { isActive?: boolean }
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                     From Requisition to RFQ.<br />
-                    <span className="text-[#3666ff]">In Minutes, Not Days.</span>
+                    <span className="text-[#3666ff]">Automated in Minutes, Not Days.</span>
                 </h3>
                 <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                     Once approved, requisitions land directly in the assigned purchaser's inbound list. From there, create an RFQ from one or multiple requisitions in a single action.

@@ -170,7 +170,7 @@ export default function InvoiceToPayFlow() {
                             fontFamily: 'var(--font-display)',
                         }}
                     >
-                        How FactWise <span style={{ color: '#3666ff' }}>Transforms Every Step.</span>
+                        How FactWise <span style={{ color: '#3666ff' }}>Automates Every Step.</span>
                     </h2>
                     <p style={{ fontSize: 17, lineHeight: 1.65, color: '#64748b', maxWidth: 640, margin: '0 auto', fontFamily: 'var(--font-inter)' }}>
                         From the first invoice raised to the last rupee paid — verified at every step, automated at every turn.

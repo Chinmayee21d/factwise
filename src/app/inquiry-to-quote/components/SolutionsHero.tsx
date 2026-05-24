@@ -278,7 +278,7 @@ export default function SolutionsHero() {
             }}>
               winning quote.
             </span>{' '}
-            Faster than you think.
+            Automated from start to finish.
           </h1>
 
           {/* Subhead */}

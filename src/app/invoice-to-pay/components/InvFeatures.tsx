@@ -48,7 +48,7 @@ const features = [
   },
   {
     icon: AnimatedLightbulbIcon,
-    title: "Total Visibility. Always.",
+    title: "Complete Visibility.",
     description:
       "Every invoice, every GR, every QC outcome, every payment — tracked in real time from start to finish. Always know exactly where every rupee stands.",
     href: "#",

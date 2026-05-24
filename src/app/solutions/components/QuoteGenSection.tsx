@@ -84,7 +84,7 @@ export default function QuoteGenSection() {
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
                     Automate Quote Generation. <br />
-                    <span className="text-[#3666ff]">Win Every Time.</span>
+                    <span className="text-[#3666ff]">Built to Win.</span>
                 </h3>
                 <p className="text-slate-400 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                     Select the best bids — FactWise automates quote generation in one click. Every line item priced, every landed cost calculated, every BOM rolled up automatically. No manual calculation. No margin errors.

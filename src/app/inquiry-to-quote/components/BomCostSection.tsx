@@ -42,8 +42,10 @@ export default function BomCostSection() {
                     BOM & Cost Intelligence
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
-                    Know Your BOM. Know Your Costs. <br />
-                    <span className="text-[#3666ff]">Before You Source.</span>
+                    AI-Driven BOM Intelligence.
+
+ <br />
+                    <span className="text-[#3666ff]">Every Part. Every Cost.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
                     Build complex multi-level BOMs with alternates in a single import. FactWise surfaces accurate line-item costs — distributor, past PO, quote, and contract prices — before any RFQ goes out.

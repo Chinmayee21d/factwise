@@ -300,11 +300,12 @@ export default function Section33LandedCostXRay({ isActive = true }: { isActive?
                     Section 3.3 · Landed Cost Analytics
                 </div>
                 <h3 className="text-[24px] md:text-[30px] font-semibold text-[#0D1117] tracking-[-0.025em] leading-[1.18]" style={{ fontFamily: 'var(--font-display)' }}>
-                    See True Landed Cost. <br />
-                    <span className="text-[#3666ff]">Shortlist with Confidence.</span>
+                    Know your True Landed Cost. <br />
+                    <span className="text-[#3666ff]">Before you Quote.</span>
                 </h3>
                 <p className="text-slate-500 text-[15px] leading-[1.65] font-normal" style={{ fontFamily: 'var(--font-inter)' }}>
-                    FactWise automatically applies your custom landed cost formulas across every bid — normalizing currencies and factoring in duties, freight, insurance, and packaging, so every comparison reflects true cost. Drill into vendor performance at a glance: competitive, non-competitive, and excluded bids per supplier, with flexible line-by-line or all-items views. FactWise Recommended Analytics then surfaces the best bid per item based on your own criteria — so every shortlisting decision is backed by data, not guesswork.
+                    FactWise automatically applies your custom landed cost formulas across every bid — normalizing currencies and factoring in duties, freight, insurance, and packaging. Drill into vendor performance at a glance — competitive, non-competitive, and excluded bids per supplier. FactWise Recommended Analytics surfaces the best bid per item based on your own criteria — so when you quote your customer, every number is backed by true cost, not guesswork.
+
                 </p>
 
                 <div className="flex flex-col gap-2 mt-8 text-left">
