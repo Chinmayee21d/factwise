@@ -192,7 +192,7 @@ export default function InvoiceHero() {
               marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
             }}
           >
-            Managing payments shouldn't mean chasing invoices, manually matching documents, and hoping nothing slips through. FactWise brings every step of the invoice-to-pay journey into one intelligent flow — from vendor invoice to final payment — with complete validation, flexibility, and total visibility at every step.
+            Stop chasing invoices, matching documents by hand, and hoping nothing slips through. FactWise unifies every step from vendor invoice to final payment — with full validation, flexibility, and visibility.
           </p>
 
           {/* CTA Buttons */}

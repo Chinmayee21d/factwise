@@ -192,7 +192,7 @@ export default function ReqHero() {
               marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
             }}
           >
-            Internal procurement should be straightforward, but requests get lost, approvals stall, and POs are issued manually one by one. FactWise brings every step of the requisition-to-PO journey into one intelligent flow — so requests move faster, sourcing gets smarter, and every PO is issued with confidence.
+            Requests get lost, approvals stall, and POs go out manually one by one. FactWise unifies every step into one intelligent flow — so requests move faster, sourcing gets smarter, and every PO ships with confidence.
           </p>
 
           {/* CTA Buttons */}

@@ -285,7 +285,7 @@ export default function SolutionsHero() {
             fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
             marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
           }}>
-            Quoting takes too long. Costs are hard to calculate. By the time the quote reaches your customer, the margin is under pressure. FactWise automates every step — so you move faster, price smarter, and win more business.
+            Quoting is slow, costs are hard to calculate, and margins shrink by the time the quote ships. FactWise automates every step — so you move faster, price smarter, and win more business.
           </p>
 
           {/* CTAs */}
