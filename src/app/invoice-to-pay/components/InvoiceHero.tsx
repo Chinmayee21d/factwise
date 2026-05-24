@@ -1,12 +1,9 @@
 'use client';
 
 import * as React from "react"
-import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { gsap } from 'gsap'
 
 const IcFile     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
 const IcTruck    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -146,20 +143,6 @@ function FloatCard({ style, delay=0, yAmt=12, dur=6, children }: {
 
 export default function InvoiceHero() {
   const mono = "'JetBrains Mono', monospace"
-  const leftColRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-
-      tl
-        .from('.inv-hw', { yPercent: 115, duration: 0.65, stagger: 0.058 })
-        .from('[data-inv-sub]',  { opacity: 0, y: 18, duration: 0.55 }, '+=0.05')
-        .from('[data-inv-btns]', { opacity: 0, y: 12, duration: 0.45 }, '-=0.28')
-    }, leftColRef)
-
-    return () => ctx.revert()
-  }, [])
 
   return (
     <>
@@ -185,7 +168,7 @@ export default function InvoiceHero() {
       }}>
 
         {/* LEFT COLUMN */}
-        <div ref={leftColRef} style={{ maxWidth:600 }}>
+        <div style={{ maxWidth:600 }}>
 
           {/* Heading */}
           <h1 style={{
@@ -193,53 +176,42 @@ export default function InvoiceHero() {
             lineHeight:1.15, letterSpacing:'-0.035em', marginBottom:24,
             fontFamily:'var(--font-display)',
           }}>
-            {['Every', 'Invoice', 'Matched.'].map((w, i) => (
-              <React.Fragment key={`a${i}`}>
-                <span style={{ display:'inline-block', overflow:'hidden', verticalAlign:'bottom', paddingBottom:'0.07em' }}>
-                  <span className="inv-hw" style={{ display:'inline-block' }}>{w}</span>
-                </span>{' '}
-              </React.Fragment>
-            ))}
-            {['Every', 'Payment', 'Cleared.'].map((w, i) => (
-              <React.Fragment key={`c${i}`}>
-                <span style={{ display:'inline-block', overflow:'hidden', verticalAlign:'bottom', paddingBottom:'0.07em' }}>
-                  <span className="inv-hw" style={{
-                    display:'inline-block',
-                    background:'linear-gradient(135deg,#7ba6ff 0%,#4f8bff 50%,#2a6cff 100%)',
-                    WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
-                  }}>{w}</span>
-                </span>{' '}
-              </React.Fragment>
-            ))}
+            Every Invoice Verified. Every Payment Controlled.{' '}
+            <span style={{
+              background:'linear-gradient(135deg,#7ba6ff 0%,#4f8bff 50%,#2a6cff 100%)',
+              WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
+            }}>
+              Every Rupee Accounted For.
+            </span>
           </h1>
 
           {/* Subtext */}
           <p
-            data-inv-sub
             style={{
               fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
               marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
             }}
           >
-            4-way validation across PO, GR, QC, and contract — every discrepancy caught before a single payment moves.
+            Stop chasing invoices, matching documents by hand, and hoping nothing slips through. FactWise unifies every step from vendor invoice to final payment — with full validation, flexibility, and visibility.
           </p>
 
           {/* CTA Buttons */}
-          <div data-inv-btns style={{ display:'flex', gap:14, alignItems:'center', marginBottom:48 }}>
-            <Button asChild style={{
-              background:'linear-gradient(135deg,#4f8bff,#2a6cff)', color:'white', border:'none',
-              padding:'14px 24px 14px 28px', borderRadius:100, fontSize:15, fontWeight:600,
-              cursor:'pointer', display:'inline-flex', alignItems:'center', gap:10,
-              boxShadow:'0 0 0 1px rgba(255,255,255,0.1) inset, 0 12px 40px rgba(42,108,255,0.4)',
-              fontFamily:'var(--font-inter)', textDecoration:'none',
-            }}>
-              <Link href="/demo" style={{ display:'flex', alignItems:'center', gap:10 }}>
-                Get started
-                <span style={{ width:28, height:28, borderRadius:'50%', background:'rgba(255,255,255,0.18)', display:'grid', placeItems:'center' }}>
-                  <ArrowRight style={{ width:14, height:14 }}/>
-                </span>
-              </Link>
-            </Button>
+          <div style={{ display:'flex', gap:14, alignItems:'center', marginBottom:48 }}>
+            <Link
+              href="/demo"
+              style={{
+                background:'linear-gradient(135deg,#4f8bff,#2a6cff)', color:'white', border:'none',
+                padding:'14px 24px 14px 28px', borderRadius:100, fontSize:15, fontWeight:600,
+                cursor:'pointer', display:'inline-flex', alignItems:'center', gap:10,
+                boxShadow:'0 0 0 1px rgba(255,255,255,0.1) inset, 0 12px 40px rgba(42,108,255,0.4)',
+                fontFamily:'var(--font-inter)', textDecoration:'none', lineHeight:1,
+              }}
+            >
+              Get started
+              <span style={{ width:28, height:28, borderRadius:'50%', background:'rgba(255,255,255,0.18)', display:'grid', placeItems:'center' }}>
+                <ArrowRight style={{ width:14, height:14 }}/>
+              </span>
+            </Link>
             <button style={{
               background:'transparent', color:'white',
               border:'1px solid rgba(255,255,255,0.15)',

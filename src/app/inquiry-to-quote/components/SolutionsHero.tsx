@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { ArrowRight, ShieldCheck } from 'lucide-react'
 
@@ -286,31 +285,30 @@ export default function SolutionsHero() {
             fontSize:18, lineHeight:1.65, color:'#8899b8', fontWeight:400,
             marginBottom:40, maxWidth:520, fontFamily:'var(--font-inter)',
           }}>
-            Quoting takes too long. Costs are hard to calculate. By the time the quote reaches your customer, the margin is under pressure. FactWise automates every step — so you move faster, price smarter, and win more business.
+            Quoting is slow, costs are hard to calculate, and margins shrink by the time the quote ships. FactWise automates every step — so you move faster, price smarter, and win more business.
           </p>
 
           {/* CTAs */}
           <div style={{ display:'flex', gap:14, alignItems:'center', marginBottom:48 }}>
-            <Button asChild
+            <Link
+              href="/demo"
               style={{
                 background:'linear-gradient(135deg,#4f8bff,#2a6cff)', color:'white', border:'none',
                 padding:'14px 24px 14px 28px', borderRadius:100, fontSize:15, fontWeight:600,
                 cursor:'pointer', display:'inline-flex', alignItems:'center', gap:10,
                 boxShadow:'0 0 0 1px rgba(255,255,255,0.1) inset, 0 12px 40px rgba(42,108,255,0.4)',
-                fontFamily:'var(--font-inter)', textDecoration:'none',
+                fontFamily:'var(--font-inter)', textDecoration:'none', lineHeight:1,
               }}
             >
-              <Link href="/demo" style={{ display:'flex', alignItems:'center', gap:10 }}>
-                Get started
-                <span style={{
-                  width:28, height:28, borderRadius:'50%',
-                  background:'rgba(255,255,255,0.18)',
-                  display:'grid', placeItems:'center',
-                }}>
-                  <ArrowRight style={{ width:14, height:14 }}/>
-                </span>
-              </Link>
-            </Button>
+              Get started
+              <span style={{
+                width:28, height:28, borderRadius:'50%',
+                background:'rgba(255,255,255,0.18)',
+                display:'grid', placeItems:'center',
+              }}>
+                <ArrowRight style={{ width:14, height:14 }}/>
+              </span>
+            </Link>
             <button style={{
               background:'transparent', color:'white',
               border:'1px solid rgba(255,255,255,0.15)',
