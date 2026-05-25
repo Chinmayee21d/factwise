@@ -7,7 +7,7 @@ import StatsStrip from '@/components/StatsStrip';
 // Everything below the fold is lazy-loaded so it doesn't block the initial bundle
 const ProblemSection       = dynamic(() => import('@/components/ProblemSection'),        { ssr: false });
 const MethodologySection   = dynamic(() => import('@/components/Methodology'),            { ssr: false });
-const ProductHubAnimation  = dynamic(() => import('@/components/productflow'),            { ssr: false });
+const ProductHubAnimation  = dynamic(() => import('@/components/ProductFlowCombined'),            { ssr: false });
 const ProcurementModules   = dynamic(() => import('@/components/ProcurementModules'),     { ssr: false });
 const ImplementationRoadmap = dynamic(() => import('@/components/ImplementationRoadmap'), { ssr: false });
 const IntegrationsShowcase = dynamic(() => import('@/components/IntegrationsShowcase'),   { ssr: false });
