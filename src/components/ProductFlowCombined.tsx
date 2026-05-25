@@ -173,18 +173,18 @@ const FLOWS: FlowDef[] = [
   },
   {
     id: 'others',
-    name: 'Others',
+    name: 'Additional modules',
     color: '#4b8bff',
     description:
-      'The supporting building blocks — a centralized item catalogue and item analytics that power every sourcing event.',
+      'Every sourcing event runs on clean data, market intelligence, and agreed terms. FactWise gives you the building blocks to source smarter — before a single RFQ goes out.',
     highlights: [
-      'Centralized item catalogue & master data',
-      'Reusable specifications across RfQs',
-      'Item-level analytics and spend insights',
+      'Item Analytics - Track market indexes and price trends — know exactly when to buy',
+      'Item Catalogue - Every item, every specification, structured and reusable across every event.',
+      'Contracts - Agreed prices, quantities, and terms — automatically referenced across every event and PO',
     ],
     dimmed: [
-      'Category & supplier benchmarking',
-      'Demand and consumption trends',
+      //'Category & supplier benchmarking',
+      //'Demand and consumption trends',
     ],
     runs: [
       ['item-cat', 'rfq', 'neg', 'bid-ana', 'po-crea'],
